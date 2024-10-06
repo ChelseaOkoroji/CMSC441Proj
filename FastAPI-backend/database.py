@@ -9,7 +9,7 @@ DATABASE_URL = "sqlite:///ezcommerce.db" # This works for multiple databases, th
 engine = create_engine(
     DATABASE_URL, connect_args={"check_same_thread": False}
 )
-# need session to access database
+# Need session to access database
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-# constructs base class (used in models.py)
+# Constructs base class (used in models.py)
 Base = declarative_base()

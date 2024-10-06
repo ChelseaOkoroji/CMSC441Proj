@@ -8,6 +8,7 @@ from database import engine, SessionLocal
 import operations, models, schemas
 
 # Create database tables
+# Note: normally you'd want to use migrations
 models.Base.metadata.create_all(bind=engine)
 
 # FastAPI instance
