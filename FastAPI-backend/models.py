@@ -11,7 +11,7 @@ from database import Base
 class User(Base):
     __tablename__ = "users"
 
-    userID = Column(String, primary_key=True)
+    userID = Column(String, primary_key=True, index=True)
     email = Column(String, nullable=False)
     password_hashed = Column(String, nullable=False)
 
