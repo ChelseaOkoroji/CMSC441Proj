@@ -2,23 +2,23 @@ import React, { useState } from 'react';
 import './Register.css'
 
 const Register = () => {
-  const [userID, setUserID] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  //const [userID, setUserID] = useState('');
+  //const [email, setEmail] = useState('');
+  //const [password, setPassword] = useState('');
 
-  const handleRegister = () => {
-    const user = { userID, email, password };
-    fetch('http://localhost:8000/users/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(user),
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log('User registered:', data);
-      })
-      .catch(error => console.error('Error:', error));
-  };
+  //const handleRegister = () => {
+    //const user = { userID, email, password };
+    //fetch('http://localhost:8000/users/', {
+      //method: 'POST',
+      //headers: { 'Content-Type': 'application/json' },
+      //body: JSON.stringify(user),
+    //})
+      //.then(response => response.json())
+      //.then(data => {
+        //console.log('User registered:', data);
+      //})
+      //.catch(error => console.error('Error:', error));
+  //};
 
   return (
     <div>
