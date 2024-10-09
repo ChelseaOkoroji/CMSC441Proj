@@ -9,6 +9,7 @@ class ProductBase(BaseModel):
     price: float
     quantity: int
     color: str
+    category: str
     userID: str # Username of seller
 
 # Additional fields needed to create product
