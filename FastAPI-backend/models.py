@@ -27,18 +27,16 @@ class Product(Base):
     price = Column(Float, nullable=False)
     quantity = Column(Integer)
     color = Column(String)
+    category = Column(String) # User will choose from a pre-defined list when they add their product
 
-    userID = Column(String, ForeignKey("users.userID"))
+    userID = Column(String, ForeignKey("users.userID", ondelete="CASCADE", onupdate="CASCADE"))
     seller = relationship("User", back_populates="items_for_sale")
 
 # All attributes for favorites functionality
 class Favorite(Base):
     __tablename__ = "favorites"
 
-    favoriteID = Column(Integer, primary_key=True)
+    favoriteID = Column(Integer, primary_key=True, index=True)
 
-    userID = Column(String, ForeignKey("users.userID"))
-    productID = Column(Integer, ForeignKey("products.productID"))
-
-
-# Add ondelete and onupdate? 
+    userID = Column(String, ForeignKey("users.userID", ondelete="CASCADE", onupdate="CASCADE"))
+    productID = Column(Integer, ForeignKey("products.productID", ondelete="CASCADE", onupdate="CASCADE"))

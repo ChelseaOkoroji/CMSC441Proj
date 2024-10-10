@@ -4,7 +4,7 @@
 from sqlalchemy.orm import Session
 import models, schemas
 
-# Create operations
+# CREATE operations
 
 # Create new user
 def create_user(db: Session, user: schemas.UserCreate):
@@ -32,7 +32,7 @@ def create_favorite(db: Session, favorite: schemas.FavoriteCreate):
     db.refresh(new_favorite)
     return new_favorite
 
-# Read operations
+# READ operations
 
 # Get user using userID
 # Can also be used to check if given userID exists
@@ -47,7 +47,28 @@ def get_user_by_email(db: Session, email: str):
 # Get specific product
 def get_product(db: Session, id: int):
     return db.query(models.Product).filter(models.Product.productID == id).first()
+    # return db.query(models.Product).filter(productID == id).first() <-- This may work as well?
+
+# Get all products in a certain category
+def get_products_by_category(db: Session, category: str):
+    #return db.query(models.Product).filter(models.Product)
+    pass
 
 # Get all products <= price
 def get_products_by_price(db: Session, price: float):
     return db.query(models.Product).filter(models.Product.price <= price)
+
+# UPDATE operations
+
+# DELETE operations
+
+# Delete user
+def delete_user(db: Session, id: str):
+    db.delete(get_user_by_id(db, id))
+    db.commit()
+
+# Delete product
+# NOT FINISHED
+def delete_product(db: Session, id: str):
+    db.delete(get_product(db, id))
+    db.commit()

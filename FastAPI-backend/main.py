@@ -62,7 +62,7 @@ if __name__ == "__main__":
     # Test ability to insert new user (Note: checking for the case where the user is already in the
     # database is done in the FastAPI functions above (not being worked on right now and commented out), 
     # so trying to insert a repeat user will result in an error)
-    cont = 1
+    cont = cont = int(input("Enter 1 to enter user, 0 to skip: "))
     while(cont == 1):
         user = input("Enter username: ")
         email = input("Enter email: ")
@@ -72,20 +72,24 @@ if __name__ == "__main__":
         cont = int(input("Enter 1 to continue, 0 to end: "))
 
     # Test ability to insert new product
-    cont = 1
+    cont = int(input("Enter 1 to enter product, 0 to skip: "))
     while(cont == 1):
         name = input("Enter name of product: ")
         description = input("Enter description: ")
         price = input("Enter price: ")
         quantity = input("Enter quantity: ")
         color = input("Enter color: ")
+        category = input("Enter category: ")
         userID = input("Enter userID: ") # In the final product, we will just extract the user's ID since they will be logged in
         test1 = schemas.ProductCreate(name=name, description=description, price=price, 
-                                        quantity=quantity, color=color, userID=userID)
+                                        quantity=quantity, color=color, category=category, userID=userID)
         operations.create_product(Session, test1)
         cont = int(input("Enter 1 to continue, 0 to end: "))
 
-    #test3 = schemas.ProductCreate(name="car", description="cool", price=208.73, quantity=1, color="green", userID=test1.userID)
-    #operations.create_product(Session, test3)
-
-
+    # Test ability to delete a user
+    cont = int(input("Enter 1 to delete user, 0 to skip: "))
+    while(cont == 1):
+        userID = input("Enter username: ")
+        operations.delete_user(Session, userID)
+        cont = 0
+        #cont = int(input("Enter 1 to continue, 0 to end: "))
