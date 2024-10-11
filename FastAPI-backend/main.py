@@ -14,7 +14,17 @@ from fastapi.middleware.cors import CORSMiddleware # Needed since React is a dif
 models.Base.metadata.create_all(bind=engine)
 
 # FastAPI instance
-#app = FastAPI()
+app = FastAPI()
+
+# Let FastAPI allow requests from React app
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"], # React app origin
+    #allow_origins=["http://localhost"], # React app origin
+    allow_credentials=True, # Allow credentials (such as cookies) to be included in cross-origin requests
+    allow_methods=["*"], # Allow all HTTP methods (GET, POST, DELETE, etc.) for cross-origin requests (* signifies all)
+    allow_headers=["*"] # Allow all HTTP headers in cross-origin requests
+)   
 
 # Create a dependency
 

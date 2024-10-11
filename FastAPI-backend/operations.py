@@ -63,12 +63,11 @@ def get_products_by_price(db: Session, price: float):
 # DELETE operations
 
 # Delete user
-def delete_user(db: Session, id: str):
-    db.delete(get_user_by_id(db, id))
+def delete_user(db: Session, userID: str):
+    db.delete(get_user_by_id(db, userID))
     db.commit()
 
 # Delete product
-# NOT FINISHED
-def delete_product(db: Session, id: str):
-    db.delete(get_product(db, id))
+def delete_product(db: Session, productID: str):
+    db.delete(get_product(db, productID))
     db.commit()
