@@ -23,24 +23,7 @@ class Product(ProductBase):
                    # It is generated after the user enters the product information
 
     class Config:
-        orm_mode = True
-
-# Shared fields of UserCreate and User
-class UserBase(BaseModel):
-    userID: str
-    email: EmailStr
-
-# Additional fields needed to create user
-class UserCreate(UserBase):
-    password: str
-
-# Data that is returned when user is queried 
-# Returned data will include what is in UserBase
-class User(UserBase):
-    items_for_sale: list[Product] = []
-
-    class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Shared fields of FavoriteCreate and Favorite
 class FavoriteBase(BaseModel):
@@ -57,4 +40,22 @@ class Favorite(FavoriteBase):
     favoriteID: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+# Shared fields of UserCreate and User
+class UserBase(BaseModel):
+    userID: str
+    email: EmailStr
+
+# Additional fields needed to create user
+class UserCreate(UserBase):
+    password: str
+
+# Data that is returned when user is queried 
+# Returned data will include what is in UserBase
+class User(UserBase):
+    products: list[Product] = []
+    favorites: list[Favorite] = []
+
+    class Config:
+        from_attributes = True
