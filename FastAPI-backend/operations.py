@@ -52,9 +52,6 @@ def get_user_by_id(db: Session, userID: str):
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
-#def return_user_by_id(db: Session, userID: str):
-    #return 
-
 # **** Product-related functions ****
 
 # Get specific product
@@ -69,6 +66,11 @@ def get_products_by_category(db: Session, category: str):
 # Get all products <= price
 def get_products_by_price(db: Session, price: float):
     return db.query(models.Product).filter(models.Product.price <= price)
+
+# Get all products being sold by a user
+def get_user_products(db: Session, userID: str):
+    user = get_user_by_id(db, userID)
+    return user.products
 
 # **** Favorite-related functions ****
 
