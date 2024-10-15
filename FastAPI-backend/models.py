@@ -15,10 +15,8 @@ class User(Base):
     email = Column(String, nullable=False)
     password_hashed = Column(String, nullable=False)
 
-    products = relationship("Product", backref="users", passive_deletes=True)
-    #products = relationship("Product", back_populates="seller")
-    favorites = relationship("Favorite", backref="users", passive_deletes=True)
-    #favorites = relationship("Favorite", back_populates="favorited_by")
+    products = relationship("Product", cascade='all,delete', backref='seller')
+    favorites = relationship("Favorite", cascade='all,delete', backref='favorited_by')
 
 # All attributes for products on the website
 class Product(Base):
@@ -32,8 +30,7 @@ class Product(Base):
     color = Column(String)
     category = Column(String) # User will choose from a pre-defined list when they add their product
 
-    userID = Column(String, ForeignKey("users.userID", ondelete="CASCADE", onupdate="CASCADE"), nullable=False)
-    #seller = relationship("User", back_populates="products")
+    userID = Column(String, ForeignKey('users.userID', ondelete='CASCADE', onupdate='CASCADE'))
 
 # All attributes for favorites functionality
 class Favorite(Base):
@@ -41,7 +38,5 @@ class Favorite(Base):
 
     favoriteID = Column(Integer, primary_key=True, index=True)
 
-    userID = Column(String, ForeignKey("users.userID", ondelete="CASCADE", onupdate="CASCADE"), nullable=False)
-    productID = Column(Integer, ForeignKey("products.productID", ondelete="CASCADE", onupdate="CASCADE"), nullable=False)
-
-    #favorited_by = relationship("User", back_populates="favorites")
+    userID = Column(String, ForeignKey('users.userID', ondelete='CASCADE', onupdate='CASCADE'))
+    productID = Column(Integer, ForeignKey('products.productID', ondelete='CASCADE', onupdate='CASCADE'))

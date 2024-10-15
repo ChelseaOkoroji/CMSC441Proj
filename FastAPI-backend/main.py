@@ -75,7 +75,6 @@ def get_user_email(userID: str, db: Session = Depends(get_db)):
 # DELETE
 
 """
-
 if __name__ == "__main__":
     generator = get_db()
     Session = next(generator)
@@ -130,10 +129,12 @@ if __name__ == "__main__":
         operations.delete_favorite(Session, favID)
         cont = int(input("Enter 1 to continue, 0 to end: "))
 
+
+
     user = operations.get_user_by_id(Session, "tstepp")
     print(schemas.User.from_orm(user))
 
     favs = operations.get_user_favorites(Session, "tstepp")
     for i in favs:
         print(schemas.Favorite.from_orm(i))
-"""
+    """
