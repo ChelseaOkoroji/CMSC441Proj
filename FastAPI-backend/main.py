@@ -38,9 +38,10 @@ models.Base.metadata.create_all(bind=engine)
 
 # FastAPI functions
 
-# CREATE
+# ****CREATE****
 
 # Add user
+# TESTED
 @app.post("/users/", status_code=status.HTTP_201_CREATED, response_model=schemas.User)
 def add_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     # Check if email is already in system
@@ -54,25 +55,43 @@ def add_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return operations.create_user(db, user)
 
 # Add product
+# TESTED
 @app.post("/products/", status_code=status.HTTP_201_CREATED, response_model=schemas.Product)
 def add_product(product: schemas.ProductCreate, db: Session = Depends(get_db)):
     return operations.create_product(db, product)
 
-# READ
+# Add favorite
+@app.post("/favorites/", status_code=status.HTTP_201_CREATED, response_model=schemas.Favorite)
+def add_favorite(favorite: schemas.FavoriteCreate, db: Session = Depends(get_db)):
+    return operations.create_favorite(db, favorite)
+
+# ****READ****
 
 # Get user's email from their ID
 # Used if user forgot their password
-@app.get("/users/{userID}", response_model=schemas.User)
+# TESTED
+@app.get("/users/{userID}", status_code=status.HTTP_200_OK)
 def get_user_email(userID: str, db: Session = Depends(get_db)):
     user = operations.get_user_by_id(db, userID)
     if not user:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="No such username exists")
-    print(user.email)
     return user.email
 
-# UPDATE
+# Get user's products they have listed
+# TESTED
+@app.get("/products/{userID}", status_code=status.HTTP_200_OK, response_model=list[schemas.Product])
+def get_user_products(userID: str, db: Session = Depends(get_db)):
+    return operations.get_user_products(db, userID)
 
-# DELETE
+# ****UPDATE****
+
+# ****DELETE****
+
+# Delete user (which will also delete any products they were selling)
+# TESTED
+@app.delete("/users/{userID}", status_code=status.HTTP_200_OK)
+def delete_user(userID: str, db: Session = Depends(get_db)):
+    operations.delete_user(db, userID)
 
 """
 if __name__ == "__main__":
@@ -129,8 +148,6 @@ if __name__ == "__main__":
         operations.delete_favorite(Session, favID)
         cont = int(input("Enter 1 to continue, 0 to end: "))
 
-
-
     user = operations.get_user_by_id(Session, "tstepp")
     print(schemas.User.from_orm(user))
 
@@ -138,3 +155,4 @@ if __name__ == "__main__":
     for i in favs:
         print(schemas.Favorite.from_orm(i))
     """
+
