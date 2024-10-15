@@ -2,6 +2,7 @@ import React from 'react';
 import './LoginForm.css';
 import { FaUserGraduate } from "react-icons/fa";
 import { FaUnlockAlt } from "react-icons/fa";
+import { Link } from 'react-router-dom';
 
 const LoginForm = () => {
     return (
@@ -26,7 +27,7 @@ const LoginForm = () => {
                 <button type="submit">Login</button>
 
                 <div className="register-link">
-                    <p>Don't have an account?<a href="#">Register</a></p>
+                <p>Don't have an account? <Link to="/register">Register</Link></p>
                 </div>
             </form>
         </div>
