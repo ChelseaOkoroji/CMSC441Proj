@@ -1,24 +1,26 @@
 import React, { useState } from 'react';
-import './Register.css'
+import './Register.css';
+import { Link } from 'react-router-dom';
+
 
 const Register = () => {
-  //const [userID, setUserID] = useState('');
-  //const [email, setEmail] = useState('');
-  //const [password, setPassword] = useState('');
+  const [userID, setUserID] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  //const handleRegister = () => {
-    //const user = { userID, email, password };
-    //fetch('http://localhost:8000/users/', {
-      //method: 'POST',
-      //headers: { 'Content-Type': 'application/json' },
-      //body: JSON.stringify(user),
-    //})
-      //.then(response => response.json())
-      //.then(data => {
-        //console.log('User registered:', data);
-      //})
-      //.catch(error => console.error('Error:', error));
-  //};
+  const handleRegister = () => {
+    const user = { userID, email, password };
+    fetch('http://localhost:8000/users/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(user),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('User registered:', data);
+      })
+      .catch(error => console.error('Error:', error));
+  };
 
   return (
     <div>
@@ -42,6 +44,9 @@ const Register = () => {
         onChange={(e) => setPassword(e.target.value)}
       />
       <button onClick={handleRegister}>Register</button>
+      <div className="login-link">
+                <p>Don't have an account? <Link to="/">Login</Link></p>
+      </div>
     </div>
   );
 };
