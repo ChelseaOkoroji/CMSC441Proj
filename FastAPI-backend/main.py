@@ -8,6 +8,7 @@ from database import engine, SessionLocal
 import operations, models, schemas
 from fastapi.middleware.cors import CORSMiddleware # Needed since React is a different application, 
                                                    # need to enable cors (cross-origin resource sharing)
+from pydantic import ValidationError
 
 # FastAPI instance
 app = FastAPI()
@@ -38,30 +39,36 @@ models.Base.metadata.create_all(bind=engine)
 
 # FastAPI functions
 
+# Used when input data does not match pydantic model
+@app.exception_handler(ValidationError)
+def validation_exception_handler(request, exc: ValidationError):
+    return HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=exc.errors())
+
 # ****CREATE****
 
 # Add user
 # TESTED
-@app.post("/users/", status_code=status.HTTP_201_CREATED, response_model=schemas.User)
+@app.post("/create-account/", status_code=status.HTTP_201_CREATED, response_model=schemas.User)
 def add_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     # Check if email is already in system
     db_user_email = operations.get_user_by_email(db, email=user.email)
     if db_user_email:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Email already registered")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
     # Check if userID is already in system
     db_user_id = operations.get_user_by_id(db, userID=user.userID)
     if db_user_id:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Username already registered")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already registered")
     return operations.create_user(db, user)
 
 # Add product
 # TESTED
-@app.post("/products/", status_code=status.HTTP_201_CREATED, response_model=schemas.Product)
+@app.post("/users/{userID}/list-product/", status_code=status.HTTP_201_CREATED, response_model=schemas.Product)
 def add_product(product: schemas.ProductCreate, db: Session = Depends(get_db)):
     return operations.create_product(db, product)
 
 # Add favorite
-@app.post("/favorites/", status_code=status.HTTP_201_CREATED, response_model=schemas.Favorite)
+# TESTED
+@app.post("/browse/product/{productID}/", status_code=status.HTTP_201_CREATED, response_model=schemas.Favorite)
 def add_favorite(favorite: schemas.FavoriteCreate, db: Session = Depends(get_db)):
     return operations.create_favorite(db, favorite)
 
@@ -70,16 +77,16 @@ def add_favorite(favorite: schemas.FavoriteCreate, db: Session = Depends(get_db)
 # Get user's email from their ID
 # Used if user forgot their password
 # TESTED
-@app.get("/users/{userID}", status_code=status.HTTP_200_OK)
+@app.get("/forget-password/", status_code=status.HTTP_200_OK)
 def get_user_email(userID: str, db: Session = Depends(get_db)):
     user = operations.get_user_by_id(db, userID)
     if not user:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="No such username exists")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No such username exists")
     return user.email
 
 # Get user's products they have listed
 # TESTED
-@app.get("/products/{userID}", status_code=status.HTTP_200_OK, response_model=list[schemas.Product])
+@app.get("/users/{userID}/products/", status_code=status.HTTP_200_OK, response_model=list[schemas.Product])
 def get_user_products(userID: str, db: Session = Depends(get_db)):
     return operations.get_user_products(db, userID)
 
@@ -89,9 +96,18 @@ def get_user_products(userID: str, db: Session = Depends(get_db)):
 
 # Delete user (which will also delete any products they were selling)
 # TESTED
-@app.delete("/users/{userID}", status_code=status.HTTP_200_OK)
+@app.delete("/users/{userID}/", status_code=status.HTTP_200_OK)
 def delete_user(userID: str, db: Session = Depends(get_db)):
     operations.delete_user(db, userID)
+
+# Delete specific product
+# TESTED
+@app.delete("/users/{userID}/products/{productID}/", status_code=status.HTTP_200_OK)
+def delete_product(userID: str, productID: int, db: Session = Depends(get_db)):
+    products = operations.get_user_products(db, userID)
+    for product in products:
+        if product.productID == productID:
+            operations.delete_product(db, productID)
 
 """
 if __name__ == "__main__":
