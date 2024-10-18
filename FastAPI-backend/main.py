@@ -62,7 +62,7 @@ def add_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 # Add product
 # TESTED
-@app.post("/users/{userID}/list-product/", status_code=status.HTTP_201_CREATED, response_model=schemas.Product)
+@app.post("/users/{userID}/products/", status_code=status.HTTP_201_CREATED, response_model=schemas.Product)
 def add_product(product: schemas.ProductCreate, db: Session = Depends(get_db)):
     return operations.create_product(db, product)
 
@@ -89,6 +89,17 @@ def get_user_email(userID: str, db: Session = Depends(get_db)):
 @app.get("/users/{userID}/products/", status_code=status.HTTP_200_OK, response_model=list[schemas.Product])
 def get_user_products(userID: str, db: Session = Depends(get_db)):
     return operations.get_user_products(db, userID)
+
+#@app.get("/browse/", status_code=status.HTTP_200_OK, response_model=list[schemas.Product])
+
+# Login function
+# TESTED
+@app.get("/login/", status_code=status.HTTP_200_OK)
+def user_login(userID: str, password: str, db: Session = Depends(get_db)):
+    user = operations.get_user_by_id(db, userID)
+    if not user or not operations.check_password(db, password, user):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid username or password")
+    return {"message": "Login successful"}
 
 # ****UPDATE****
 

@@ -52,6 +52,10 @@ def get_user_by_id(db: Session, userID: str):
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
+# Check password 
+def check_password(db: Session, password_to_check: str, user: models.User):
+    return bcrypt.checkpw(password_to_check.encode("utf-8"), user.password_hashed.encode("utf-8"))
+
 # **** Product-related functions ****
 
 # Get specific product
