@@ -13,7 +13,10 @@ from pydantic import ValidationError
 # FastAPI instance
 app = FastAPI()
 
-origins = ["http://localhost:3000"] # React app origin
+origins = [
+    "http://localhost:3000",
+    "localhost:3000"
+] # React app origin
 
 # Let FastAPI allow requests from React app
 app.add_middleware(
@@ -48,7 +51,7 @@ def validation_exception_handler(request, exc: ValidationError):
 
 # Add user
 # TESTED
-@app.post("/create-account/", status_code=status.HTTP_201_CREATED, response_model=schemas.User)
+@app.post("/register/", status_code=status.HTTP_201_CREATED, response_model=schemas.User)
 def add_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     # Check if email is already in system
     db_user_email = operations.get_user_by_email(db, email=user.email)
@@ -94,7 +97,7 @@ def get_user_products(userID: str, db: Session = Depends(get_db)):
 
 # Login function
 # TESTED
-@app.get("/login/", status_code=status.HTTP_200_OK)
+@app.get("/", status_code=status.HTTP_200_OK)
 def user_login(userID: str, password: str, db: Session = Depends(get_db)):
     user = operations.get_user_by_id(db, userID)
     if not user or not operations.check_password(db, password, user):
@@ -105,12 +108,6 @@ def user_login(userID: str, password: str, db: Session = Depends(get_db)):
 
 # ****DELETE****
 
-# Delete user (which will also delete any products they were selling)
-# TESTED
-@app.delete("/users/{userID}/", status_code=status.HTTP_200_OK)
-def delete_user(userID: str, db: Session = Depends(get_db)):
-    operations.delete_user(db, userID)
-
 # Delete specific product
 # TESTED
 @app.delete("/users/{userID}/products/{productID}/", status_code=status.HTTP_200_OK)
@@ -119,6 +116,12 @@ def delete_product(userID: str, productID: int, db: Session = Depends(get_db)):
     for product in products:
         if product.productID == productID:
             operations.delete_product(db, productID)
+
+# Delete user (which will also delete any products they were selling)
+# TESTED
+@app.delete("/users/{userID}/", status_code=status.HTTP_200_OK)
+def delete_user(userID: str, db: Session = Depends(get_db)):
+    operations.delete_user(db, userID)
 
 """
 if __name__ == "__main__":

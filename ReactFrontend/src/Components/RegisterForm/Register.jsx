@@ -8,9 +8,11 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleRegister = () => {
+  // Note from Trevor: I added async because I think that allows for
+  // the UI to still be responsive while the task is being completed
+  const handleRegister = async () => {
     const user = { userID, email, password };
-    fetch('http://localhost:8000/users/', {
+    fetch('/register/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(user),
@@ -19,7 +21,9 @@ const Register = () => {
       .then(data => {
         console.log('User registered:', data);
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => {
+        console.error('Error:', error);
+      });
   };
 
   return (
