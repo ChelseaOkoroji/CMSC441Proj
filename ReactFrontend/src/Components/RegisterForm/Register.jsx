@@ -24,6 +24,11 @@ const Register = () => {
       .catch(error => {
         console.error('Error:', error);
       });
+
+      // Clear form fields
+      setUserID('');
+      setEmail('');
+      setPassword('');
   };
 
   return (
