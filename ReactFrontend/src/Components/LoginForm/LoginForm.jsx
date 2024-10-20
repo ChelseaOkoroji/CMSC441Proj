@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
 
-const LoginForm = () => {
+const LoginForm = ({ setUser }) => {
     const [userID, setUserID] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -18,6 +18,7 @@ const LoginForm = () => {
         const checkUser = { userID, password };
         await axios.post('/login/', checkUser)
             .then(response => {
+                setUser(response.data);
                 navigate('/home');
             })
             .catch(error => {
