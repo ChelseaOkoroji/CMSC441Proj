@@ -23,8 +23,25 @@ const Register = () => {
       setError("Please fill in all fields.");
       return;
     }
+    // Password must be at least 8 characters long
+    if(password.length < 8) {
+      setError("Password must be at least 8 characters");
+      return;
+    }
 
     const user = { userID, email, password };
+    await axios.post('/register/', user)
+      .then(response => {
+        navigate('/');
+      })
+      .catch(error => {
+        if(error.response) {
+          setError(error.response.data.detail);
+        } else {
+          setError('Network error. Please check your connection.');
+        }
+      });
+    /*
     try {
       const response = await axios.post('/register/', user);
       if (response.status === 201) {
@@ -40,6 +57,7 @@ const Register = () => {
         setError('Network error. Please check your connection.');
       }
     }
+    */
 
     // Clear form fields
     setUserID('');
