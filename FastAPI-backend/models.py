@@ -29,7 +29,6 @@ class Product(Base):
     quantity = Column(Integer)
     color = Column(String)
     category = Column(String) # User will choose from a pre-defined list when they add their product
-    image = Column(String) # Image of product
 
     userID = Column(String, ForeignKey('users.userID', ondelete='CASCADE', onupdate='CASCADE'))
 
