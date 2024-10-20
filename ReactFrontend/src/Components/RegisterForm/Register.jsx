@@ -9,7 +9,7 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   // So that user cannot just click "Register" over and over
   const areAllFieldsFilled = (userID !== "") && (email !== "") && (password !== "");
@@ -66,7 +66,7 @@ const Register = () => {
   };
 
   return (
-    <div className='test'>
+    <div>
       <h2>Register</h2>
       <input
         type="text"

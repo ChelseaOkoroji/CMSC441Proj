@@ -102,10 +102,10 @@ def get_user_products(userID: str, db: Session = Depends(get_db)):
 
 # Login function
 # TESTED
-@app.get("/", status_code=status.HTTP_200_OK)
-def user_login(userID: str, password: str, db: Session = Depends(get_db)):
-    user = operations.get_user_by_id(db, userID)
-    if not user or not operations.check_password(db, password, user):
+@app.post("/login/", status_code=status.HTTP_200_OK)
+def user_login(user_to_check: schemas.UserLogin, db: Session = Depends(get_db)):
+    user = operations.get_user_by_id(db, user_to_check.userID)
+    if not user or not operations.check_password(db, user_to_check.password, user):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid username or password")
     return {"message": "Login successful"}
 
