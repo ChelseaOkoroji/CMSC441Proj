@@ -2,7 +2,9 @@
 # Currently, it just tests database.py, models.py, schemas.py, and operations.py
 # The main function has a loop where the user can enter new users to be added to the user database
 
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends, status, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from database import engine, SessionLocal
 import operations, models, schemas
@@ -43,9 +45,12 @@ models.Base.metadata.create_all(bind=engine)
 # FastAPI functions
 
 # Used when input data does not match pydantic model
-@app.exception_handler(ValidationError)
-def validation_exception_handler(request, exc: ValidationError):
-    return HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=exc.errors())
+@app.exception_handler(RequestValidationError)
+def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, 
+        content={"detail": "Invalid input"}
+    )
 
 # ****CREATE****
 
