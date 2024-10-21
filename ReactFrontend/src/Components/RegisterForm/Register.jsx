@@ -41,23 +41,6 @@ const Register = () => {
           setError('Network error. Please check your connection.');
         }
       });
-    /*
-    try {
-      const response = await axios.post('/register/', user);
-      if (response.status === 201) {
-          // Redirect to login page
-          navigate('/');
-      } 
-    } catch (err) {
-      // Check if error has a response
-      if (err.response) {
-        // Show error message from FastAPI
-        setError(err.response.data.detail); 
-      } else {
-        setError('Network error. Please check your connection.');
-      }
-    }
-    */
 
     // Clear form fields
     setUserID('');
