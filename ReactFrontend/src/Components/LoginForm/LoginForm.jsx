@@ -4,12 +4,14 @@ import { FaUserGraduate } from "react-icons/fa";
 import { FaUnlockAlt } from "react-icons/fa";
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useUser } from '../../UserContext';
 import axios from 'axios';
 
-const LoginForm = ({ setUser }) => {
+const LoginForm = () => {
     const [userID, setUserID] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const { setUser } = useUser();
     const navigate = useNavigate();
 
     // Login functionality
@@ -18,7 +20,7 @@ const LoginForm = ({ setUser }) => {
         const checkUser = { userID, password };
         await axios.post('/login/', checkUser)
             .then(response => {
-                setUser(response.data);
+                setUser(response.data); // Save data about user in context
                 navigate('/home');
             })
             .catch(error => {
