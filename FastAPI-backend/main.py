@@ -11,6 +11,7 @@ import operations, models, schemas
 from fastapi.middleware.cors import CORSMiddleware # Needed since React is a different application, 
                                                    # need to enable cors (cross-origin resource sharing)
 from pydantic import ValidationError
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 
 # FastAPI instance
 app = FastAPI()
@@ -89,7 +90,7 @@ def add_favorite(favorite: schemas.FavoriteCreate, db: Session = Depends(get_db)
 def send_email(email: str, db: Session = Depends(get_db)):
     user = operations.get_user_by_email(db, email)
     if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No such email exists")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Email not found")
     # Still working
     return user.email
 
