@@ -1,13 +1,25 @@
 import React, { useState } from 'react';
 import './ForgotPassword.css';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
+    const [error, setError] = useState('');
 
-    const handleSubmit = (e) => {
-         
-        console.log("Reset link sent to:", email);
+    const handleSubmit = async (event) => {
+        event.preventDefault(); // Prevent default form submission
+        await axios.get(`/forget-password/${email}`)
+        .then(response => {
+            // Remove email form and display message that says "Email sent"
+        })
+        .catch(error => {
+            if(error.response) {
+                setError(error.response.data.detail);
+            } else {
+                setError('Network error. Please check your connection.');
+            }
+        });
     };
 
     return (
@@ -25,6 +37,7 @@ const ForgotPassword = () => {
                 </div>
                 <button type="submit">Send Reset Link</button>
             </form>
+            {error && <p style={{color: 'red'}}>{error}</p>}
         </div>
     );
 };
