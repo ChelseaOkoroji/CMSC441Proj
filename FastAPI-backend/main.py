@@ -85,11 +85,12 @@ def add_favorite(favorite: schemas.FavoriteCreate, db: Session = Depends(get_db)
 # Get user's email from their ID
 # Used if user forgot their password
 # TESTED
-@app.get("/forget-password/", status_code=status.HTTP_200_OK)
-def get_user_email(userID: str, db: Session = Depends(get_db)):
-    user = operations.get_user_by_id(db, userID)
+@app.get("/forget-password/{email}", status_code=status.HTTP_200_OK)
+def send_email(email: str, db: Session = Depends(get_db)):
+    user = operations.get_user_by_email(db, email)
     if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No such username exists")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No such email exists")
+    # Still working
     return user.email
 
 # Get user's products they have listed
