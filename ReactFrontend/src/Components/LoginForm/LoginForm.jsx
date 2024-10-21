@@ -21,7 +21,7 @@ const LoginForm = () => {
                 </div>
 
                 <div className="remeber-forgot">
-                    <a href="#">Forgot password?</a>
+                    <Link to="/forgot-password">Forgot password?</Link>
                 </div>
                 <button type="submit">Login</button>
 
