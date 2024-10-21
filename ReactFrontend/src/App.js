@@ -4,18 +4,20 @@ import LoginForm from './Components/LoginForm/LoginForm';
 import RegisterForm from './Components/RegisterForm/Register';
 import ForgotPassword from './Components/Forgot/ForgotPassword';
 import HomePage from './Components/HomePage/HomePage';
+import { UserProvider } from './UserContext';
 
 const App = () => {
-
     return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<LoginForm />} />
-                <Route path="/register" element={<RegisterForm />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/home" element={<HomePage />} />
-            </Routes>
-        </Router>
+        <UserProvider>
+            <Router>
+                <Routes>
+                    <Route path="/" element={<LoginForm />} />
+                    <Route path="/register" element={<RegisterForm />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/home" element={<HomePage />} />
+                </Routes>
+            </Router>
+        </UserProvider>
     );
 };
 
