@@ -10,6 +10,7 @@ class ProductBase(BaseModel):
     quantity: int
     color: str
     category: str
+    image_data: str
     userID: str # Username of seller
 
 # Additional fields needed to create product

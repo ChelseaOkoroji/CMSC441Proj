@@ -63,6 +63,7 @@ def get_products_by_price(db: Session, price: float):
 # DELETE operations
 
 # Delete user
+#would you want me to add so
 def delete_user(db: Session, userID: str):
     db.delete(get_user_by_id(db, userID))
     db.commit()

@@ -2,19 +2,26 @@
 # Currently, it just tests database.py, models.py, schemas.py, and operations.py
 # The main function has a loop where the user can enter new users to be added to the user database
 
-from fastapi import FastAPI, HTTPException, Depends, status
+#install python multipart
+from fastapi import FastAPI, HTTPException, Depends, status, UploadFile, File
 from sqlalchemy.orm import Session
 from database import engine, SessionLocal
 import operations, models, schemas
 from fastapi.middleware.cors import CORSMiddleware # Needed since React is a different application, 
                                                    # need to enable cors (cross-origin resource sharing)
 
+
+from cloudinary.uploader import upload
+from cloud_config import cloudinary
+import cloudinary
 # Create database tables
 # Note: normally you'd want to use migrations
 models.Base.metadata.create_all(bind=engine)
 
 # FastAPI instance
 app = FastAPI()
+
+
 
 # Let FastAPI allow requests from React app
 app.add_middleware(
@@ -35,7 +42,17 @@ def get_db():
     finally:
         db.close()
 
+
 # Create
+
+def upload_image_to_cloudinary(image_path: str) -> str:
+    """Uploads an image to Cloudinary and returns the URL."""
+    try:
+        result = upload(image_path)
+        return result["secure_url"]
+    except Exception as e:
+        print(f"Error uploading to Cloudinary: {e}")
+        return None
 """
 # Add user
 @app.post("/users/", response_model=schemas.User)
@@ -90,9 +107,11 @@ if __name__ == "__main__":
         quantity = input("Enter quantity: ")
         color = input("Enter color: ")
         category = input("Enter category: ")
+        image_data = upload_image_to_cloudinary("test_images/pexels-dilara-yilmaz-988605972-28766047.jpg")
         userID = input("Enter userID: ") # In the final product, we will just extract the user's ID since they will be logged in
+
         test1 = schemas.ProductCreate(name=name, description=description, price=price, 
-                                        quantity=quantity, color=color, category=category, userID=userID)
+                                        quantity=quantity, color=color, category=category,image_data = image_data, userID=userID)
         operations.create_product(Session, test1)
         cont = int(input("Enter 1 to continue, 0 to end: "))
 

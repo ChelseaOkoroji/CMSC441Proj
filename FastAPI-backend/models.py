@@ -28,6 +28,7 @@ class Product(Base):
     quantity = Column(Integer)
     color = Column(String)
     category = Column(String) # User will choose from a pre-defined list when they add their product
+    image_data = Column(String, nullable=True) ## string should bne a link to cloudinary
 
     userID = Column(String, ForeignKey("users.userID", ondelete="CASCADE", onupdate="CASCADE"))
     seller = relationship("User", back_populates="items_for_sale")
