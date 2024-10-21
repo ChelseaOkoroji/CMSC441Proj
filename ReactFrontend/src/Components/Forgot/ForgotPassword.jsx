@@ -16,7 +16,7 @@ const ForgotPassword = () => {
                 <div className="input-box">
                     <input 
                         type="email" 
-                        placeholder="Enter email to receive password" 
+                        placeholder="Enter your account's email" 
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
