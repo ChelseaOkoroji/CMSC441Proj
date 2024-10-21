@@ -10,6 +10,7 @@ class ProductBase(BaseModel):
     quantity: int
     color: str
     category: str
+    image: str
     userID: str # Username of seller
 
 # Additional fields needed to create product
@@ -59,3 +60,7 @@ class User(UserBase):
 
     class Config:
         from_attributes = True
+
+class UserLogin(BaseModel):
+    userID: str
+    password: str
