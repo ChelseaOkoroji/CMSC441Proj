@@ -3,30 +3,30 @@ import './ForgotPassword.css';
 import { Link } from 'react-router-dom';
 
 const ForgotPassword = () => {
-    const [email, setEmail] = useState('');//idk if this is necessary lol
+    const [email, setEmail] = useState('');
 
-    const sendPassword= (e) => {
-       
+    const handleSubmit = (e) => {
+         
+        console.log("Reset link sent to:", email);
     };
 
     return (
-        <div className="forgot-password-box">
-            <form onSubmit={sendPassword}>
-                <h1>Resend Password</h1>
+        <div className="forgot-password-wrapper">
+            <form onSubmit={handleSubmit}>
+                <h1>Reset Password</h1>
                 <div className="input-box">
                     <input 
                         type="email" 
-                        placeholder="Enter your account's email" 
+                        placeholder="Enter email" 
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
                     />
                 </div>
-                <button type="submit">Send Password</button>
+                <button type="submit">Send Reset Link</button>
             </form>
         </div>
     );
 };
 
-export default ForgotPassword; 
-
+export default ForgotPassword;
