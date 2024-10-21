@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const HomePage = ({ user }) => {
+    /*Everything in here can be deleted, was just for testing purposes to see if login was working*/
     return (
         <div>
             <header style={{ display: 'flex', justifyContent: 'space-between', padding: '10px' }}>
