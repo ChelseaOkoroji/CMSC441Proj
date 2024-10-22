@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import './HomePage.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../../UserContext';
-import axios from 'axios';
+import axios from '../../axiosConfig';
 
 const HomePage = () => {
     const { user } = useUser(); // Keep this

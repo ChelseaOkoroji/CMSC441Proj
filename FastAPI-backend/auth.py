@@ -31,7 +31,7 @@ def get_db():
 def login_for_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
                     db: Session = Depends(get_db)):
     user = check_user(form_data.username, form_data.password, db)
-    token = create_access_token(user.email, user.userID, timedelta(hours=2))
+    token = create_access_token(user.email, user.userID, timedelta(seconds=10))
     return {'access_token': token, 'token_type': 'bearer'}
 
 def check_user(userID: str, password: str, db):
