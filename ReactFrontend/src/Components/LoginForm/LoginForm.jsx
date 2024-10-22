@@ -5,7 +5,7 @@ import { FaUnlockAlt } from "react-icons/fa";
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useUser } from '../../UserContext';
-import axios from 'axios';
+import axios from 'axios'
 
 const LoginForm = () => {
     const [userID, setUserID] = useState('');
@@ -19,17 +19,18 @@ const LoginForm = () => {
         event.preventDefault(); // Prevent default form submission
         const checkUser = { "username": userID, "password": password };
         try {
-            const tokenResponse = await axios.post('/auth/token', new URLSearchParams(checkUser),
+            const tokenResponse = await axios.post('http://localhost:8000/auth/token', new URLSearchParams(checkUser),
                 {headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
             });
             const { access_token } = tokenResponse.data;
-            const userResponse = await axios.post('/login/', {}, {
+            const userResponse = await axios.post('http://localhost:8000/login/', {}, {
                 headers: {
                     Authorization: `Bearer ${access_token}`,
                 },
             });
+            localStorage.setItem('token', access_token);
             setUser(userResponse.data); // Save data about user in context
             navigate('/home');
         } catch(error) {
