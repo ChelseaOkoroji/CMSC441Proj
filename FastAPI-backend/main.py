@@ -91,18 +91,18 @@ def add_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 # Add product
 # TESTED
-@app.post("/users/{userID}/products/", status_code=status.HTTP_201_CREATED, response_model=schemas.Product)
-def add_product(product: schemas.ProductCreate, db: Session = Depends(get_db)):
+@app.post("/add-product/", status_code=status.HTTP_201_CREATED, response_model=schemas.Product)
+def add_product(user: user_dependency, product: schemas.ProductCreate, db: Session = Depends(get_db)):
     return operations.create_product(db, product)
 
 # Add favorite
 # TESTED
-@app.post("/browse/product/{productID}/", status_code=status.HTTP_201_CREATED, response_model=schemas.Favorite)
-def add_favorite(favorite: schemas.FavoriteCreate, db: Session = Depends(get_db)):
+@app.post("/browse/product/", status_code=status.HTTP_201_CREATED, response_model=schemas.Favorite)
+def add_favorite(user: user_dependency, favorite: schemas.FavoriteCreate, db: Session = Depends(get_db)):
     return operations.create_favorite(db, favorite)
 
 # Reset password (from link)
-@app.post("/reset-password", status_code=status.HTTP_200_OK)
+@app.post("/reset-password/", status_code=status.HTTP_200_OK)
 def reset_password(reset_request: schemas.ResetPasswordRequest, db: Session = Depends(get_db)):
     # Validate token
     reset_token = db.query(models.PasswordResetToken).filter(
@@ -129,7 +129,7 @@ def reset_password(reset_request: schemas.ResetPasswordRequest, db: Session = De
 # ****READ****
 
 # Forgot password (sends email)
-@app.get("/forget-password/{email}", status_code=status.HTTP_200_OK)
+@app.get("/forget-password/{email}/", status_code=status.HTTP_200_OK)
 def send_email(email: str, db: Session = Depends(get_db)):
     user = operations.get_user_by_email(db, email)
     if not user:
@@ -158,7 +158,7 @@ def send_email(email: str, db: Session = Depends(get_db)):
 # Get user's products they have listed
 # TESTED
 @app.get("/users/{userID}/products/", status_code=status.HTTP_200_OK, response_model=list[schemas.Product])
-def get_user_products(userID: str, db: Session = Depends(get_db)):
+def get_user_products(user: user_dependency, userID: str, db: Session = Depends(get_db)):
     return operations.get_user_products(db, userID)
 
 #@app.get("/browse/", status_code=status.HTTP_200_OK, response_model=list[schemas.Product])
@@ -177,7 +177,7 @@ def user_login(user: user_dependency, db: Session = Depends(get_db)):
 # Delete specific product
 # TESTED
 @app.delete("/users/{userID}/products/{productID}/", status_code=status.HTTP_200_OK)
-def delete_product(userID: str, productID: int, db: Session = Depends(get_db)):
+def delete_product(user: user_dependency, userID: str, productID: int, db: Session = Depends(get_db)):
     products = operations.get_user_products(db, userID)
     for product in products:
         if product.productID == productID:
@@ -186,7 +186,7 @@ def delete_product(userID: str, productID: int, db: Session = Depends(get_db)):
 # Delete user (which will also delete any products they were selling)
 # TESTED
 @app.delete("/users/{userID}/", status_code=status.HTTP_200_OK)
-def delete_user(userID: str, db: Session = Depends(get_db)):
+def delete_user(user: user_dependency, userID: str, db: Session = Depends(get_db)):
     operations.delete_user(db, userID)
 
 """
