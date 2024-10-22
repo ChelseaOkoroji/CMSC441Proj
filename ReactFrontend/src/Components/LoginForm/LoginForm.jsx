@@ -31,6 +31,7 @@ const LoginForm = () => {
                 },
             });
             localStorage.setItem('token', access_token);
+            localStorage.setItem('user', JSON.stringify(userResponse.data))
             setUser(userResponse.data); // Save data about user in context
             navigate('/home');
         } catch(error) {
