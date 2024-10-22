@@ -64,3 +64,13 @@ class User(UserBase):
 class UserLogin(BaseModel):
     userID: str
     password: str
+
+class ResetPasswordRequest(BaseModel):
+    email: EmailStr
+    token: str
+    new_password: str
+
+# Used for login session
+class Token(BaseModel):
+    access_token: str
+    token_type: str

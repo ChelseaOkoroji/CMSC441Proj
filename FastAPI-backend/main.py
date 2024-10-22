@@ -3,18 +3,22 @@
 # The main function has a loop where the user can enter new users to be added to the user database
 
 from fastapi import FastAPI, HTTPException, Depends, status, Request
+from typing import Annotated
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from database import engine, SessionLocal
-import operations, models, schemas
+import operations, models, schemas, auth
 from fastapi.middleware.cors import CORSMiddleware # Needed since React is a different application, 
                                                    # need to enable cors (cross-origin resource sharing)
 from pydantic import ValidationError
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+from datetime import datetime, timedelta
+import uuid
 
 # FastAPI instance
 app = FastAPI()
+app.include_router(auth.router)
 
 origins = [
     "http://localhost:3000",
@@ -29,9 +33,27 @@ app.add_middleware(
     allow_methods=["*"], # Allow all HTTP methods (GET, POST, DELETE, etc.) for cross-origin requests (* signifies all)
     allow_headers=["*"] # Allow all HTTP headers in cross-origin requests
 )   
+"""
+# Email configuration
+conf = ConnectionConfig(
+    MAIL_USERNAME="email",
+    MAIL_PASSWORD="password",
+    MAIL_FROM="email",
+    MAIL_PORT=587, 
+    MAIL_SERVER="",  
+    MAIL_FROM_NAME="name",
+    MAIL_STARTTLS=True,
+    MAIL_SSL_TLS=False,
+    USE_CREDENTIALS=True,
+    VALIDATE_CERTS=True
+)
+"""
+
+# Create database tables
+# Note: normally you'd want to use migrations
+models.Base.metadata.create_all(bind=engine)
 
 # Create a dependency
-
 def get_db():
     db = SessionLocal()
     try:
@@ -39,9 +61,7 @@ def get_db():
     finally:
         db.close()
 
-# Create database tables
-# Note: normally you'd want to use migrations
-models.Base.metadata.create_all(bind=engine)
+user_dependency = Annotated[dict, Depends(auth.get_current_user)]
 
 # FastAPI functions
 
@@ -53,7 +73,7 @@ def validation_exception_handler(request: Request, exc: RequestValidationError):
         content={"detail": "Invalid input"}
     )
 
-# ****CREATE****
+# ****CREATE**** and ****UPDATE****
 
 # Add user
 # TESTED
@@ -81,18 +101,59 @@ def add_product(product: schemas.ProductCreate, db: Session = Depends(get_db)):
 def add_favorite(favorite: schemas.FavoriteCreate, db: Session = Depends(get_db)):
     return operations.create_favorite(db, favorite)
 
+# Reset password (from link)
+@app.post("/reset-password", status_code=status.HTTP_200_OK)
+def reset_password(reset_request: schemas.ResetPasswordRequest, db: Session = Depends(get_db)):
+    # Validate token
+    reset_token = db.query(models.PasswordResetToken).filter(
+        models.PasswordResetToken.token == reset_request.token,
+        models.PasswordResetToken.expires_at > datetime.utcnow()
+    ).first()
+    # If not found or expired
+    if not reset_token:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired token")
+    # Get user associated with token
+    user = db.query(models.User).filter(models.User.userID == reset_token.userID).first()
+    # If not found
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    # Update password
+    user.password_hashed = operations.hash_pw(db, reset_request.new_password)
+    db.commit()
+    # Delete token
+    db.delete(reset_token)
+    db.commit()
+
+    return JSONResponse(content={"detail": "Password has been reset"})
+
 # ****READ****
 
-# Get user's email from their ID
-# Used if user forgot their password
-# TESTED
+# Forgot password (sends email)
 @app.get("/forget-password/{email}", status_code=status.HTTP_200_OK)
 def send_email(email: str, db: Session = Depends(get_db)):
     user = operations.get_user_by_email(db, email)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Email not found")
-    # Still working
-    return user.email
+    # Make new token unique to the user
+    token = str(uuid.uuid4())
+    expiration = datetime.utcnow() + timedelta(minutes=15)
+    # Store token in database
+    reset_token = models.PasswordResetToken(userID=user.userID, token=token, expires_at=expiration)
+    db.add(reset_token)
+    db.commit()
+    # Link to be sent in email
+    reset_link = f"http://localhost:3000/reset-password?token={token}&email={email}"
+    # Email message
+    message = MessageSchema(
+        subject="E-Z College Password Reset Request",
+        recipients=[email],
+        body=f"Click the link to reset your password: {reset_link}",
+        subtype="html"
+    )
+    #fm = FastMail(conf)
+    #fm.send_message(message)
+
+    return JSONResponse(content={"detail": "Password reset email sent."})
 
 # Get user's products they have listed
 # TESTED
@@ -105,13 +166,11 @@ def get_user_products(userID: str, db: Session = Depends(get_db)):
 # Login function
 # TESTED
 @app.post("/login/", status_code=status.HTTP_200_OK, response_model=schemas.User)
-def user_login(user_to_check: schemas.UserLogin, db: Session = Depends(get_db)):
-    user = operations.get_user_by_id(db, user_to_check.userID)
-    if not user or not operations.check_password(db, user_to_check.password, user):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid username or password")
-    return user
-
-# ****UPDATE****
+def user_login(user: user_dependency, db: Session = Depends(get_db)):
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication failed")
+    user_to_return = operations.get_user_by_id(db, user['userID'])
+    return user_to_return
 
 # ****DELETE****
 

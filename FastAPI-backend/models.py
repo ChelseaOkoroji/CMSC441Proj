@@ -3,9 +3,10 @@
 # So far I have written three tables, not sure what other tables we want
 # Will things like pictures and stuff just go under Product or in their own class?
 
-from sqlalchemy import Integer, Float, String, Column, ForeignKey
+from sqlalchemy import Integer, Float, String, Column, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from database import Base
+from datetime import datetime, timedelta
 
 # All attributes for users of the website
 class User(Base):
@@ -41,3 +42,12 @@ class Favorite(Base):
 
     userID = Column(String, ForeignKey('users.userID', ondelete='CASCADE', onupdate='CASCADE'))
     productID = Column(Integer, ForeignKey('products.productID', ondelete='CASCADE', onupdate='CASCADE'))
+
+class PasswordResetToken(Base):
+    __tablename__ = "password_reset_tokens"
+
+    resetID = Column(Integer, primary_key=True, index=True)
+    userID = Column(String, ForeignKey('users.userID', ondelete='CASCADE', onupdate='CASCADE'))
+    token = Column(String, unique=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    expires_at = Column(DateTime)

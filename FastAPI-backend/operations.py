@@ -2,7 +2,7 @@
 # These will be used in main.py inside the FastAPI functions
 
 from sqlalchemy.orm import Session
-import models, schemas
+import models, schemas, auth
 import bcrypt
 
 # CREATE operations
@@ -115,3 +115,7 @@ def delete_product(db: Session, productID: str):
 def delete_favorite(db: Session, favoriteID: str):
     db.delete(get_favorite(db, favoriteID))
     db.commit()
+
+# Helper
+def hash_pw(db: Session, password_to_hash: str):
+    hashed_pw = bcrypt.hashpw(password_to_hash.encode("utf-8"), bcrypt.gensalt())

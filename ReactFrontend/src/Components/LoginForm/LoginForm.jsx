@@ -17,19 +17,28 @@ const LoginForm = () => {
     // Login functionality
     const handleLogin = async (event) => {
         event.preventDefault(); // Prevent default form submission
-        const checkUser = { userID, password };
-        await axios.post('/login/', checkUser)
-            .then(response => {
-                setUser(response.data); // Save data about user in context
-                navigate('/home');
-            })
-            .catch(error => {
-                if(error.response) {
-                    setError(error.response.data.detail);
-                } else {
-                    setError('Network error. Please check your connection.');
-                }
+        const checkUser = { "username": userID, "password": password };
+        try {
+            const tokenResponse = await axios.post('/auth/token', new URLSearchParams(checkUser),
+                {headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
             });
+            const { access_token } = tokenResponse.data;
+            const userResponse = await axios.post('/login/', {}, {
+                headers: {
+                    Authorization: `Bearer ${access_token}`,
+                },
+            });
+            setUser(userResponse.data); // Save data about user in context
+            navigate('/home');
+        } catch(error) {
+            if(error.response) {
+                setError(error.response.data.detail);
+            } else {
+                setError('Network error. please check your connection.');
+            }
+        }
         // Clear form fields
         setUserID('');
         setPassword('');
