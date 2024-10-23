@@ -4,7 +4,7 @@ const UserContext = createContext();
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(() => {
         // Check local storage
-        const savedUser = localStorage.getItem('user');
+        const savedUser = sessionStorage.getItem('user');
         if(savedUser) {
             return JSON.parse(savedUser)
         }
