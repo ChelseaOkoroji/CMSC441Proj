@@ -20,7 +20,7 @@ const LoginForm = () => {
         const checkUser = { userID, password };
         await axios.post('/login/', checkUser)
             .then(response => {
-                localStorage.setItem('user', JSON.stringify(response.data))
+                sessionStorage.setItem('user', JSON.stringify(response.data))
                 setUser(response.data); // Save data about user in context
                 navigate('/home');
             })
