@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './Register.css';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios'
+import axios from 'axios';
+import { useEffect } from 'react';
 
 
 const Register = () => {
@@ -10,6 +11,15 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.body.classList.add('register-page');
+
+    // Cleanup function to remove the class when component unmounts
+    return () => {
+      document.body.classList.remove('register-page');
+    };
+  }, []);
 
   // So that user cannot just click "Register" over and over
   const areAllFieldsFilled = (userID !== "") && (email !== "") && (password !== "");
@@ -41,6 +51,8 @@ const Register = () => {
           setError('Network error. Please check your connection.');
         }
       });
+
+   
 
     // Clear form fields
     setUserID('');

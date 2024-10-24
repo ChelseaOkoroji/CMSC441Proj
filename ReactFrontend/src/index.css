@@ -1,3 +1,4 @@
+/* index */
 @import url('https://fonts.googleapis.com/css2?family=Edu+AU+VIC+WA+NT+Guides:wght@400..700&display=swap');
 * {
   margin: 0;
@@ -13,7 +14,20 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: url('./Components/Assests/university.png') no-repeat;
+}
+
+body.login-page {
+  background: url('./Components/Assests/university.png') no-repeat center center;
+  background-size: cover;
+}
+
+body.register-page {
+  background: url('./Components/Assests/university.png') no-repeat center center;
+  background-size: cover;
+}
+
+body.homepage-page {
+  background-color: white;
 }
 
 code {
