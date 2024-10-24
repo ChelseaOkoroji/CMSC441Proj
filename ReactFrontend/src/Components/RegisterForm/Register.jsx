@@ -61,7 +61,7 @@ const Register = () => {
   };
 
   return (
-    <div>
+    <div className='wrapper'>
       <h2>Register</h2>
       <input
         type="text"
