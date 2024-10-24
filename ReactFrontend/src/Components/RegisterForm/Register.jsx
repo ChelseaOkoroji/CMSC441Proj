@@ -31,7 +31,7 @@ const Register = () => {
 
     // Don't want to do anything if a field is missing
     if(!areAllFieldsFilled) {
-      setError("Please fill in all fields.");
+      setError("Please fill in all fields");
       return;
     }
     // Username must be at least 6 characters long
@@ -102,7 +102,7 @@ const Register = () => {
       <div className="login-link">
         <p>Already have an account? <Link to="/">Login</Link></p>
       </div>
-      {error && <p style={{color: 'red', textAlign:'center'}}>{error}</p>}
+      {error && <p style={{color: 'red', textAlign: 'center', fontSize: '20px', fontWeight: 'bold'}}>{error}</p>}
     </div>
   );
 };

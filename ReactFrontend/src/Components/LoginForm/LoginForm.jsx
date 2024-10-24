@@ -71,7 +71,7 @@ const LoginForm = () => {
                 <p>Don't have an account? <Link to="/register">Register</Link></p>
                 </div>
             </form>
-            {error && <p style={{color: 'red'}}>{error}</p>}
+            {error && <p style={{color: 'red', textAlign: 'center', fontSize: '20px', fontWeight: 'bold'}}>{error}</p>}
         </div>
     );
 };
