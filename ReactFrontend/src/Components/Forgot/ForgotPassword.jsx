@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import './ForgotPassword.css';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -6,6 +7,15 @@ import axios from 'axios';
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
+
+    useEffect(() => {
+        document.body.classList.add('forgotpassword-page');
+    
+        // Cleanup function to remove the class when component unmounts
+        return () => {
+          document.body.classList.remove('forgotpassword-page');
+        };
+      }, []);
 
     const handleSubmit = async (event) => {
         event.preventDefault(); // Prevent default form submission
