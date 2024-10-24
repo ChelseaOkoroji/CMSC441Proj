@@ -93,7 +93,7 @@ const Register = () => {
       <div className="login-link">
         <p>Already have an account? <Link to="/">Login</Link></p>
       </div>
-      {error && <p style={{color: 'red'}}>{error}</p>}
+      {error && <p style={{color: 'red', textAlign:'center'}}>{error}</p>}
     </div>
   );
 };
