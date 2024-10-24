@@ -30,6 +30,12 @@ body.homepage-page {
   background-color: white;
 }
 
+body.forgotpassword-page {
+  background: url('./Components/Assests/university.png') no-repeat center center;
+  background-size: cover;
+}
+
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
