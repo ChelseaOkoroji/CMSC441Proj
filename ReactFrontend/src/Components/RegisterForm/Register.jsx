@@ -9,6 +9,7 @@ const Register = () => {
   const [userID, setUserID] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -81,6 +82,14 @@ const Register = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
+      <input
+        type="password"
+        placeholder="Confirm Password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+      />
+
+
       <button onClick={handleRegister}>Register</button>
       <div className="login-link">
         <p>Already have an account? <Link to="/">Login</Link></p>
