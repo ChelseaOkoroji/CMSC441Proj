@@ -98,7 +98,6 @@ const Register = () => {
         onChange={(e) => setConfirmPassword(e.target.value)}
       />
 
-
       <button onClick={handleRegister}>Register</button>
       <div className="login-link">
         <p>Already have an account? <Link to="/">Login</Link></p>
