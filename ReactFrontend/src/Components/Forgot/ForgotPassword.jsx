@@ -7,6 +7,7 @@ import axios from 'axios';
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
+    const [message, setMessage] = useState('');
 
     useEffect(() => {
         document.body.classList.add('forgotpassword-page');
@@ -19,9 +20,9 @@ const ForgotPassword = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault(); // Prevent default form submission
-        await axios.get(`/forget-password/${email}`)
+        await axios.post(`/forget-password/${email}/`)
         .then(response => {
-            // Remove email form and display message that says "Email sent"
+            setMessage("Password reset email sent");
         })
         .catch(error => {
             if(error.response) {
@@ -47,7 +48,8 @@ const ForgotPassword = () => {
                 </div>
                 <button type="submit">Send Reset Link</button>
             </form>
-            {error && <p style={{color: 'red'}}>{error}</p>}
+            {message && <p style={{color: 'white', textAlign: 'center', fontSize: '20px', fontWeight: 'bold'}}>{message}</p>}
+            {error && <p style={{color: 'red', textAlign: 'center', fontSize: '20px', fontWeight: 'bold'}}>{error}</p>}
         </div>
     );
 };
