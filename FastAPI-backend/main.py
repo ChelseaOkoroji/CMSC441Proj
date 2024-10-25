@@ -7,13 +7,23 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from database import engine, SessionLocal
-import operations, models, schemas
+import operations, models, schemas, reset
 from fastapi.middleware.cors import CORSMiddleware # Needed since React is a different application, 
                                                    # need to enable cors (cross-origin resource sharing)
 from pydantic import ValidationError
+from fastapi.security import OAuth2PasswordBearer
+from datetime import datetime, timedelta
+from itsdangerous import URLSafeTimedSerializer
+from dotenv import load_dotenv
+import os
 
 # FastAPI instance
 app = FastAPI()
+
+load_dotenv("tokenvalidation.env")
+# Secret key for token generation
+SECRET_KEY = os.getenv("TOKEN_KEY")
+serializer = URLSafeTimedSerializer(SECRET_KEY)
 
 origins = [
     "http://localhost:3000",
@@ -85,13 +95,23 @@ def add_favorite(favorite: schemas.FavoriteCreate, db: Session = Depends(get_db)
 # Get user's email from their ID
 # Used if user forgot their password
 # TESTED
-@app.get("/forget-password/{email}", status_code=status.HTTP_200_OK)
+@app.post("/forget-password/{email}/", status_code=status.HTTP_200_OK)
 def send_email(email: str, db: Session = Depends(get_db)):
     user = operations.get_user_by_email(db, email)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Email not found")
+    # Generate token, then link
+    token = serializer.dumps(user.email, salt='email-confirm')
+    reset_link = f"http://localhost:3000/reset-password?email={user.email}&token={token}"
+    # Send email
+    status_code = reset.send_reset_link(user.email, reset_link)
+    if status_code != 202:
+        raise HTTPException(status_code=status_code, detail="Failed to send verification email. Please check email validity.")
+
+@app.post("/reset-password/", status_code=status.HTTP_200_OK)
+def reset_password(reset: schemas.ResetPassword, db: Session = Depends(get_db)):
     # Still working
-    return user.email
+    pass
 
 # Get user's products they have listed
 # TESTED

@@ -64,3 +64,7 @@ class User(UserBase):
 class UserLogin(BaseModel):
     userID: str
     password: str
+
+class ResetPassword(BaseModel):
+    token: str
+    new_password: str
