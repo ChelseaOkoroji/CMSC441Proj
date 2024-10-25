@@ -11,7 +11,6 @@ import operations, models, schemas
 from fastapi.middleware.cors import CORSMiddleware # Needed since React is a different application, 
                                                    # need to enable cors (cross-origin resource sharing)
 from pydantic import ValidationError
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 
 # FastAPI instance
 app = FastAPI()
