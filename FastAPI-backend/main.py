@@ -16,6 +16,7 @@ from datetime import datetime, timedelta
 from itsdangerous import URLSafeTimedSerializer
 from dotenv import load_dotenv
 import os
+import bcrypt
 
 # FastAPI instance
 app = FastAPI()
@@ -92,26 +93,44 @@ def add_favorite(favorite: schemas.FavoriteCreate, db: Session = Depends(get_db)
 
 # ****READ****
 
-# Get user's email from their ID
 # Used if user forgot their password
-# TESTED
 @app.post("/forget-password/{email}/", status_code=status.HTTP_200_OK)
 def send_email(email: str, db: Session = Depends(get_db)):
     user = operations.get_user_by_email(db, email)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Email not found")
     # Generate token, then link
-    token = serializer.dumps(user.email, salt='email-confirm')
+    token = serializer.dumps(user.email, salt='password-reset-salt')
     reset_link = f"http://localhost:3000/reset-password?email={user.email}&token={token}"
     # Send email
     status_code = reset.send_reset_link(user.email, reset_link)
     if status_code != 202:
         raise HTTPException(status_code=status_code, detail="Failed to send verification email. Please check email validity.")
+    return operations.create_password_reset_token(db, user.email, token)
 
 @app.post("/reset-password/", status_code=status.HTTP_200_OK)
 def reset_password(reset: schemas.ResetPassword, db: Session = Depends(get_db)):
-    # Still working
-    pass
+    try:
+        # Verify token
+        email = serializer.loads(reset.token, salt='password-reset-salt', max_age=900)  # 15 minutes expiry
+        # Check if the token exists and is valid
+        token_record = operations.get_token(db, reset.token)
+        if token_record is None or token_record.status != 'valid':
+            raise HTTPException(status_code=400, detail="Invalid or expired token.")
+
+        # Update user's password in the database
+        hashed_password = bcrypt.hashpw(reset.new_password.encode("utf-8"), bcrypt.gensalt())
+        user = operations.get_user_by_email(db, email)
+        if user:
+            user.password_hashed = hashed_password.decode("utf-8")
+            db.commit()
+
+        # Mark token as used
+        operations.update_token_status(db, reset.token, 'used')
+        return {"message": "Password has been reset successfully."}
+
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired token.")
 
 # Get user's products they have listed
 # TESTED
