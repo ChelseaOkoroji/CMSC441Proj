@@ -115,3 +115,24 @@ def delete_product(db: Session, productID: str):
 def delete_favorite(db: Session, favoriteID: str):
     db.delete(get_favorite(db, favoriteID))
     db.commit()
+
+# HELPER FUNCTIONS (TOKEN)
+
+# Create a token
+def create_password_reset_token(db: Session, email: str, token: str):
+    db_token = models.PasswordResetToken(email=email, token=token)
+    db.add(db_token)
+    db.commit()
+    db.refresh(db_token)
+    return db_token
+
+# Return a token
+def get_token(db: Session, token: str):
+    return db.query(models.PasswordResetToken).filter(models.PasswordResetToken.token == token).first()
+
+# Update a token's status
+def update_token_status(db: Session, token: str, status: str):
+    db_token = get_token(db, token)
+    if db_token:
+        db_token.status = status
+        db.commit()
