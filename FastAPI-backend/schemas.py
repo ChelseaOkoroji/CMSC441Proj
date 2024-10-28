@@ -1,6 +1,6 @@
 # pydantic is used to validate the data types for the columns in the tables
-
 from pydantic import BaseModel, EmailStr
+from typing import Optional
 
 # Shared fields of ProductCreate and Product
 class ProductBase(BaseModel):
@@ -68,3 +68,9 @@ class UserLogin(BaseModel):
 class ResetPassword(BaseModel):
     token: str
     new_password: str
+
+class ProductSearch(BaseModel):
+    name: Optional[str] = None
+    max_price: Optional[float] = None
+    color: Optional[str] = None
+    category: Optional[str] = None

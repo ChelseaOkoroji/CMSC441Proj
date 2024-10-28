@@ -2,6 +2,7 @@
 # These will be used in main.py inside the FastAPI functions
 
 from sqlalchemy.orm import Session
+from sqlalchemy import and_
 import models, schemas
 import bcrypt
 
@@ -136,3 +137,18 @@ def update_token_status(db: Session, token: str, status: str):
     if db_token:
         db_token.status = status
         db.commit()
+
+# Get products using optional filters
+def get_products(db: Session, filters: schemas.ProductSearch):
+    query = db.query(models.Product)
+    # Now check filters
+    if filters.name is not None:
+        query = query.filter(models.Product.name.ilike(f"%{filters.name}%"))
+    if filters.max_price is not None:
+        query = query.filter(models.Product.price <= filters.max_price)
+    if filters.category is not None:
+        query = query.filter(models.Product.category == filters.category)
+    if filters.color is not None:
+        query = query.filter(models.Product.color == filters.color)
+    # Do the query
+    return query.all()

@@ -2,7 +2,7 @@
 # Currently, it just tests database.py, models.py, schemas.py, and operations.py
 # The main function has a loop where the user can enter new users to be added to the user database
 
-from fastapi import FastAPI, HTTPException, Depends, status, Request
+from fastapi import FastAPI, HTTPException, Depends, status, Request, Query
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
@@ -17,6 +17,7 @@ from itsdangerous import URLSafeTimedSerializer
 from dotenv import load_dotenv
 import os
 import bcrypt
+from typing import Optional
 
 # FastAPI instance
 app = FastAPI()
@@ -93,7 +94,8 @@ def add_favorite(favorite: schemas.FavoriteCreate, db: Session = Depends(get_db)
 
 # ****READ****
 
-# Used if user forgot their password
+# Used if user forgot their password (sends email)
+# TESTED
 @app.post("/forget-password/{email}/", status_code=status.HTTP_200_OK)
 def send_email(email: str, db: Session = Depends(get_db)):
     user = operations.get_user_by_email(db, email)
@@ -108,6 +110,8 @@ def send_email(email: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status_code, detail="Failed to send verification email. Please check email validity.")
     return operations.create_password_reset_token(db, user.email, token)
 
+# Reset password functionality (used after user clicks link in email)
+# TESTED
 @app.post("/reset-password/", status_code=status.HTTP_200_OK)
 def reset_password(reset: schemas.ResetPassword, db: Session = Depends(get_db)):
     try:
@@ -148,6 +152,12 @@ def user_login(user_to_check: schemas.UserLogin, db: Session = Depends(get_db)):
     if not user or not operations.check_password(db, user_to_check.password, user):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid username or password")
     return user
+
+# Get products based on filterable arguments (name, price, category, color)
+# TESTED
+@app.get("/products/", status_code=status.HTTP_200_OK, response_model=list[schemas.Product])
+def get_products(products: schemas.ProductSearch = Depends(), db: Session = Depends(get_db)):
+    return operations.get_products(db, products)
 
 # ****UPDATE****
 
