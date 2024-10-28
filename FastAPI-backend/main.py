@@ -2,7 +2,7 @@
 # Currently, it just tests database.py, models.py, schemas.py, and operations.py
 # The main function has a loop where the user can enter new users to be added to the user database
 
-from fastapi import FastAPI, HTTPException, Depends, status, Request
+from fastapi import FastAPI, HTTPException, Depends, UploadFile, status, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
@@ -12,6 +12,9 @@ from fastapi.middleware.cors import CORSMiddleware # Needed since React is a dif
                                                    # need to enable cors (cross-origin resource sharing)
 from pydantic import ValidationError
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+
+import cloud_config
+from cloudinary.uploader import upload
 
 # FastAPI instance
 app = FastAPI()
@@ -45,6 +48,17 @@ models.Base.metadata.create_all(bind=engine)
 
 # FastAPI functions
 
+
+
+def upload_image_to_cloudinary(image: UploadFile) -> str:
+    """Uploads an image to Cloudinary and returns the URL."""
+    try:
+        result = upload(image.file)
+        return result["secure_url"]
+    except Exception as e:
+        print(f"Error uploading to Cloudinary: {e}")
+        return None
+
 # Used when input data does not match pydantic model
 @app.exception_handler(RequestValidationError)
 def validation_exception_handler(request: Request, exc: RequestValidationError):
@@ -72,7 +86,14 @@ def add_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 # Add product
 # TESTED
 @app.post("/users/{userID}/products/", status_code=status.HTTP_201_CREATED, response_model=schemas.Product)
-def add_product(product: schemas.ProductCreate, db: Session = Depends(get_db)):
+def add_product(product: schemas.ProductCreate, image: UploadFile = Body(...), db: Session = Depends(get_db)):
+
+
+    image_url = upload_image_to_cloudinary(image)
+    if image_url is None:
+        raise HTTPException(status_code=500, detail="Image upload failed")
+
+    product.image_url = image_url
     return operations.create_product(db, product)
 
 # Add favorite
