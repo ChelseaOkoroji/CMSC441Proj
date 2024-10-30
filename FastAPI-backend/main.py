@@ -3,7 +3,7 @@
 # The main function has a loop where the user can enter new users to be added to the user database
 
 #from fastapi import FastAPI, HTTPException, Depends, status, Request, Query
-from fastapi import FastAPI, HTTPException, Depends, UploadFile, status, Request,Query
+from fastapi import Body, FastAPI, HTTPException, Depends, UploadFile, status, Request,Query
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
