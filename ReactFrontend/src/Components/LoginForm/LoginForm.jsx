@@ -5,6 +5,7 @@ import { FaUnlockAlt } from "react-icons/fa";
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useUser } from '../../UserContext';
+import { useEffect } from 'react';
 import axios from 'axios';
 
 const LoginForm = () => {
@@ -13,6 +14,14 @@ const LoginForm = () => {
     const [error, setError] = useState('');
     const { setUser } = useUser();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        document.body.classList.add('login-page');
+    
+        return () => {
+          document.body.classList.remove('login-page');
+        };
+      }, []);
 
     // Login functionality
     const handleLogin = async (event) => {

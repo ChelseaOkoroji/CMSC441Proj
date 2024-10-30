@@ -2,9 +2,17 @@ import React, {useState} from 'react';
 import './HomePage.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../../UserContext';
+import {useEffect} from 'react';
 import axios from 'axios';
 
 const HomePage = () => {
+    useEffect(() => {
+        document.body.classList.add('homepage-page');
+    
+        return () => {
+          document.body.classList.remove('homepage-page');
+        };
+      }, []);
     const { user } = useUser(); // Keep this
     /*Everything in here can be deleted, was just for testing purposes to see if login was working*/
     return (
