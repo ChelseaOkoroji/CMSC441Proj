@@ -1,6 +1,4 @@
-# This is the main file of the website that will eventually include FastAPI
-# Currently, it just tests database.py, models.py, schemas.py, and operations.py
-# The main function has a loop where the user can enter new users to be added to the user database
+# This is the main file of the website that contains all FastAPI functionality
 
 from fastapi import FastAPI, HTTPException, Depends, status, Request, Query
 from fastapi.exceptions import RequestValidationError
