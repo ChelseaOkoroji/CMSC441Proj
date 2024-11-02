@@ -24,7 +24,7 @@ const HomePage = () => {
     return (
         <div className='homepage'>
             <header style={{ display: 'flex', justifyContent: 'space-between', padding: '10px' }}>
-                <h1>Product List</h1>
+                <h1>E-Z College</h1>
                 <div>
                     <span>Welcome, { user.userID }</span>
                     <div className='profile'>
@@ -64,13 +64,12 @@ const HomePage = () => {
                 </div>
             </header>
             <div className="products">
-                <h2>Products</h2>
                 {filteredProducts.map(product => (
-                    <div key={product.id} className="product-card">
-                        <img src={product.image} alt={product.name} />
-                        <h3>{product.name}</h3>
-                        <p>Price: ${product.price}</p>
-                    </div>
+                    <Link to={`product/${product.id}`} key={product.id} className="product-card">
+                    <img src={product.image} alt={product.name} />
+                    <h3>{product.name}</h3>
+                    <p>Price: ${product.price}</p>
+                </Link>
                 ))}
             </div>
         </div>

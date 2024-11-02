@@ -9,7 +9,7 @@ import HomePage from './Components/HomePage/HomePage';
 import Main from './Components/HomePage/Main';
 import Categories from './Components/HomePage/Categories';
 import { UserProvider } from './UserContext';
-import { Product } from './Components/Products/Products';
+import ProductsInfo from './Components/Products/ProductsInfo';
 
 const App = () => {
     return (
@@ -29,9 +29,7 @@ const App = () => {
                         <Route path="home/technology" element={<Categories category="technologies" />} />
                         <Route path="home/dorm" element={<Categories category="dorms" />} />
                         <Route path="home/health" element={<Categories category="healths" />} />
-                        <Route path="home/product" element={<Product/>}>
-                            <Route path=':productID' element={<Product/>}/>
-                        </Route>    
+                        <Route path="home/product/:productId" element={<ProductsInfo />} />   
                     </Route>
 
                 </Routes>
