@@ -6,7 +6,7 @@ let all_products = [
     {
         id: 1,
         name: 'Macbook Air Rose Gold',
-        category: "technologies",
+        category: "technology",
         image: p1_img,
         price: 1000,
 
@@ -23,8 +23,10 @@ let all_products = [
     {
         id: 3,
         name: "Book Bag ",
-        category: "school-supply",
+        category: "school-supplies",
         image: p3_img,
         price: 10
     }
 ];
+
+export default all_products;
