@@ -1,0 +1,13 @@
+.item {
+    width: 350px;
+
+}
+
+.item p{
+    margin: 6px 0px;
+}
+
+.item-price {
+    display: flex;
+    gap: 20px;
+}

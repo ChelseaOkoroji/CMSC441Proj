@@ -11,6 +11,15 @@
     padding: 10px;
 }
 
+.profile {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+
+}
+
 .menu {
     display: flex;
     align-items: center;
@@ -29,6 +38,11 @@
     justify-content: center;
     gap: 3px;
     cursor: pointer;
+    outline: none;
+}
+
+.menu li a:focus {
+    outline: none; 
 }
 
 .menu hr {

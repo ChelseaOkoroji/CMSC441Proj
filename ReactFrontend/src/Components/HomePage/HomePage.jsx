@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import './HomePage.css';
 import { Link, useNavigate } from 'react-router-dom';
+import { CgProfile } from "react-icons/cg";
 import { useUser } from '../../UserContext';
 import {useEffect} from 'react';
 import axios from 'axios';
@@ -22,22 +23,24 @@ const HomePage = () => {
                 <h1>Product List</h1>
                 <div>
                     <span>Welcome, { user.userID }</span>
-                    <Link to="/profile" style={{ marginLeft: '10px' }}>
+                    <div className='profile'>
                         <button>Profile</button>
-                    </Link>
+                        <CgProfile className='profile_icon'/>
+                    </div>
                     <ul className='menu'>
-                        <li onClick={()=>{setMenu("all")}}>All{menu==="all"?<hr/>:<></>}</li>
-                        <li onClick={()=>{setMenu("book")}}>Book{menu==="book"?<hr/>:<></>}</li>
-                        <li onClick={()=>{setMenu("merch")}}>Merch{menu==="merch"?<hr/>:<></>}</li>
-                        <li onClick={()=>{setMenu("school-supplies")}}>School Supplies{menu==="school-supplies"?<hr/>:<></>}</li>
-                        <li onClick={()=>{setMenu("technology")}}>Technology{menu==="technology"?<hr/>:<></>}</li>
-                        <li onClick={()=>{setMenu("dorm")}}>Dorm{menu==="dorm"?<hr/>:<></>}</li>
-                        <li onClick={()=>{setMenu("health")}}>Health/Fitness{menu==="health"?<hr/>:<></>}</li>
+                    <li onClick={()=>{setMenu("all")}}><Link style={{textDecoration: "none"}} to="home/all">All</Link>{menu==="all"?<hr/>:<></>}</li>
+                        <li onClick={()=>{setMenu("book")}}><Link style={{textDecoration: "none"}} to="home/book">Book</Link>{menu==="book"?<hr/>:<></>}</li>
+                        <li onClick={()=>{setMenu("merch")}}><Link style={{textDecoration: "none"}} to="home/merch">Merch</Link>{menu==="merch"?<hr/>:<></>}</li>
+                        <li onClick={()=>{setMenu("school-supplies")}}><Link style={{textDecoration: "none"}} to="home/school-supplies">School Supplies</Link>{menu==="school-supplies"?<hr/>:<></>}</li>
+                        <li onClick={()=>{setMenu("technology")}}><Link style={{textDecoration: "none"}} to="home/technology">Technology</Link>{menu==="technology"?<hr/>:<></>}</li>
+                        <li onClick={()=>{setMenu("dorm")}}><Link style={{textDecoration: "none"}} to="home/dorm">Dorm</Link>{menu==="dorm"?<hr/>:<></>}</li>
+                        <li onClick={()=>{setMenu("health")}}><Link style={{textDecoration: "none"}} to="home/health">Health/Fitness</Link>{menu==="health"?<hr/>:<></>}</li>
                     </ul>     
                 </div>
             </header>
             {/* Here you would map over your products and display them */}
-            <div>
+            <div className="products">
+            
                 {/* Example of product display */}
                 <h2>Products</h2>
                 {/* Map your products here */}
