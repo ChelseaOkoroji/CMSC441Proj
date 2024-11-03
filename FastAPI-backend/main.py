@@ -1,8 +1,8 @@
 # This is the main file of the website that will eventually include FastAPI
 # Currently, it just tests database.py, models.py, schemas.py, and operations.py
 # The main function has a loop where the user can enter new users to be added to the user database
-
-from fastapi import FastAPI, HTTPException, Depends, status, Request, Query
+from cloudinary.uploader import upload
+from fastapi import FastAPI, File, HTTPException, Depends, UploadFile, status, Request, Query, Form
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
@@ -18,7 +18,8 @@ from dotenv import load_dotenv
 import os
 import bcrypt
 from typing import Optional
-
+import cloud_config
+import asyncio
 # FastAPI instance
 app = FastAPI()
 
@@ -54,7 +55,21 @@ def get_db():
 # Note: normally you'd want to use migrations
 models.Base.metadata.create_all(bind=engine)
 
+
+#image helpper functions
+async def upload_image_to_cloudinary(image: UploadFile) -> str:
+    """Uploads an image to Cloudinary asynchronously and returns the URL."""
+    try:
+        loop = asyncio.get_event_loop()
+        # Run the synchronous upload function in an executor
+        result = await loop.run_in_executor(None, upload, image.file)
+        return result["secure_url"]
+    except Exception as e:
+        print(f"Error uploading to Cloudinary: {e}")
+        return None	
+
 # FastAPI functions
+
 
 # Used when input data does not match pydantic model
 @app.exception_handler(RequestValidationError)
@@ -83,8 +98,41 @@ def add_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 # Add product
 # TESTED
 @app.post("/users/{userID}/products/", status_code=status.HTTP_201_CREATED, response_model=schemas.Product)
-def add_product(product: schemas.ProductCreate, db: Session = Depends(get_db)):
-    return operations.create_product(db, product)
+async def add_product(
+    name: str = Form(...),
+    description: str = Form(...),
+    price: float = Form(...),
+    quantity: int = Form(...),
+    color: str = Form(...),
+    category: str = Form(...),
+    image: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
+    try:
+        # Upload the image to Cloudinary
+        image_url = await upload_image_to_cloudinary(image)
+        if image_url is None:
+            raise HTTPException(status_code=500, detail="Image upload failed")
+        
+        # Create the product object to store in the database
+        product_data = schemas.ProductCreate(
+            name=name,
+            description=description,
+            price=price,
+            quantity=quantity,
+            color=color,
+            category=category,
+            image=image_url,
+
+        )
+
+        # Insert product in the database
+        return operations.create_product(db, product_data)
+
+    except Exception as e:
+        # Log the error and return a detailed response
+        print(f"Error occurred: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 # Add favorite
 # TESTED
