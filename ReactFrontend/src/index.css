@@ -36,6 +36,10 @@ body.forgotpassword-page {
   background-size: cover;
 }
 
+body.resetpassword-page {
+  background: url('./Components/Assests/university.png') no-repeat center center;
+  background-size: cover;
+}
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

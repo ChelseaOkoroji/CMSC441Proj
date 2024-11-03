@@ -1,0 +1,61 @@
+/* Overlay to cover the entire screen */
+.modal-overlay {
+    position: fixed; /* Sticks to the screen */
+    top: 0; /* Start at the top */
+    left: 0; /* Start at the left */
+    right: 0; /* End at the right */
+    bottom: 0; /* End at the bottom */
+    background: rgba(0, 0, 0, 0.7); /* Darker semi-transparent background */
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    z-index: 1000; /* Ensure modal is above other content */
+}
+
+/* Modal content box */
+.modal-content {
+    background: linear-gradient(135deg, #585858, #12141e); /* Gradient background */
+    padding: 20px; /* Spacing inside the modal */
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); 
+    text-align: center; 
+    max-width: 90%; 
+    width: 300px; /* default width */
+    height: auto;
+    min-height: 150px;
+    transition: max-width 0.3s ease; /* Smooth transition for resizing */
+    color: white; 
+    font-size: 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Button styling */
+.modal-content button {
+    margin-top: 15px; /* Space above the button */
+    padding: 8px 12px; /* Smaller padding for the button */
+    background-color: #333639; /* Primary button color */
+    color: white; /* Text color */
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 14px; /* Smaller font size */
+    transition: background-color 0.3s; /* Smooth transition for hover */
+    width: 75px;
+    height: 35px;
+}
+
+/* Button hover effect */
+.modal-content button:hover {
+    background-color: #5e6062; /* Darker shade on hover */
+}
+
+/* Responsive adjustments */
+@media (max-width: 500px) {
+    .modal-content {
+        width: 90%; /* Make it even more responsive on smaller screens */
+    }
+}
