@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './HomePage.css';
 import { Link } from 'react-router-dom';
 import { CgProfile } from "react-icons/cg";
+import user_profile from '../Assests/user-profile.png';
+
 import { useUser } from '../../UserContext';
 import all_products from '../Assests/all_products';
 
@@ -23,14 +25,16 @@ const HomePage = () => {
 
     return (
         <div className='homepage'>
-            <header style={{ display: 'flex', justifyContent: 'space-between', padding: '10px' }}>
+            <header className='header'>
                 <h1>E-Z College</h1>
-                <div>
-                    <span>Welcome, { user.userID }</span>
-                    <div className='profile'>
-                        <button>Profile</button>
-                        <CgProfile className='profile_icon'/>
-                    </div>
+                <div className="header-right">
+                    <span className="welcome-text">Welcome, {user.userID}</span>
+                <Link to="/profile">
+                            <img src={user_profile} alt="Profile" className='profile_icon'/>
+                        </Link>
+                </div>
+                </header>
+                
                     <ul className='menu'>
                         <li onClick={()=>{setMenu("all")}}>
                             <Link to="home/all" style={{textDecoration: "none"}}>All</Link>
@@ -61,11 +65,11 @@ const HomePage = () => {
                             {menu === "health" && <hr />}
                         </li>
                     </ul>     
-                </div>
-            </header>
+               
+
             <div className="products">
                 {filteredProducts.map(product => (
-                    <Link to={`product/${product.id}`} key={product.id} className="product-card">
+                    <Link to={`home/product/${product.id}`} key={product.id} className="product-card">
                     <img src={product.image} alt={product.name} />
                     <h3>{product.name}</h3>
                     <p>Price: ${product.price}</p>

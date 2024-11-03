@@ -29,7 +29,9 @@ const App = () => {
                         <Route path="home/technology" element={<Categories category="technologies" />} />
                         <Route path="home/dorm" element={<Categories category="dorms" />} />
                         <Route path="home/health" element={<Categories category="healths" />} />
-                        <Route path="home/product/:productId" element={<ProductsInfo />} />   
+                        <Route path="home/product" element={<ProductsInfo/>}>
+                            <Route path=':productID' element={<ProductsInfo/>}/>
+                        </Route>    
                     </Route>
 
                 </Routes>
