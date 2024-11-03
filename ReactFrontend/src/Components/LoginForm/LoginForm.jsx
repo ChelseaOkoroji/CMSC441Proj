@@ -1,5 +1,6 @@
 import React from 'react';
 import './LoginForm.css';
+import Modal from '../Modal/Modal'; // Import the modal component
 import { FaUserGraduate } from "react-icons/fa";
 import { FaUnlockAlt } from "react-icons/fa";
 import { Link, useNavigate } from 'react-router-dom';
@@ -11,7 +12,8 @@ import axios from 'axios';
 const LoginForm = () => {
     const [userID, setUserID] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const [modalMessage, setModalMessage] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
     const { setUser } = useUser();
     const navigate = useNavigate();
 
@@ -35,14 +37,19 @@ const LoginForm = () => {
             })
             .catch(error => {
                 if(error.response) {
-                    setError(error.response.data.detail);
+                    setModalMessage(error.response.data.detail);
                 } else {
-                    setError('Network error. Please check your connection.');
+                    setModalMessage('Network error. Please check your connection.');
                 }
+                setModalVisible(true);
             });
         // Clear form fields
         setUserID('');
         setPassword('');
+    };
+
+    const handleCloseModal = () => {
+        setModalVisible(false);
     };
 
     return (
@@ -71,7 +78,9 @@ const LoginForm = () => {
                 <p>Don't have an account? <Link to="/register">Register</Link></p>
                 </div>
             </form>
-            {error && <p style={{color: 'red', textAlign: 'center', fontSize: '20px', fontWeight: 'bold'}}>{error}</p>}
+            {modalVisible && (
+                <Modal message={modalMessage} onClose={handleCloseModal} />
+            )}
         </div>
     );
 };
