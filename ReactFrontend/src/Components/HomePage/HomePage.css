@@ -26,10 +26,10 @@
     font-size: 50px;
     font-style: italic;
     flex-grow: 1; 
-    text-align: center;
+    text-align: left;
     margin: 0; 
     color: white; 
-    margin-left: 150px; 
+    margin-left: 50px; 
 
 
 }
@@ -59,6 +59,34 @@
     height: 60px; 
     cursor: pointer;
     border-radius: 50%; 
+}
+
+.profile-container {
+    position: relative; 
+    display: inline-block; 
+}
+
+.dropdown-menu {
+    position: absolute; 
+    right: 0;
+    background-color: white; 
+    box-shadow: black; 
+    z-index: 1000; 
+    min-width: 120px; 
+    border-radius: 10px; 
+    font-size: 25px;
+
+}
+
+.dropdown-item {
+    display: block; 
+    padding: 18px 22px; 
+    text-decoration: none; 
+    color: black; 
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0; /* Background on hover */
 }
 
 .menu {
@@ -134,5 +162,19 @@
 .product-card a:visited {
     color: black !important;
     text-decoration: none;
+}
+
+.search-bar {
+    text-align: center; 
+    margin: 20px 0;
+}
+
+.search-bar input {
+    padding: 10px;
+    width: 400px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-right: 50px;
 }
 

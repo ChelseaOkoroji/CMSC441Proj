@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './HomePage.css';
 import { Link } from 'react-router-dom';
-import { CgProfile } from "react-icons/cg";
 import user_profile from '../Assests/user-profile.png';
 
 import { useUser } from '../../UserContext';
@@ -16,25 +15,49 @@ const HomePage = () => {
     }, []);
     
     const { user } = useUser();
-    const [menu, setMenu] = useState("all"); // Set default to "all" for showing all products initially
-    
-    // Show all products if "all" is selected; otherwise, filter by selected category
-    const filteredProducts = menu === "all" 
-        ? all_products 
-        : all_products.filter(product => product.category === menu);
+    const [menu, setMenu] = useState("all"); 
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
+    const [searchBar, setSearchBar] = useState(""); 
+
+
+    const filteredProducts = all_products.filter(product => {
+        const matchesCategory = menu === "all" || product.category === menu;
+        const matchesSearch = product.name.toLowerCase().includes(searchBar.toLowerCase());
+        return matchesCategory && matchesSearch;
+    });
+    const toggleDropdown = () => {
+        setIsDropdownOpen(!isDropdownOpen);
+    };
+
 
     return (
         <div className='homepage'>
-            <header className='header'>
+            <header className='header'>          
                 <h1>E-Z College</h1>
+                <div className="search-bar">
+                    <input 
+                        type="text" 
+                        placeholder="Search products..." 
+                        value={searchBar} 
+                        onChange={(e) => setSearchBar(e.target.value)} 
+                    />
+             </div>
                 <div className="header-right">
                     <span className="welcome-text">Welcome, {user.userID}</span>
-                <Link to="/profile">
-                            <img src={user_profile} alt="Profile" className='profile_icon'/>
-                        </Link>
+                    <div className="profile-container" onClick={toggleDropdown}>
+                        <img src={user_profile} alt="Profile" className='profile_icon'/>
+                        {isDropdownOpen && (
+                            <div className="dropdown-menu">
+                                <Link to="/profile" className="dropdown-item">Profile</Link>
+                                <Link to="/favorites" className="dropdown-item">Favorites</Link>
+                                <Link to="/items" className="dropdown-item">Add Item</Link>
+                                <Link to="/logout" className="dropdown-item">Logout</Link>
+                            </div>
+                        )}
+                    </div>
                 </div>
                 </header>
-                
+               
                     <ul className='menu'>
                         <li onClick={()=>{setMenu("all")}}>
                             <Link to="home/all" style={{textDecoration: "none"}}>All</Link>
