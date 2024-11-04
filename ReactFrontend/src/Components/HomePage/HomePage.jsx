@@ -27,7 +27,7 @@ const HomePage = () => {
     });
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
-    };
+    }
 
 
     return (

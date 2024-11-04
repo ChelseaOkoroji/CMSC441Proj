@@ -25,11 +25,9 @@ app = FastAPI()
 # Load environment variables
 load_dotenv("tokenvalidation.env")
 SECRET_KEY = os.getenv("TOKEN_KEY")
-
 #error check
 if SECRET_KEY is None:
     raise RuntimeError("TOKEN_KEY environment variable is not set. Please check your tokenvalidation.env file.")
-
 serializer = URLSafeTimedSerializer(SECRET_KEY)
 
 

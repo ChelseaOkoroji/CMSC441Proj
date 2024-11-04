@@ -10,6 +10,7 @@ import Categories from './Components/HomePage/Categories';
 import { UserProvider } from './UserContext';
 import ProductsInfo from './Components/Products/ProductsInfo';
 import Marketplace from './Components/ItemPage/itempage';
+import ProtectedRoute from './ProtectedRoute';
 
 const App = () => {
   return (
@@ -20,7 +21,16 @@ const App = () => {
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/home" element={<HomePage />}>
+          
+          {/* Protect all routes under /home */}
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            }
+          >
             <Route index element={<Marketplace />} />
             <Route path="marketplace" element={<Marketplace />} />
             <Route path="all" element={<Main />} />

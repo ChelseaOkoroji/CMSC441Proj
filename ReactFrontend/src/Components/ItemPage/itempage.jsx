@@ -1,6 +1,7 @@
-{/*Comment*/}
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom'; // Added useParams
+import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useUser } from '../../UserContext';
+import user_profile from '../Assests/user-profile.png';
 import './itempage.css';
 
 const Marketplace = () => {
@@ -9,22 +10,66 @@ const Marketplace = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [selectedItem, setSelectedItem] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  
   const { category } = useParams();
   const itemsPerPage = 25;
   const navigate = useNavigate();
+  const { user, setUser } = useUser();  // Add setUser from context
+
+  // Add logout handler
+  const handleLogout = async () => {
+    try {
+      // Make a request to your backend logout endpoint
+      const response = await fetch('http://localhost:8000/auth/logout', {
+        method: 'POST',
+        credentials: 'include', // Important for cookies
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Logout failed');
+      }
+
+      // Clear user from context
+      setUser(null);
+      
+      // Clear any stored tokens or user data from localStorage
+      localStorage.removeItem('user');
+      
+      // Close the dropdown
+      setIsDropdownOpen(false);
+      
+      // Redirect to home page
+      navigate('/');
+      
+    } catch (error) {
+      console.error('Error during logout:', error);
+      // You might want to show an error message to the user
+    }
+  };
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
         let url = `http://localhost:8000/products/?page=${currentPage}&limit=${itemsPerPage}`;
-        if (category) {
+        if (category && category !== 'all') {
           url += `&category=${category}`;
         }
         const response = await fetch(url);
         if (!response.ok) throw new Error('Failed to fetch items');
         const data = await response.json();
-        console.log('Fetched data:', data); // Add this for debugging
-        setItems(data.items || []); // Add fallback empty array
+        
+        // Filter items based on search query
+        const filteredItems = data.items.filter(item =>
+          item.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        
+        setItems(filteredItems || []);
         setTotalPages(Math.ceil((data.total || 0) / itemsPerPage));
         setLoading(false);
       } catch (error) {
@@ -34,41 +79,98 @@ const Marketplace = () => {
     };
 
     fetchItems();
-  }, [currentPage, category]);
+  }, [currentPage, category, searchQuery]);
 
-  // Rest of your component code stays the same
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleCategoryChange = (newCategory) => {
+    setSelectedCategory(newCategory);
+    navigate(`/home/${newCategory}`);
+  };
+
+  const categories = [
+    { id: 'all', name: 'All' },
+    { id: 'book', name: 'Book' },
+    { id: 'merch', name: 'Merch' },
+    { id: 'school-supplies', name: 'School Supplies' },
+    { id: 'technology', name: 'Technology' },
+    { id: 'dorm', name: 'Dorm' },
+    { id: 'health', name: 'Health/Fitness' }
+  ];
+  
   return (
-    <div className="marketplace-container">
-      <div className="items-grid">
-        {items.map((item) => (
-          <div
-            key={item.productID}
-            className="item-card"
-            onClick={() => handleItemClick(item)}
-          >
-            <div className="item-image">
-              <img src={item.image} alt={item.name} />
-            </div>
-            <div className="item-info">
-              <h3>{item.name}</h3>
-              <p className="price">${item.price}</p>
+    <>
+      <div className="header-container">
+        <div className="header">
+          <h1>E-Z COLLEGE</h1>
+          <div className="search-bar">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <div className="header-right">
+            <span className="welcome-text">WELCOME, {user.userID}</span>
+            <div className="profile-container" onClick={toggleDropdown}>
+              <img src={user_profile} alt="Profile" className="profile_icon" />
+              {isDropdownOpen && (
+                <div className="dropdown-menu">
+                  <Link to="/profile" className="dropdown-item">Profile</Link>
+                  <Link to="/favorites" className="dropdown-item">Favorites</Link>
+                  <Link to="/items" className="dropdown-item">Add Item</Link>
+                  {/* Replace Link with button for logout */}
+                  <button 
+                    onClick={handleLogout} 
+                    className="dropdown-item"
+                    style={{ 
+                      background: 'none',
+                      border: 'none',
+                      width: '100%',
+                      textAlign: 'left',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
           </div>
-        ))}
+        </div>
       </div>
-      
-      <div className="pagination">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-          <button
-            key={page}
-            onClick={() => setCurrentPage(page)}
-            className={currentPage === page ? 'active' : ''}
-          >
-            {page}
-          </button>
+
+      <ul className="menu">
+        {['ALL', 'BOOK', 'MERCH', 'SCHOOL SUPPLIES', 'TECHNOLOGY', 'DORM', 'HEALTH/FITNESS'].map((item) => (
+          <li key={item} className={selectedCategory === item.toLowerCase() ? 'active' : ''}>
+            <Link to={`/home/${item.toLowerCase()}`}>{item}</Link>
+          </li>
         ))}
+      </ul>
+
+      <div className="marketplace-container">
+        <div className="items-grid">
+          {items.map((item) => (
+            <div
+              key={item.productID}
+              className="item-card"
+              onClick={() => navigate(`/product/${item.productID}`)}
+            >
+              <div className="item-image">
+                <img src={item.image} alt={item.name} />
+              </div>
+              <div className="item-info">
+                <h3>{item.name}</h3>
+                <p className="price">PRICE: ${item.price}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
