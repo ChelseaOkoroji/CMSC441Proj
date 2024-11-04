@@ -1,9 +1,7 @@
 {/*Comment*/}
-// File: src/Components/Marketplace.js
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom'; // Added useParams
 import './itempage.css';
-
 
 const Marketplace = () => {
   const [items, setItems] = useState([]);
@@ -15,21 +13,19 @@ const Marketplace = () => {
   const itemsPerPage = 25;
   const navigate = useNavigate();
 
-  // Fetch items from API
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        // Build URL with pagination and optional category filter
         let url = `http://localhost:8000/products/?page=${currentPage}&limit=${itemsPerPage}`;
         if (category) {
           url += `&category=${category}`;
         }
-
         const response = await fetch(url);
         if (!response.ok) throw new Error('Failed to fetch items');
         const data = await response.json();
-        setItems(data.items);
-        setTotalPages(Math.ceil(data.total / itemsPerPage));
+        console.log('Fetched data:', data); // Add this for debugging
+        setItems(data.items || []); // Add fallback empty array
+        setTotalPages(Math.ceil((data.total || 0) / itemsPerPage));
         setLoading(false);
       } catch (error) {
         console.error('Error fetching items:', error);
@@ -40,21 +36,13 @@ const Marketplace = () => {
     fetchItems();
   }, [currentPage, category]);
 
-  // Handle item click
-  const handleItemClick = (item) => {
-    navigate(`/home/product/${item.productID}`);
-  };
-
-  if (loading) {
-    return <div className="loading">Loading...</div>;
-  }
-
+  // Rest of your component code stays the same
   return (
     <div className="marketplace-container">
       <div className="items-grid">
         {items.map((item) => (
-          <div 
-            key={item.productID} 
+          <div
+            key={item.productID}
             className="item-card"
             onClick={() => handleItemClick(item)}
           >
@@ -68,8 +56,7 @@ const Marketplace = () => {
           </div>
         ))}
       </div>
-
-      {/* Pagination */}
+      
       <div className="pagination">
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
           <button

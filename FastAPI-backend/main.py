@@ -22,10 +22,16 @@ import math
 # FastAPI instance
 app = FastAPI()
 
+# Load environment variables
 load_dotenv("tokenvalidation.env")
-# Secret key for token generation
 SECRET_KEY = os.getenv("TOKEN_KEY")
+
+#error check
+if SECRET_KEY is None:
+    raise RuntimeError("TOKEN_KEY environment variable is not set. Please check your tokenvalidation.env file.")
+
 serializer = URLSafeTimedSerializer(SECRET_KEY)
+
 
 origins = [
     "http://localhost:3000",

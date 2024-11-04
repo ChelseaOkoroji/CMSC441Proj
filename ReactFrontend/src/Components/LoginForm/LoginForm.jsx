@@ -35,25 +35,20 @@ const LoginForm = () => {
             const response = await axios.post('/login/', checkUser);
             sessionStorage.setItem('user', JSON.stringify(response.data));
             setUser(response.data);
-            
-            // First navigate to home
-            navigate('/home');
-            
-            // Then navigate to the items page within home
-            navigate('/home/Items');
-        } catch (error) {
+            // Use a single navigate
+            navigate('/home/marketplace');
+          } catch (error) {
             if (error.response) {
-                setModalMessage(error.response.data.detail);
+              setModalMessage(error.response.data.detail);
             } else {
-                setModalMessage('Network error. Please check your connection.');
+              setModalMessage('Network error. Please check your connection.');
             }
             setModalVisible(true);
-        } finally {
+          } finally {
             setIsLoading(false);
-            // Clear form fields
             setUserID('');
             setPassword('');
-        }
+          }
     };
 
     const handleCloseModal = () => {

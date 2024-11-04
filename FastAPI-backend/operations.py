@@ -1,18 +1,7 @@
-# This file is where the CRUD operations are written
-# These will be used in main.py inside the FastAPI functions
-
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 import models, schemas
 import bcrypt
-from fastapi import APIRouter, Depends, Query, HTTPException
-from sqlalchemy import and_, or_, desc, asc
-from typing import Optional, List
-from math import ceil
-from pydantic import BaseModel
-from .database import get_db
-
-
 
 # CREATE operations
 
@@ -29,100 +18,7 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.refresh(new_user)
     return new_user
 
-#this all below is a single function
-#it takes in parameters defined and then helps to load the webpage
-def list_products(
-    db: Session,
-    skip: int = 0,
-    limit: int = 25,
-    name: Optional[str] = None,
-    category: Optional[str] = None,
-    min_price: Optional[float] = None,
-    max_price: Optional[float] = None,
-    sort: Optional[str] = None
-):
-    #first get the database query
-    query = db.query(models.Product)
-    
-    #then apply the necessary filters
-    #name filters by name, category filters by category, min_price and max_price define price
-    if name:
-        query = query.filter(models.Product.name.ilike(f"%{name}%"))
-    if category:
-        query = query.filter(models.Product.category == category)
-    if min_price is not None:
-        query = query.filter(models.Product.price >= min_price)
-    if max_price is not None:
-        query = query.filter(models.Product.price <= max_price)
-    
-    #Apply sorting based on filters
-    if sort:
-        if sort == "priceAsc":
-            query = query.order_by(asc(models.Product.price))
-        elif sort == "priceDesc":
-            query = query.order_by(desc(models.Product.price))
-        elif sort == "newest":
-            query = query.order_by(desc(models.Product.productID))
-    
-    #get total and then paginate the page
-    total = query.count()
-    products = query.offset(skip).limit(limit).all()
-    
-    return products, total
-
-#Update the router so that the products are now listed
-router = APIRouter(prefix="/api", tags=["products"])
-@router.get("/products", response_model=schemas.ItemPageResponse)
-#new function helps to get the products
-async def get_products_paginated(
-    db: Session = Depends(get_db),
-    page: int = Query(1, ge=1),
-    limit: int = Query(25, ge=1, le=100),
-    search: Optional[str] = None,
-    category: Optional[str] = None,
-    min_price: Optional[float] = None,
-    max_price: Optional[float] = None,
-    sort: Optional[str] = None
-):
-    skip = (page - 1) * limit
-    
-    products, total = list_products(
-        db=db,
-        skip=skip,
-        limit=limit,
-        name=search,
-        category=category,
-        min_price=min_price,
-        max_price=max_price,
-        sort=sort
-    )
-    
-    total_pages = ceil(total / limit)
-    
-    return {
-        "items": products,
-        "total": total,
-        "page": page,
-        "pages": total_pages
-    }
-
-@router.get("/products/{product_id}", response_model=schemas.Product)
-async def get_product_detail(
-    product_id: int,
-    db: Session = Depends(get_db)
-):
-    product = get_product(db, product_id)
-    if product is None:
-        raise HTTPException(status_code=404, detail="Product not found")
-    return product
-
-@router.get("/products/user/{user_id}", response_model=List[schemas.Product])
-async def get_user_products_endpoint(
-    user_id: str,
-    db: Session = Depends(get_db)
-):
-    products = get_user_products(db, user_id)
-    return products
+# **** Product-related functions ****
 
 # Create new product
 def create_product(db: Session, product: schemas.ProductCreate):
