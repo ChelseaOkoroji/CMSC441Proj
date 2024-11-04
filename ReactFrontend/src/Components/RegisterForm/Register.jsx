@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Register.css';
+import Modal from '../Modal/Modal'; // Import the modal component
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect } from 'react';
@@ -10,7 +11,8 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,36 +33,47 @@ const Register = () => {
 
     // Don't want to do anything if a field is missing
     if(!areAllFieldsFilled) {
-      setError("Please fill in all fields");
+      setModalMessage("Please fill in all fields");
+      setModalVisible(true);
       return;
     }
     // Username must be at least 6 characters long
     if(userID.length < 6) {
-      setError("Username must be at least 6 characters long");
+      setModalMessage("Username must be at least 6 characters long");
+      setModalVisible(true);
       return;
     }
     // Password must be at least 8 characters long
     if(password.length < 8) {
-      setError("Password must be at least 8 characters long");
+      setModalMessage("Password must be at least 8 characters long");
+      setModalVisible(true);
       return;
     }
     // Passwords much match
     if(password !== confirmPassword) {
-      setError("Passwords must match");
+      setModalMessage("Passwords must match");
+      setModalVisible(true);
       return;
     }
     // If no errors from above, register the user
     const user = { userID, email, password };
     await axios.post('/register/', user)
       .then(response => {
-        navigate('/');
+        setModalMessage("Success! Redirecting to login page...");
+        setModalVisible(true);
+        
+        // Redirect after 2 seconds
+        setTimeout(() => {
+          navigate('/'); // Redirect to the login page
+        }, 2000);
       })
       .catch(error => {
         if(error.response) {
-          setError(error.response.data.detail);
+          setModalMessage(error.response.data.detail);
         } else {
-          setError('Network error. Please check your connection.');
+          setModalMessage('Network error. Please check your connection.');
         }
+        setModalVisible(true);
       });
 
     // Clear form fields
@@ -68,6 +81,10 @@ const Register = () => {
     setEmail('');
     setPassword('');
     setConfirmPassword('');
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
   };
 
   return (
@@ -102,7 +119,9 @@ const Register = () => {
       <div className="login-link">
         <p>Already have an account? <Link to="/">Login</Link></p>
       </div>
-      {error && <p style={{color: 'red', textAlign: 'center', fontSize: '20px', fontWeight: 'bold'}}>{error}</p>}
+      {modalVisible && (
+        <Modal message={modalMessage} onClose={handleCloseModal} />
+      )}
     </div>
   );
 };

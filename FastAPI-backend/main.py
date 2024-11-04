@@ -118,7 +118,7 @@ def reset_password(reset: schemas.ResetPassword, db: Session = Depends(get_db)):
         # Check if the token exists and is valid
         token_record = operations.get_token(db, reset.token)
         if token_record is None or token_record.status != 'valid':
-            raise HTTPException(status_code=400, detail="Invalid or expired token.")
+            raise HTTPException(status_code=400, detail="Invalid or expired token. Please enter new password reset request.")
 
         # Update user's password in the database
         hashed_password = bcrypt.hashpw(reset.new_password.encode("utf-8"), bcrypt.gensalt())
@@ -132,7 +132,7 @@ def reset_password(reset: schemas.ResetPassword, db: Session = Depends(get_db)):
         return {"message": "Password has been reset successfully."}
 
     except Exception:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired token.")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired token. Please enter new password reset request.")
 
 # Get user's products they have listed
 # TESTED

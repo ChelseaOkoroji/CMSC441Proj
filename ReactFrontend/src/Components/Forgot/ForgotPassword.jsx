@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import './ForgotPassword.css';
+import Modal from '../Modal/Modal'; // Import the modal component
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
-    const [error, setError] = useState('');
-    const [message, setMessage] = useState('');
+    const [modalMessage, setModalMessage] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         document.body.classList.add('forgotpassword-page');
@@ -22,15 +23,21 @@ const ForgotPassword = () => {
         event.preventDefault(); // Prevent default form submission
         await axios.post(`/forget-password/${email}/`)
         .then(response => {
-            setMessage("Password reset email sent");
+            setModalMessage("Password reset email sent");
+            setModalVisible(true);
         })
         .catch(error => {
             if(error.response) {
-                setError(error.response.data.detail);
+                setModalMessage(error.response.data.detail);
             } else {
-                setError('Network error. Please check your connection.');
+                setModalMessage('Network error. Please check your connection.');
             }
+            setModalVisible(true);
         });
+    };
+
+    const handleCloseModal = () => {
+        setModalVisible(false);
     };
 
     return (
@@ -48,8 +55,9 @@ const ForgotPassword = () => {
                 </div>
                 <button type="submit">Send Reset Link</button>
             </form>
-            {message && <p style={{color: 'white', textAlign: 'center', fontSize: '20px', fontWeight: 'bold'}}>{message}</p>}
-            {error && <p style={{color: 'red', textAlign: 'center', fontSize: '20px', fontWeight: 'bold'}}>{error}</p>}
+            {modalVisible && (
+                <Modal message={modalMessage} onClose={handleCloseModal} />
+            )}
         </div>
     );
 };
