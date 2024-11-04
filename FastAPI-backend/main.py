@@ -1,6 +1,6 @@
 # This is the main file of the website that contains all FastAPI functionality
 
-from fastapi import FastAPI, HTTPException, Depends, status, Request, Query
+from fastapi import FastAPI, HTTPException, Response, Depends, status, Request, Query
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
@@ -214,6 +214,23 @@ def delete_product(userID: str, productID: int, db: Session = Depends(get_db)):
 @app.delete("/users/{userID}/", status_code=status.HTTP_200_OK)
 def delete_user(userID: str, db: Session = Depends(get_db)):
     operations.delete_user(db, userID)
+
+@app.post("/logout")
+async def logout(response: Response):
+    """
+    Endpoint to handle user logout
+    """
+    try:
+        # Clear the JWT token cookie if you're using cookies
+        response.delete_cookie(
+            key="access_token",
+            httponly=True,
+            samesite="lax",
+            secure=False  # Set to True if using HTTPS
+        )
+        return {"message": "Successfully logged out"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 """
 if __name__ == "__main__":

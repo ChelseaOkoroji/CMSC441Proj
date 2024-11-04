@@ -19,13 +19,14 @@ const Marketplace = () => {
   const navigate = useNavigate();
   const { user, setUser } = useUser();  // Add setUser from context
 
-  // Add logout handler
-  const handleLogout = async () => {
+  const handleLogout = async (e) => {
+    e.preventDefault(); // Prevent default navigation
+    e.stopPropagation(); // Stop event bubbling
+    
     try {
-      // Make a request to your backend logout endpoint
-      const response = await fetch('http://localhost:8000/auth/logout', {
+      const response = await fetch('http://localhost:8000/logout', {
         method: 'POST',
-        credentials: 'include', // Important for cookies
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         }
@@ -35,21 +36,12 @@ const Marketplace = () => {
         throw new Error('Logout failed');
       }
 
-      // Clear user from context
       setUser(null);
-      
-      // Clear any stored tokens or user data from localStorage
       localStorage.removeItem('user');
-      
-      // Close the dropdown
       setIsDropdownOpen(false);
-      
-      // Redirect to home page
       navigate('/');
-      
     } catch (error) {
       console.error('Error during logout:', error);
-      // You might want to show an error message to the user
     }
   };
 
@@ -101,7 +93,7 @@ const Marketplace = () => {
   ];
   
   return (
-    <>
+<>
       <div className="header-container">
         <div className="header">
           <h1>E-Z COLLEGE</h1>
@@ -114,7 +106,7 @@ const Marketplace = () => {
             />
           </div>
           <div className="header-right">
-            <span className="welcome-text">WELCOME, {user.userID}</span>
+            <span className="welcome-text">WELCOME, {user?.userID}</span>
             <div className="profile-container" onClick={toggleDropdown}>
               <img src={user_profile} alt="Profile" className="profile_icon" />
               {isDropdownOpen && (
@@ -122,16 +114,21 @@ const Marketplace = () => {
                   <Link to="/profile" className="dropdown-item">Profile</Link>
                   <Link to="/favorites" className="dropdown-item">Favorites</Link>
                   <Link to="/items" className="dropdown-item">Add Item</Link>
-                  {/* Replace Link with button for logout */}
+                  {/* Replace Link with button */}
                   <button 
-                    onClick={handleLogout} 
+                    onClick={handleLogout}
                     className="dropdown-item"
-                    style={{ 
+                    style={{
                       background: 'none',
                       border: 'none',
                       width: '100%',
                       textAlign: 'left',
-                      cursor: 'pointer'
+                      padding: '8px 16px',
+                      cursor: 'pointer',
+                      display: 'block',
+                      color: 'inherit',
+                      fontFamily: 'inherit',
+                      fontSize: 'inherit'
                     }}
                   >
                     Logout
