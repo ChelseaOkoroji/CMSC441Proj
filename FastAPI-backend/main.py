@@ -16,7 +16,9 @@ from dotenv import load_dotenv
 import os
 import bcrypt
 from typing import Optional
-
+from fastapi import Query
+from typing import List
+import math
 # FastAPI instance
 app = FastAPI()
 
@@ -153,9 +155,42 @@ def user_login(user_to_check: schemas.UserLogin, db: Session = Depends(get_db)):
 
 # Get products based on filterable arguments (name, price, category, color)
 # TESTED
-@app.get("/products/", status_code=status.HTTP_200_OK, response_model=list[schemas.Product])
-def get_products(products: schemas.ProductSearch = Depends(), db: Session = Depends(get_db)):
-    return operations.get_products(db, products)
+@app.get("/products/", response_model=schemas.PaginatedProducts)
+async def get_products_paginated(
+    page: int = Query(1, ge=1, description="Page number"),
+    limit: int = Query(25, ge=1, le=100, description="Items per page"),
+    name: Optional[str] = None,
+    max_price: Optional[float] = None,
+    color: Optional[str] = None,
+    category: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    # Create filter object
+    filters = schemas.ProductSearch(
+        name=name,
+        max_price=max_price,
+        color=color,
+        category=category
+    )
+    
+    # Get filtered products
+    all_products = operations.get_products(db, filters)
+    
+    # Calculate pagination
+    total_items = len(all_products)
+    total_pages = math.ceil(total_items / limit)
+    
+    # Get paginated subset
+    start_idx = (page - 1) * limit
+    end_idx = start_idx + limit
+    paginated_products = all_products[start_idx:end_idx]
+    
+    return {
+        "items": paginated_products,
+        "total": total_items,
+        "page": page,
+        "pages": total_pages
+    }
 
 # ****UPDATE****
 
