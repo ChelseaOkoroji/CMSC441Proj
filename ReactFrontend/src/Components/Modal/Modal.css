@@ -34,7 +34,7 @@
 }
 
 /* Button styling */
-.modal-content button {
+.modal-overlay .modal-content button {
     margin-top: 15px; /* Space above the button */
     padding: 8px 12px; /* Smaller padding for the button */
     background-color: #333639; /* Primary button color */
