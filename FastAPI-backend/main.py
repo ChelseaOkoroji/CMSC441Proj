@@ -99,6 +99,7 @@ def add_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 # TESTED
 @app.post("/users/{userID}/products/", status_code=status.HTTP_201_CREATED, response_model=schemas.Product)
 async def add_product(
+    userID: str,  # Accept userID as a path parameter
     name: str = Form(...),
     description: str = Form(...),
     price: float = Form(...),
@@ -114,7 +115,7 @@ async def add_product(
         if image_url is None:
             raise HTTPException(status_code=500, detail="Image upload failed")
         
-        # Create the product object to store in the database
+        # Create the product data, including userID
         product_data = schemas.ProductCreate(
             name=name,
             description=description,
@@ -123,7 +124,7 @@ async def add_product(
             color=color,
             category=category,
             image=image_url,
-
+            userID=userID  # Include userID here
         )
 
         # Insert product in the database
@@ -133,6 +134,7 @@ async def add_product(
         # Log the error and return a detailed response
         print(f"Error occurred: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
+
 
 # Add favorite
 # TESTED
@@ -187,7 +189,7 @@ def reset_password(reset: schemas.ResetPassword, db: Session = Depends(get_db)):
 # Get user's products they have listed
 # TESTED
 @app.get("/users/{userID}/products/", status_code=status.HTTP_200_OK, response_model=list[schemas.Product])
-def get_user_products(userID: str, db: Session = Depends(get_db)):
+async def get_user_products(userID: str, db: Session = Depends(get_db)):
     return operations.get_user_products(db, userID)
 
 #@app.get("/browse/", status_code=status.HTTP_200_OK, response_model=list[schemas.Product])
