@@ -1,6 +1,3 @@
-# This file is where the CRUD operations are written
-# These will be used in main.py inside the FastAPI functions
-
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 import models, schemas
