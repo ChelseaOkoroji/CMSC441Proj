@@ -1,4 +1,4 @@
-# This is the setup for using SQLAlchemy to make a database
+# This is the setup for using SQLAlchemy to make a SQLite database
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
