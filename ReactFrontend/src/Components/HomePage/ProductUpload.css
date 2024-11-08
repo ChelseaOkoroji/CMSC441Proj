@@ -1,0 +1,20 @@
+.product-upload {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.product-upload input {
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0;
+}
+
+.product-upload button {
+    width: 100%;
+    padding: 10px;
+    background-color: #355a75;
+    color: white;
+    border: none;
+    cursor: pointer;
+}

@@ -50,7 +50,7 @@ const HomePage = () => {
                             <div className="dropdown-menu">
                                 <Link to="/profile" className="dropdown-item">Profile</Link>
                                 <Link to="/favorites" className="dropdown-item">Favorites</Link>
-                                <Link to="/items" className="dropdown-item">Add Item</Link>
+                                <Link to="/product-upload" className="dropdown-item">Add Item</Link>
                                 <Link to="/logout" className="dropdown-item">Logout</Link>
                             </div>
                         )}
