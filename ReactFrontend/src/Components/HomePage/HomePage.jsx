@@ -121,20 +121,35 @@ const HomePage = () => {
             </header>
 
             <ul className='menu'>
-                {['ALL', 'BOOK', 'MERCH', 'SCHOOL SUPPLIES', 'TECHNOLOGY', 'DORM', 'HEALTH/FITNESS'].map((item) => (
-                    <li
-                        key={item}
-                        onClick={() => setMenu(item.toLowerCase())}
-                        className={menu === item.toLowerCase() ? 'active' : ''}
-                    >
-                        <Link to={`/home/${item.toLowerCase()}`} style={{ textDecoration: "none" }}>
-                            {item}
-                        </Link>
-                        {menu === item.toLowerCase() && <hr />}
-                    </li>
-                ))}
-            </ul>
-
+                        <li onClick={()=>{setMenu("all")}}>
+                            <Link to="home/all" style={{textDecoration: "none"}}>All</Link>
+                            {menu === "all" && <hr />}
+                        </li>
+                        <li onClick={()=>{setMenu("book")}}>
+                            <Link to="home/book" style={{textDecoration: "none"}}>Book</Link>
+                            {menu === "book" && <hr />}
+                        </li>
+                        <li onClick={()=>{setMenu("merch")}}>
+                            <Link to="home/merch" style={{textDecoration: "none"}}>Merch</Link>
+                            {menu === "merch" && <hr />}
+                        </li>
+                        <li onClick={()=>{setMenu("school-supplies")}}>
+                            <Link to="home/school-supplies" style={{textDecoration: "none"}}>School Supplies</Link>
+                            {menu === "school-supplies" && <hr />}
+                        </li>
+                        <li onClick={()=>{setMenu("technology")}}>
+                            <Link to="home/technology" style={{textDecoration: "none"}}>Technology</Link>
+                            {menu === "technology" && <hr />}
+                        </li>
+                        <li onClick={()=>{setMenu("dorm")}}>
+                            <Link to="home/dorm" style={{textDecoration: "none"}}>Dorm</Link>
+                            {menu === "dorm" && <hr />}
+                        </li>
+                        <li onClick={()=>{setMenu("health")}}>
+                            <Link to="home/health" style={{textDecoration: "none"}}>Health/Fitness</Link>
+                            {menu === "health" && <hr />}
+                        </li>
+                    </ul>    
             <div className="products">
                 {filteredProducts.map(product => (
                     <div
