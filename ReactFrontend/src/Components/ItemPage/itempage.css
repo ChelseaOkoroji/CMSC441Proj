@@ -1,3 +1,13 @@
+
+
+
+
+
+
+
+
+
+
 /* Reset and base styles */
 * {
     margin: 0;
@@ -7,14 +17,19 @@
   
   body {
     background-color: #f0f6ff;
+    /* Increased padding to account for search bar */
+    padding-top: 180px;
   }
   
-  /* Header container */
+  
+    /* Header container - now positioned below search */
   .header-container {
     background-color: #345aa0;
     padding: 15px 30px;
-    position: sticky;
-    top: 0;
+    position: fixed;
+    top: 50px;  /* Positioned below search bar */
+    left: 0;
+    right: 0;
     z-index: 1000;
   }
   
@@ -40,13 +55,34 @@
     max-width: 600px;
     margin: 0 20px;
   }
+
+
+  /* Standalone search bar container */
+  .top-search-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #1a3a7a;
+    padding: 10px 0;
+    z-index: 1001;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+
+  .search-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
   
   .search-bar input {
     width: 100%;
-    padding: 8px 15px;
+    padding: 12px 20px;
     border: none;
     border-radius: 4px;
     font-size: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
   
   /* Profile section */
@@ -69,17 +105,20 @@
   }
   
   /* Navigation menu */
-  .menu {
+    .menu {
     display: flex;
     justify-content: center;
     list-style: none;
     padding: 15px 0;
     background-color: white;
     border-bottom: 1px solid #ddd;
-    position: sticky;
-    top: 70px;
+    position: fixed;
+    top: 120px;  /* Adjusted to account for search bar */
+    left: 0;
+    right: 0;
     z-index: 999;
-  }
+    }
+
   
   .menu li {
     margin: 0 35px;

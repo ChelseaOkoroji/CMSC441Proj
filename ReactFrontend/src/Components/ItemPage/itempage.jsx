@@ -93,18 +93,22 @@ const Marketplace = () => {
   ];
   
   return (
-<>
+    <>
+      {/* Separate top search bar */}
+      <div className="top-search-container">
+        <div className="search-wrapper">
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      </div>
+
       <div className="header-container">
         <div className="header">
           <h1>E-Z COLLEGE</h1>
-          <div className="search-bar">
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
           <div className="header-right">
             <span className="welcome-text">WELCOME, {user?.userID}</span>
             <div className="profile-container" onClick={toggleDropdown}>
@@ -114,7 +118,6 @@ const Marketplace = () => {
                   <Link to="/profile" className="dropdown-item">Profile</Link>
                   <Link to="/favorites" className="dropdown-item">Favorites</Link>
                   <Link to="/items" className="dropdown-item">Add Item</Link>
-                  {/* Replace Link with button */}
                   <button 
                     onClick={handleLogout}
                     className="dropdown-item"
@@ -139,6 +142,7 @@ const Marketplace = () => {
           </div>
         </div>
       </div>
+
 
       <ul className="menu">
         {['ALL', 'BOOK', 'MERCH', 'SCHOOL SUPPLIES', 'TECHNOLOGY', 'DORM', 'HEALTH/FITNESS'].map((item) => (

@@ -16,9 +16,9 @@ from dotenv import load_dotenv
 import os
 import bcrypt
 from typing import Optional
-from fastapi import Query
 from typing import List
 import math
+
 # FastAPI instance
 app = FastAPI()
 

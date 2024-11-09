@@ -11,6 +11,8 @@ import { UserProvider } from './UserContext';
 import ProductsInfo from './Components/Products/ProductsInfo';
 import Marketplace from './Components/ItemPage/itempage';
 import ProtectedRoute from './ProtectedRoute';
+import Profile from './Components/HomePage/Profile';
+import ProductUpload from './Components/HomePage/ProductUpload';
 
 const App = () => {
   return (
@@ -33,15 +35,17 @@ const App = () => {
           >
             <Route index element={<Marketplace />} />
             <Route path="marketplace" element={<Marketplace />} />
-            <Route path="all" element={<Main />} />
-            <Route path="book" element={<Categories category="books" />} />
-            <Route path="merch" element={<Categories category="merchs" />} />
-            <Route path="school-supplies" element={<Categories category="school-supply" />} />
-            <Route path="technology" element={<Categories category="technologies" />} />
-            <Route path="dorm" element={<Categories category="dorms" />} />
-            <Route path="health" element={<Categories category="healths" />} />
+            <Route path="home/all" element={<Main />} />
+            <Route path="home/book" element={<Categories category="books" />} />
+            <Route path="home/merch" element={<Categories category="merchs" />} />
+            <Route path="home/school-supplies" element={<Categories category="school-supply" />} />
+            <Route path="home/technology" element={<Categories category="technologies" />} />
+            <Route path="home/dorm" element={<Categories category="dorms" />} />
+            <Route path="home/health" element={<Categories category="healths" />} />
             <Route path="product/:productID" element={<ProductsInfo />} />
           </Route>
+          <Route path='/profile' element={<Profile />} />
+          <Route path='/product-upload' element={<ProductUpload />} />
         </Routes>
       </Router>
     </UserProvider>

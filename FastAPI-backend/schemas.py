@@ -1,7 +1,6 @@
 # pydantic is used to validate the data types for the columns in the tables
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List
-from typing import List
 
 # Shared fields of ProductCreate and Product
 class ProductBase(BaseModel):
@@ -26,7 +25,6 @@ class Product(ProductBase):
 
     class Config:
         from_attributes = True
-
 
 class PaginatedProducts(BaseModel):
     items: List[Product]
@@ -85,10 +83,3 @@ class ProductSearch(BaseModel):
     max_price: Optional[float] = None
     color: Optional[str] = None
     category: Optional[str] = None
-
-#ItemPageResponse creates a list of products to show to the user
-class ItemPageResponse(BaseModel):
-    items: List[Product]
-    total: int
-    page: int
-    pages: int
