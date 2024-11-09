@@ -88,7 +88,7 @@ def add_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 # Add product
 # TESTED
-@app.post("/users/{userID}/products/", status_code=status.HTTP_201_CREATED, response_model=schemas.Product)
+@app.post("/create-product/", status_code=status.HTTP_201_CREATED, response_model=schemas.Product)
 def add_product(product: schemas.ProductCreate, db: Session = Depends(get_db)):
     return operations.create_product(db, product)
 

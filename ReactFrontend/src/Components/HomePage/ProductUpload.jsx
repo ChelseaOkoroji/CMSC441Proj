@@ -17,24 +17,23 @@ const ProductUpload = () => {
 
     const handleProductUpload = async (event) => {
         event.preventDefault();
-
-        const formData = new FormData();
-        formData.append('name', name);
-        formData.append('description', description);
-        formData.append('price', price);
-        formData.append('quantity', quantity);
-        formData.append('color', color);
-        formData.append('category', category);
-        formData.append('image', image);
-
+    
+        const myproduct = {
+            name,
+            description,
+            price: parseFloat(price), 
+            quantity: parseInt(quantity),  
+            color,
+            category,
+            image: image ? image.name : ''  
+        };
+    
         try {
-            const response = await axios.post(`http://localhost:8000/users/${userID}/products/`, formData, {
+            const response = await axios.post('/create-product/', myproduct, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'application/json'
                 }
             });
-
-            // Handle success and store product data
             sessionStorage.setItem('product', JSON.stringify(response.data));
             navigate('/product-upload-success');
         } catch (error) {
