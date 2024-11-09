@@ -79,6 +79,14 @@ const HomePage = () => {
 
             <header className='header'>
                 <h1>E-Z COLLEGE</h1>
+                <div className="search-wrapper">
+                    <input
+                        type="text"
+                        placeholder="Search products..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </div>
                 <div className="header-right">
                     <span className="welcome-text">WELCOME, {user?.userID}</span>
                     <div className="profile-container" onClick={toggleDropdown}>
