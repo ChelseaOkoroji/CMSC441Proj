@@ -2,8 +2,11 @@ import './ProductUpload.css';
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../../UserContext';
 
 const ProductUpload = () => {
+
+    const { user } = useUser();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
@@ -13,7 +16,7 @@ const ProductUpload = () => {
     const [image, setImage] = useState(null);
     const navigate = useNavigate();
 
-    const userID = sessionStorage.getItem('userID');
+    const userID = user.userID;
 
     const handleProductUpload = async (event) => {
         event.preventDefault();
@@ -25,9 +28,10 @@ const ProductUpload = () => {
             quantity: parseInt(quantity),  
             color,
             category,
-            image: image ? image.name : ''  
+            image: image ? image.name : '',
+            userID  
         };
-    
+
         try {
             const response = await axios.post('/create-product/', myproduct, {
                 headers: {
