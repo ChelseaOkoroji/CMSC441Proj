@@ -44,8 +44,12 @@
     box-shadow: 0 0 0 2px rgba(52, 90, 160, 0.2);
 }
 
+
+.product-upload input,
+.product-upload select,
 .product-upload button {
     width: 100%;
+
     padding: 15px;
     background-color: #345aa0;
     color: white;
@@ -154,5 +158,28 @@
 body {
     background-color: #f5f5f5;
     margin: 0;
-    padding: 0;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.product-upload select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #fff;
+}
+
+.product-upload button {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+
+.product-upload button:hover {
+    background-color: #0056b3;
 }
