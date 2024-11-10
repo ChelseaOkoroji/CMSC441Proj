@@ -1,7 +1,47 @@
 .product-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    padding-top: 150px; /* Match homepage padding to account for fixed header */
     width: 100%;
-    max-width: 500px;
+    max-width: 800px;
     margin: 0 auto;
+    background-color: #f5f5f5;
+}
+
+.product-upload h1 {
+    font-size: 32px;
+    color: #345aa0;
+    margin-bottom: 30px;
+}
+
+.product-upload form {
+    width: 100%;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.product-upload input,
+.product-upload select,
+.product-upload textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.product-upload input:focus,
+.product-upload select:focus,
+.product-upload textarea:focus {
+    border-color: #345aa0;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(52, 90, 160, 0.2);
 }
 
 
@@ -9,6 +49,115 @@
 .product-upload select,
 .product-upload button {
     width: 100%;
+
+    padding: 15px;
+    background-color: #345aa0;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+}
+
+.product-upload button:hover {
+    background-color: #2a4780;
+}
+
+/* Header styles - matching HomePage */
+.header {
+    width: 100%;
+    background-color: #345aa0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: 80px;
+    box-sizing: border-box;
+}
+
+.header h1 {
+    font-size: 50px;
+    font-style: italic;
+    margin: 0;
+    color: white;
+    white-space: nowrap;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    white-space: nowrap;
+}
+
+.welcome-text {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+}
+
+.profile_icon {
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.profile-container {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-top: 10px;
+    min-width: 180px;
+    z-index: 1000;
+}
+
+.dropdown-item {
+    padding: 12px 20px;
+    display: block;
+    color: #333;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.dropdown-item:hover {
+    background-color: #f5f5f5;
+}
+
+/* File input styling */
+.file-input-container {
+    border: 2px dashed #ddd;
+    padding: 20px;
+    text-align: center;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.file-input-container:hover {
+    border-color: #345aa0;
+    background-color: rgba(52, 90, 160, 0.05);
+}
+
+/* Make the page background match HomePage */
+body {
+    background-color: #f5f5f5;
+    margin: 0;
     padding: 10px;
     margin-bottom: 10px;
     font-size: 16px;
