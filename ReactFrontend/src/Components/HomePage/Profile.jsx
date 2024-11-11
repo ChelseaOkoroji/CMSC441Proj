@@ -54,7 +54,7 @@ const Profile = () => {
         e.stopPropagation();
         
         try {
-            const response = await fetch('http://localhost:8000/logout', {
+            const response = await fetch('/logout/', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -142,7 +142,7 @@ const Profile = () => {
     const handleDeleteAccount = async () => {
         if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
             try {
-                const response = await fetch(`http://localhost:8000/delete-account/${user.userID}`, {
+                const response = await fetch(`/users/${user.userID}`, {
                     method: 'DELETE',
                     credentials: 'include'
                 });
