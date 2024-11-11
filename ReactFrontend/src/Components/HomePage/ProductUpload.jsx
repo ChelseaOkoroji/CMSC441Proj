@@ -29,7 +29,6 @@ const ProductUpload = () => {
             category,
             image: image ? image.name : '',  
             userID
-
         };
     
         try {
@@ -38,7 +37,6 @@ const ProductUpload = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            sessionStorage.setItem('product', JSON.stringify(response.data));
             navigate('/product-upload-success');
         } catch (error) {
             console.error("Error uploading product:", error);

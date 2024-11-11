@@ -104,9 +104,9 @@ def add_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 # Add product
 # TESTED
-@app.post("/users/{userID}/products/", status_code=status.HTTP_201_CREATED, response_model=schemas.Product)
+@app.post("/create-product/", status_code=status.HTTP_201_CREATED, response_model=schemas.Product)
 async def add_product(
-    userID: str,  # Accept userID as a path parameter
+    userID: str, 
     name: str = Form(...),
     description: str = Form(...),
     price: float = Form(...),
@@ -268,11 +268,10 @@ def delete_product(userID: str, productID: int, db: Session = Depends(get_db)):
 def delete_user(userID: str, db: Session = Depends(get_db)):
     operations.delete_user(db, userID)
 
+"""
 @app.post("/logout")
 async def logout(response: Response):
-    """
-    Endpoint to handle user logout
-    """
+    #Endpoint to handle user logout
     try:
         # Clear the JWT token cookie if you're using cookies
         response.delete_cookie(
@@ -284,67 +283,4 @@ async def logout(response: Response):
         return {"message": "Successfully logged out"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 """
-if __name__ == "__main__":
-    generator = get_db()
-    Session = next(generator)
-
-    # Test ability to insert new user (Note: checking for the case where the user is already in the
-    # database is done in the FastAPI functions above (not being worked on right now and commented out), 
-    # so trying to insert a repeat user will result in an error)
-    cont = cont = int(input("Enter 1 to enter user, 0 to skip: "))
-    while(cont == 1):
-        user = input("Enter username: ")
-        email = input("Enter email: ")
-        password = input("Enter password: ")
-        test1 = schemas.UserCreate(userID=user, email=email, password=password)
-        operations.create_user(Session, test1)
-        cont = int(input("Enter 1 to continue, 0 to end: "))
-
-    # Test ability to insert new product
-    cont = int(input("Enter 1 to enter product, 0 to skip: "))
-    while(cont == 1):
-        name = input("Enter name of product: ")
-        description = input("Enter description: ")
-        price = input("Enter price: ")
-        quantity = input("Enter quantity: ")
-        color = input("Enter color: ")
-        category = input("Enter category: ")
-        userID = input("Enter userID: ") # In the final product, we will just extract the user's ID since they will be logged in
-        test1 = schemas.ProductCreate(name=name, description=description, price=price, 
-                                        quantity=quantity, color=color, category=category, userID=userID)
-        operations.create_product(Session, test1)
-        cont = int(input("Enter 1 to continue, 0 to end: "))
-
-    # Test ability to delete a user
-    cont = int(input("Enter 1 to delete user, 0 to skip: "))
-    while(cont == 1):
-        userID = input("Enter username: ")
-        operations.delete_user(Session, userID)
-        cont = int(input("Enter 1 to continue, 0 to end: "))
-
-    # Test ability to add a favorite
-    cont = int(input("Enter 1 to add favorite, 0 to skip: "))
-    while(cont == 1):
-        userID = input("Enter username: ")
-        productID = input("Enter productID: ")
-        fav = schemas.FavoriteCreate(userID=userID, productID=productID)
-        operations.create_favorite(Session, fav)
-        cont = int(input("Enter 1 to continue, 0 to end: "))
-
-    # Test ability to delete a favorite
-    cont = int(input("Enter 1 to delete favorite, 0 to skip: "))
-    while(cont == 1):
-        favID = input("Enter favoriteID: ")
-        operations.delete_favorite(Session, favID)
-        cont = int(input("Enter 1 to continue, 0 to end: "))
-
-    user = operations.get_user_by_id(Session, "tstepp")
-    print(schemas.User.from_orm(user))
-
-    favs = operations.get_user_favorites(Session, "tstepp")
-    for i in favs:
-        print(schemas.Favorite.from_orm(i))
-    """
-
