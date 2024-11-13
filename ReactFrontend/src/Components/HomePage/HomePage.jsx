@@ -34,12 +34,11 @@ const HomePage = () => {
                     params: {
                         page: currentPage,
                         limit: itemsPerPage,
-                        category: menu, // Category filter
-                        name: searchQuery // Search query
+                        category: menu,
+                        name: searchQuery 
                     }
                 });
 
-                // Update state with the fetched products and pagination data
                 setProducts(response.data.items);
                 setTotalPages(response.data.pages);
                 setLoading(false);
@@ -164,6 +163,7 @@ const HomePage = () => {
                 </li>
                 <li onClick={()=>{setMenu("technology")}}>
                     <Link to="home/technology" style={{textDecoration: "none"}}>Technology</Link>
+                    {menu === "technology" && <hr />}
                 </li>
                 <li onClick={()=>{setMenu("dorm")}}>
                             <Link to="home/dorm" style={{textDecoration: "none"}}>Dorm</Link>
@@ -171,6 +171,7 @@ const HomePage = () => {
                 </li>
                 <li onClick={()=>{setMenu("health")}}>
                             <Link to="home/health" style={{textDecoration: "none"}}>Health/Fitness</Link>
+                            {menu === "health" && <hr />}
                 </li>
                 
             </ul>
@@ -185,7 +186,7 @@ const HomePage = () => {
                             <div className="product-info">
                                 <h3>{product.name}</h3>
                                 <p>{product.description}</p>
-                                <p>{product.price}</p>
+                                <p>${product.price}</p>
                             </div>
                         </div>
                     ))
