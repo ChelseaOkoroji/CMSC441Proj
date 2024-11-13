@@ -87,6 +87,15 @@ def get_user_favorites(db: Session, userID: str):
 
 # UPDATE operations
 
+# Update user (only possible for userID, email, and (maybe) profile image)
+def update_user(db: Session, oldUserID: str, newUserID: str, newEmail: str):
+    existing_user = get_user_by_id(db, oldUserID)
+    existing_user.userID = newUserID
+    existing_user.email = newEmail
+    db.commit()
+    db.refresh(existing_user)
+    return existing_user
+
 #def update_price(db: Session, productID: int):
 
 # DELETE operations
