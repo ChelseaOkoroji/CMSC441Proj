@@ -143,7 +143,7 @@ def get_products(db: Session, filters: schemas.ProductSearch):
         query = query.filter(models.Product.name.ilike(f"%{filters.name}%"))
     if filters.max_price is not None:
         query = query.filter(models.Product.price <= filters.max_price)
-    if filters.category is not None:
+    if (filters.category is not None) and (filters.category != "all"):
         query = query.filter(models.Product.category == filters.category)
     if filters.color is not None:
         query = query.filter(models.Product.color == filters.color)

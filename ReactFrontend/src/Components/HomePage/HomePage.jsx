@@ -30,7 +30,7 @@ const HomePage = () => {
         const fetchProducts = async () => {
             try {
                 // Fetch the products from the FastAPI backend
-                const response = await axios.get('http://localhost:8000/products/', {
+                const response = await axios.get('/products/', {
                     params: {
                         page: currentPage,
                         limit: itemsPerPage,

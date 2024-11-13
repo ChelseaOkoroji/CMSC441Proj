@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../../UserContext';
 import user_profile from '../Assests/user-profile.png';
 import './Profile.css';
+import axios from 'axios';
+import { data } from '@remix-run/router';
 
 const Profile = () => {
     const { user, setUser } = useUser();
@@ -27,16 +29,16 @@ const Profile = () => {
 
     const fetchUserProducts = async () => {
         try {
-            const response = await fetch(`http://localhost:8000/user-products/${user.userID}`);
+            const response = await axios.get(`/user-products/${user.userID}/`);
             if (response.ok) {
-                const data = await response.json();
+                const data = response.data;
                 setUserProducts(data);
             }
         } catch (error) {
             console.error('Error fetching user products:', error);
         }
     };
-
+    
     const fetchPurchasedItems = async () => {
         try {
             const response = await fetch(`http://localhost:8000/purchased-items/${user.userID}`);

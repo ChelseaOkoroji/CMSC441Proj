@@ -195,7 +195,7 @@ def reset_password(reset: schemas.ResetPassword, db: Session = Depends(get_db)):
 
 # Get user's products they have listed
 # TESTED
-@app.get("/users/{userID}/products/", status_code=status.HTTP_200_OK, response_model=list[schemas.Product])
+@app.get("/user-products/{userID}/", status_code=status.HTTP_200_OK, response_model=list[schemas.Product])
 async def get_user_products(userID: str, db: Session = Depends(get_db)):
     return operations.get_user_products(db, userID)
 
