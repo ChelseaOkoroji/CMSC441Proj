@@ -30,13 +30,18 @@ const ProductUpload = () => {
             image: image ? image.name : '',  
             userID
         };
+        const formData = new FormData();
+        formData.append('userID', userID)
+        formData.append('name', name);
+        formData.append('description', description);
+        formData.append('price', price);
+        formData.append('quantity', quantity);
+        formData.append('color', color);
+        formData.append('category', category);
+        formData.append('image', image);
     
         try {
-            const response = await axios.post('/create-product/', myproduct, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            const response = await axios.post('/create-product/', formData);
             navigate('/product-upload-success');
         } catch (error) {
             console.error("Error uploading product:", error);
@@ -52,10 +57,10 @@ const ProductUpload = () => {
         <div className='product-upload'>
             <h1>Upload your Product</h1>
             <form onSubmit={handleProductUpload}>
-                <input type="text" placeholder="Product Name" value={name} onChange={(e) => setName(e.target.value)} />
-                <input type="text" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
-                <input type="number" placeholder="Price" value={price} onChange={(e) => setPrice(e.target.value)} />
-                <input type="number" placeholder="Quantity" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+                <input type="text" placeholder="Product Name" value={name} onChange={(e) => setName(e.target.value)} required/>
+                <input type="text" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} required/>
+                <input type="number" placeholder="Price" value={price} onChange={(e) => setPrice(e.target.value)} required/>
+                <input type="number" placeholder="Quantity" value={quantity} onChange={(e) => setQuantity(e.target.value)} required/>
                 <input type="text" placeholder="Color" value={color} onChange={(e) => setColor(e.target.value)} />
                 <select value={category} onChange={(e) => setCategory(e.target.value)}>
                     <option value="">Select Category</option>
@@ -66,7 +71,7 @@ const ProductUpload = () => {
                     <option value="dorm">Dorm</option>
                     <option value="health">Health/Fitness</option>
                 </select>
-                <input type="file" onChange={handleImageChange} accept="image/*" />
+                <input type="file" onChange={handleImageChange} accept="image/*" required/>
                 <button type="submit">Upload Product</button>
             </form>
         </div>

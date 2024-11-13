@@ -106,7 +106,7 @@ def add_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 # TESTED
 @app.post("/create-product/", status_code=status.HTTP_201_CREATED, response_model=schemas.Product)
 async def add_product(
-    userID: str, 
+    userID: str = Form(...), 
     name: str = Form(...),
     description: str = Form(...),
     price: float = Form(...),
