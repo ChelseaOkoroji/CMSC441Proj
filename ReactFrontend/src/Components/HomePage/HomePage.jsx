@@ -3,7 +3,7 @@ import './HomePage.css';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../../UserContext';
 import user_profile from '../Assests/user-profile.png';
-import all_products from '../Assests/all_products';
+import axios from 'axios';
 
 const HomePage = () => {
     const [menu, setMenu] = useState("all");
@@ -12,6 +12,7 @@ const HomePage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [products, setProducts] = useState([]);
     const itemsPerPage = 25;
 
     const { category } = useParams();
@@ -25,7 +26,32 @@ const HomePage = () => {
         };
     }, []);
 
-    // Handle logout functionality
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                // Fetch the products from the FastAPI backend
+                const response = await axios.get('http://localhost:8000/products/', {
+                    params: {
+                        page: currentPage,
+                        limit: itemsPerPage,
+                        category: menu, // Category filter
+                        name: searchQuery // Search query
+                    }
+                });
+
+                // Update state with the fetched products and pagination data
+                setProducts(response.data.items);
+                setTotalPages(response.data.pages);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching products:', error);
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, [menu, searchQuery, currentPage]);
+
     const handleLogout = async (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -56,8 +82,7 @@ const HomePage = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
 
-    // Filter products based on category and search query
-    const filteredProducts = all_products.filter(product => {
+    const filteredProducts = products.filter(product => {
         const matchesCategory = menu === "all" || product.category === menu;
         const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesCategory && matchesSearch;
@@ -121,51 +146,61 @@ const HomePage = () => {
             </header>
 
             <ul className='menu'>
-                        <li onClick={()=>{setMenu("all")}}>
-                            <Link to="home/all" style={{textDecoration: "none"}}>All</Link>
-                            {menu === "all" && <hr />}
-                        </li>
-                        <li onClick={()=>{setMenu("book")}}>
-                            <Link to="home/book" style={{textDecoration: "none"}}>Book</Link>
-                            {menu === "book" && <hr />}
-                        </li>
-                        <li onClick={()=>{setMenu("merch")}}>
-                            <Link to="home/merch" style={{textDecoration: "none"}}>Merch</Link>
-                            {menu === "merch" && <hr />}
-                        </li>
-                        <li onClick={()=>{setMenu("school-supplies")}}>
-                            <Link to="home/school-supplies" style={{textDecoration: "none"}}>School Supplies</Link>
-                            {menu === "school-supplies" && <hr />}
-                        </li>
-                        <li onClick={()=>{setMenu("technology")}}>
-                            <Link to="home/technology" style={{textDecoration: "none"}}>Technology</Link>
-                            {menu === "technology" && <hr />}
-                        </li>
-                        <li onClick={()=>{setMenu("dorm")}}>
+                <li onClick={() => setMenu("all")}>
+                    <Link to="home/all" style={{textDecoration: "none"}}>All</Link>
+                    {menu === "all" && <hr />}
+                </li>
+                <li onClick={() => setMenu("book")}>
+                    <Link to="home/book" style={{textDecoration: "none"}}>Book</Link>
+                    {menu === "book" && <hr />}
+                </li>
+                <li onClick={() => setMenu("merch")}>
+                    <Link to="home/merch" style={{textDecoration: "none"}}>Merch</Link>
+                    {menu === "merch" && <hr />}
+                </li>
+                <li onClick={() => setMenu("school-supplies")}>
+                    <Link to="home/school-supplies" style={{textDecoration: "none"}}>School Supplies</Link>
+                    {menu === "school-supplies" && <hr />}
+                </li>
+                <li onClick={()=>{setMenu("technology")}}>
+                    <Link to="home/technology" style={{textDecoration: "none"}}>Technology</Link>
+                </li>
+                <li onClick={()=>{setMenu("dorm")}}>
                             <Link to="home/dorm" style={{textDecoration: "none"}}>Dorm</Link>
                             {menu === "dorm" && <hr />}
-                        </li>
-                        <li onClick={()=>{setMenu("health")}}>
+                </li>
+                <li onClick={()=>{setMenu("health")}}>
                             <Link to="home/health" style={{textDecoration: "none"}}>Health/Fitness</Link>
-                            {menu === "health" && <hr />}
-                        </li>
-                    </ul>    
-            <div className="products">
-                {filteredProducts.map(product => (
-                    <div
-                        key={product.id}
-                        className="product-card"
-                        onClick={() => navigate(`/product/${product.id}`)}
-                    >
-                        <div className="product-image">
-                            <img src={product.image} alt={product.name} />
+                </li>
+                
+            </ul>
+
+            <div className="product-list">
+                {loading ? (
+                    <div>Loading products...</div>
+                ) : (
+                    filteredProducts.map(product => (
+                        <div key={product.productID} className="product-card">
+                            <img src={product.image} alt={product.name} className="product-image" />
+                            <div className="product-info">
+                                <h3>{product.name}</h3>
+                                <p>{product.description}</p>
+                                <p>{product.price}</p>
+                            </div>
                         </div>
-                        <div className="product-info">
-                            <h3>{product.name}</h3>
-                            <p className="price">PRICE: ${product.price}</p>
-                        </div>
-                    </div>
-                ))}
+                    ))
+                )}
+            </div>
+
+            {/* Pagination */}
+            <div className="pagination">
+                {currentPage > 1 && (
+                    <button onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
+                )}
+                <span>{currentPage} / {totalPages}</span>
+                {currentPage < totalPages && (
+                    <button onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
+                )}
             </div>
         </div>
     );
