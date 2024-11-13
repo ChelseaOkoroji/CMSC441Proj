@@ -87,6 +87,15 @@ def get_user_favorites(db: Session, userID: str):
 
 # UPDATE operations
 
+# Update user (only possible for userID, email, and (maybe) profile image)
+def update_user(db: Session, oldUserID: str, newUserID: str, newEmail: str):
+    existing_user = get_user_by_id(db, oldUserID)
+    existing_user.userID = newUserID
+    existing_user.email = newEmail
+    db.commit()
+    db.refresh(existing_user)
+    return existing_user
+
 #def update_price(db: Session, productID: int):
 
 # DELETE operations
@@ -143,7 +152,7 @@ def get_products(db: Session, filters: schemas.ProductSearch):
         query = query.filter(models.Product.name.ilike(f"%{filters.name}%"))
     if filters.max_price is not None:
         query = query.filter(models.Product.price <= filters.max_price)
-    if filters.category is not None:
+    if (filters.category is not None) and (filters.category != "all"):
         query = query.filter(models.Product.category == filters.category)
     if filters.color is not None:
         query = query.filter(models.Product.color == filters.color)

@@ -11,7 +11,7 @@ from database import engine, SessionLocal
 import operations, models, schemas, reset
 from fastapi.middleware.cors import CORSMiddleware # Needed since React is a different application, 
                                                    # need to enable cors (cross-origin resource sharing)
-from pydantic import ValidationError
+from pydantic import ValidationError, EmailStr
 from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timedelta
 from itsdangerous import URLSafeTimedSerializer
@@ -76,7 +76,6 @@ async def upload_image_to_cloudinary(image: UploadFile) -> str:
         return None	
 
 # FastAPI functions
-
 
 # Used when input data does not match pydantic model
 @app.exception_handler(RequestValidationError)
@@ -195,11 +194,31 @@ def reset_password(reset: schemas.ResetPassword, db: Session = Depends(get_db)):
 
 # Get user's products they have listed
 # TESTED
-@app.get("/users/{userID}/products/", status_code=status.HTTP_200_OK, response_model=list[schemas.Product])
+@app.get("/user-products/{userID}/", status_code=status.HTTP_200_OK, response_model=list[schemas.Product])
 async def get_user_products(userID: str, db: Session = Depends(get_db)):
     return operations.get_user_products(db, userID)
 
-#@app.get("/browse/", status_code=status.HTTP_200_OK, response_model=list[schemas.Product])
+# Update user's profile
+@app.put("/update-profile/{userID}/", status_code=status.HTTP_200_OK, response_model=schemas.User)
+def update_profile(
+    userID: str, 
+    newUserID: str = Form(...),
+    newEmail: EmailStr = Form(...),
+    #newProfileImage: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
+    # Check if email is already in system (if the email is different than what it was)
+    if(newEmail != operations.get_user_by_id(db, userID=userID).email):
+        db_user_email = operations.get_user_by_email(db, email=newEmail)
+        if db_user_email:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
+    # Check if userID is already in system (if the userID is different than what it was)
+    if(newUserID != userID):
+        db_user_id = operations.get_user_by_id(db, userID=newUserID)
+        if db_user_id:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already registered")
+    # Otherwise, update database
+    return operations.update_user(db, oldUserID=userID, newUserID=newUserID, newEmail=newEmail)
 
 # Login function
 # TESTED

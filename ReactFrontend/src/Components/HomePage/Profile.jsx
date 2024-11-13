@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../../UserContext';
 import user_profile from '../Assests/user-profile.png';
 import './Profile.css';
+import axios from 'axios';
+import { data } from '@remix-run/router';
 
 const Profile = () => {
     const { user, setUser } = useUser();
@@ -27,16 +29,16 @@ const Profile = () => {
 
     const fetchUserProducts = async () => {
         try {
-            const response = await fetch(`http://localhost:8000/user-products/${user.userID}`);
-            if (response.ok) {
-                const data = await response.json();
+            const response = await axios.get(`/user-products/${user.userID}/`);
+            if (response.status === 200) {
+                const data = response.data;
                 setUserProducts(data);
             }
         } catch (error) {
             console.error('Error fetching user products:', error);
         }
     };
-
+    
     const fetchPurchasedItems = async () => {
         try {
             const response = await fetch(`http://localhost:8000/purchased-items/${user.userID}`);
@@ -95,44 +97,25 @@ const Profile = () => {
         setError('');
 
         try {
-            // Check if username is taken
-            if (editForm.userID !== user.userID) {
-                const usernameCheck = await fetch(`http://localhost:8000/check-username/${editForm.userID}`);
-                const usernameData = await usernameCheck.json();
-                if (usernameData.taken) {
-                    setError('Username is already taken');
-                    return;
-                }
-            }
-
-            // Check if email is taken
-            if (editForm.email !== user.email) {
-                const emailCheck = await fetch(`http://localhost:8000/check-email/${editForm.email}`);
-                const emailData = await emailCheck.json();
-                if (emailData.taken) {
-                    setError('Email is already taken');
-                    return;
-                }
-            }
-
+            
             // Create FormData for file upload
             const formData = new FormData();
-            formData.append('userID', editForm.userID);
-            formData.append('email', editForm.email);
+            formData.append('newUserID', editForm.userID);
+            formData.append('newEmail', editForm.email);
             if (editForm.profilePicture) {
                 formData.append('profilePicture', editForm.profilePicture);
             }
+            console.log(formData);
+            console.log(user)
 
-            const response = await fetch(`http://localhost:8000/update-profile/${user.userID}`, {
-                method: 'PUT',
-                body: formData
-            });
+            const response = await axios.put(`/update-profile/${user.userID}/`, formData);
 
-            if (response.ok) {
-                const updatedUser = await response.json();
+            if (response.status === 200) {
+                const updatedUser = response.data;
                 setUser(updatedUser);
                 setIsEditing(false);
             }
+
         } catch (error) {
             console.error('Error updating profile:', error);
             setError('Failed to update profile');
@@ -211,6 +194,7 @@ const Profile = () => {
                                     name="userID"
                                     value={editForm.userID}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                             <div className="form-group">
@@ -220,6 +204,7 @@ const Profile = () => {
                                     name="email"
                                     value={editForm.email}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                             <div className="form-group">
