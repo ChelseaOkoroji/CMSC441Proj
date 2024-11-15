@@ -200,7 +200,7 @@ async def get_user_products(userID: str, db: Session = Depends(get_db)):
 
 # Update user's profile
 @app.put("/update-profile/{userID}/", status_code=status.HTTP_200_OK, response_model=schemas.User)
-def update_profile(
+async def update_profile(
     userID: str, 
     newUserID: str = Form(...),
     newEmail: EmailStr = Form(...),
@@ -218,7 +218,7 @@ def update_profile(
         if db_user_id:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already registered")
     # Otherwise, update database
-    return operations.update_user(db, oldUserID=userID, newUserID=newUserID, newEmail=newEmail)
+    return await operations.update_user(db, oldUserID=userID, newUserID=newUserID, newEmail=newEmail)
 
 # Login function
 # TESTED
