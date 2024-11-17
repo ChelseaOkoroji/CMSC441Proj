@@ -22,7 +22,7 @@
     white-space: nowrap;
 }
 
-/* Search bar styling */
+
 .search-wrapper {
     flex: 1;
     max-width: 500px;
@@ -142,7 +142,7 @@
     text-decoration: underline;
 }
 
-/* Homepage layout */
+
 .homepage {
     display: flex;
     flex-direction: column;
@@ -151,10 +151,10 @@
     padding-top: 150px;
 }
 
-/* Products grid */
+
 .products {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     gap: 30px;
     padding: 20px;
     width: 100%;
@@ -162,50 +162,39 @@
     margin: 0 auto;
 }
 
-.product-card {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
-    cursor: pointer;
+
+.product-list {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: 1px solid #e0e0e0;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    padding: 16px;
 }
 
-.product-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+.product-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    width: 200px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
 }
 
 .product-image {
-    width: 100%;
-    aspect-ratio: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.product-image img {
-    width: 80%;
-    height: 80%;
-    object-fit: contain;
-}
-
-.product-info {
-    text-align: center;
-    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
 }
 
 .product-info h3 {
-    font-size: 18px;
-    color: #0066cc;
-    margin: 10px 0;
+    font-size: 1.2em;
+    margin: 8px 0;
 }
 
+.product-info p {
+    margin: 4px 0;
+}
 .price {
     font-size: 20px;
     font-weight: bold;
@@ -219,7 +208,7 @@
     text-decoration: none;
 }
 
-/* Search bar specific styles */
+
 .search-bar {
     text-align: center;
     margin: 20px 0;
@@ -234,12 +223,12 @@
     margin-right: 50px;
 }
 
-/* Remove the separate top search container */
+
 .top-search-container {
     display: none;
 }
 
-/* Body class for homepage */
+
 .homepage-page {
     margin: 0;
     padding: 0;

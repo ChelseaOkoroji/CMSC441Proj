@@ -102,7 +102,9 @@ const HomePage = () => {
             </div>
 
             <header className='header'>
-                <h1>E-Z COLLEGE</h1>
+                <Link to="/home/home/all" className="header-title">
+                    <h1>E-Z COLLEGE</h1>
+                </Link>
                 <div className="search-wrapper">
                     <input
                         type="text"

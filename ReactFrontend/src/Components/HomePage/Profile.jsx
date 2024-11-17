@@ -148,7 +148,9 @@ const Profile = () => {
     return (
         <div className='profile-page'>
             <header className='header'>
-                <h1>E-Z COLLEGE</h1>
+                <Link to="/home/home/all" className="header-title">
+                    <h1>E-Z COLLEGE</h1>
+                </Link>
                 <div className="header-right">
                     <span className="welcome-text">WELCOME, {user?.userID}</span>
                     <div className="profile-container" onClick={toggleDropdown}>

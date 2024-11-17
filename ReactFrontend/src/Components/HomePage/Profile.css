@@ -1,3 +1,4 @@
+/*Profile.css*/
 .profile-page {
     padding-top: 80px;
     min-height: 100vh;
@@ -8,6 +9,7 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+    padding-top: 100px;
 }
 
 .profile-header {
@@ -102,11 +104,30 @@
     margin-bottom: 30px;
 }
 
-.products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
+.product-card {
+    padding: 10px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.product-card h4 {
+    font-size: 16px;
+    margin: 10px 0;
+    color: #333;
+}
+
+.product-card p {
+    font-size: 14px;
+    color: #666;
+}
+
+.product-card img {
+    max-width: 100%;
+    max-height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
 }
 
 .deactivate {
@@ -130,7 +151,6 @@
     background-color: #d32f2f;
 }
 
-/* Inherit header styles from HomePage.css */
 .header {
     width: 100%;
     background-color: #345aa0;
@@ -153,6 +173,11 @@
     margin: 0;
     color: white;
     white-space: nowrap;
+}
+.header a:link,
+.header a:visited {
+    color: black !important;
+    text-decoration: none;
 }
 
 .header-right {
