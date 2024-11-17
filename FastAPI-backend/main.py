@@ -287,10 +287,13 @@ def delete_product(userID: str, productID: int, db: Session = Depends(get_db)):
 def delete_user(userID: str, db: Session = Depends(get_db)):
     operations.delete_user(db, userID)
 
-"""
-@app.post("/logout")
-async def logout(response: Response):
+# Since we are not using JWTs at the moment, I commented out the code and
+# just added a success message since the frontend will simply be deleting
+# the session storage and redirecting the user to the home page
+@app.post("/logout/{userID}/", status_code=status.HTTP_200_OK)
+async def logout(userID: str):
     #Endpoint to handle user logout
+    """
     try:
         # Clear the JWT token cookie if you're using cookies
         response.delete_cookie(
@@ -302,4 +305,5 @@ async def logout(response: Response):
         return {"message": "Successfully logged out"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-"""
+    """
+    return {"message": "success"}

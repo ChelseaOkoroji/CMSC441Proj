@@ -1,73 +1,4 @@
-.product-upload {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 16px;
-    padding-top: 150px; /* Match homepage padding to account for fixed header */
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: #f5f5f5;
-}
-
-.product-upload h1 {
-    font-size: 32px;
-    color: #345aa0;
-    margin-bottom: 30px;
-}
-
-
-.product-upload form {
-    width: 100%;
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.product-upload input,
-.product-upload select,
-.product-upload textarea {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-    transition: border-color 0.3s;
-}
-
-.product-upload input:focus,
-.product-upload select:focus,
-.product-upload textarea:focus {
-    border-color: #345aa0;
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(52, 90, 160, 0.2);
-}
-
-
-.product-upload input,
-.product-upload select,
-.product-upload button {
-    width: 100%;
-
-    padding: 15px;
-    background-color: #345aa0;
-    color: rgb(13, 71, 115);
-    border: none;
-    border-radius: 4px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    margin-top: 20px;
-}
-
-.product-upload button:hover {
-    background-color: #2a4780;
-}
-
-/* Header styles - matching HomePage */
+/* Fixed Header */
 .header {
     width: 100%;
     background-color: #345aa0;
@@ -105,6 +36,12 @@
     color: white;
 }
 
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .profile_icon {
     width: 50px;
     height: 50px;
@@ -117,6 +54,7 @@
     display: inline-block;
 }
 
+/* Dropdown Menu */
 .dropdown-menu {
     position: absolute;
     right: 0;
@@ -132,7 +70,7 @@
 .dropdown-item {
     padding: 12px 20px;
     display: block;
-    color: #333;
+    color: black;
     text-decoration: none;
     font-size: 16px;
 }
@@ -141,7 +79,87 @@
     background-color: #f5f5f5;
 }
 
-/* File input styling */
+#logout {
+    border-radius: 0px;
+    margin: 0px;
+    font-family: "Bebas Neue";
+    color: black;
+}
+
+#logout:hover {
+    background-color: #f5f5f5;
+}
+
+/* Adjust content below header */
+.product-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    padding-top: 150px; /* Space for fixed header */
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+}
+
+.product-upload h1 {
+    font-size: 32px;
+    color: #345aa0;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.product-upload form {
+    width: 100%;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.product-upload input,
+.product-upload select,
+.product-upload textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.product-upload input:focus,
+.product-upload select:focus,
+.product-upload textarea:focus {
+    border-color: #345aa0;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(52, 90, 160, 0.2);
+}
+
+.product-upload input,
+.product-upload select,
+.product-upload button {
+    width: 100%;
+    padding: 15px;
+    background-color: #345aa0;
+    color: rgb(13, 71, 115);
+    border: none;
+    border-radius: 4px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+}
+
+.product-upload button:hover {
+    background-color: #2a4780;
+}
+
+/* File input container */
 .file-input-container {
     border: 2px dashed #ddd;
     padding: 20px;
@@ -155,7 +173,7 @@
     background-color: rgba(52, 90, 160, 0.05);
 }
 
-/* Make the page background match HomePage */
+/* Background of body */
 body {
     background-color: #f5f5f5;
     margin: 0;
@@ -167,6 +185,7 @@ body {
     box-sizing: border-box;
 }
 
+/* Styling for select dropdowns */
 .product-upload select {
     -webkit-appearance: none;
     -moz-appearance: none;
