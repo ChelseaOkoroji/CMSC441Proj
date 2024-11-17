@@ -56,24 +56,18 @@ const HomePage = () => {
         e.stopPropagation();
         
         try {
-            const response = await fetch('http://localhost:8000/logout', {
-                method: 'POST',
-                credentials: 'include',
+            const response = await axios.post(`/logout/${userID}`, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
-
-            if (!response.ok) {
-                throw new Error('Logout failed');
-            }
-
             setUser(null);
             localStorage.removeItem('user');
             setIsDropdownOpen(false);
             navigate('/');
         } catch (error) {
             console.error('Error during logout:', error);
+            alert("Unexpected error during logout");
         }
     };
 
@@ -125,18 +119,7 @@ const HomePage = () => {
                                 <button
                                     onClick={handleLogout}
                                     className="dropdown-item"
-                                    style={{
-                                        background: 'none',
-                                        border: 'none',
-                                        width: '100%',
-                                        textAlign: 'left',
-                                        padding: '8px 16px',
-                                        cursor: 'pointer',
-                                        display: 'block',
-                                        color: 'inherit',
-                                        fontFamily: 'inherit',
-                                        fontSize: 'inherit'
-                                    }}
+                                    id="logout"
                                 >
                                     Logout
                                 </button>
