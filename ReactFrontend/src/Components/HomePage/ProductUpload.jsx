@@ -62,6 +62,7 @@ const ProductUpload = () => {
                 <input type="number" placeholder="Price" value={price} onChange={(e) => setPrice(e.target.value)} required/>
                 <input type="number" placeholder="Quantity" value={quantity} onChange={(e) => setQuantity(e.target.value)} required/>
                 <select value={color} onChange={(e) => setColor(e.target.value)} >
+                    <option value="" disabled>Select Color</option>
                     <option value="red">Red</option>
                     <option value="blue">Blue</option>
                     <option value="green">Green</option>
@@ -70,8 +71,8 @@ const ProductUpload = () => {
                     <option value="white">White</option>
                     <option value="black">Black</option>
                 </select>
-                <select value={category} onChange={(e) => setCategory(e.target.value)}>
-                    <option value="">Select Category</option>
+                <select value={category} onChange={(e) => setCategory(e.target.value)} required>
+                    <option value="" disabled>Select Category</option>
                     <option value="book">Books</option>
                     <option value="merch">Merch</option>
                     <option value="school-supplies">School Supplies</option>
