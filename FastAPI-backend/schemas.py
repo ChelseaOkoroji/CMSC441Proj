@@ -94,8 +94,6 @@ class User(UserBase):
     id: int
     products: list[Product] = []
     favorites: list[Favorite] = []
-    sent_messages: list[Message] = []
-    received_messages: list[Message] = []
 
     class Config:
         from_attributes = True
