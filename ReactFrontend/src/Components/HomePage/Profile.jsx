@@ -6,6 +6,7 @@ import user_profile from '../Assests/user-profile.png';
 import './Profile.css';
 import axios from 'axios';
 import { data } from '@remix-run/router';
+import { checkForUser } from '../CheckForUser/CheckForUser';
 
 const Profile = () => {
     const { user, setUser } = useUser();
@@ -20,6 +21,8 @@ const Profile = () => {
         profilePicture: null
     });
     const [error, setError] = useState('');
+
+    checkForUser(user)
 
     useEffect(() => {
         // Fetch user's products and purchased items
@@ -126,7 +129,7 @@ const Profile = () => {
 
                 if (response.ok) {
                     setUser(null);
-                    localStorage.removeItem('user');
+                    sessionStorage.removeItem('user');
                     navigate('/');
                 }
             } catch (error) {
@@ -149,7 +152,7 @@ const Profile = () => {
                     <span className="welcome-text">WELCOME, {user?.userID}</span>
                     <div className="profile-container" onClick={toggleDropdown}>
                         <img 
-                            src={user.profilePicture || user_profile} 
+                            src={/*user.profilePicture ||*/ user_profile} 
                             alt="Profile" 
                             className='profile_icon'
                         />
@@ -174,14 +177,14 @@ const Profile = () => {
             <div className="profile-content">
                 <div className="profile-header">
                     <img 
-                        src={user.profilePicture || user_profile} 
+                        src={/*user.profilePicture ||*/ user_profile} 
                         alt="Profile" 
                         className="large-profile-image" 
                     />
                     {!isEditing ? (
                         <div className="profile-info">
-                            <h2>{user.userID}</h2>
-                            <p>{user.email}</p>
+                            <h2>{user?.userID}</h2>
+                            <p>{user?.email}</p>
                             <button onClick={() => setIsEditing(true)} className="edit-button">
                                 Edit Profile
                             </button>

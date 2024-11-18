@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../../UserContext';
 import user_profile from '../Assests/user-profile.png';
 import axios from 'axios';
+import { checkForUser } from '../CheckForUser/CheckForUser';
 
 const HomePage = () => {
     const [menu, setMenu] = useState("all");
@@ -19,7 +20,7 @@ const HomePage = () => {
     const navigate = useNavigate();
     const { user, setUser } = useUser();
 
-    const userID = user.userID;
+    checkForUser(user);
 
     useEffect(() => {
         document.body.classList.add('homepage-page');
@@ -58,7 +59,7 @@ const HomePage = () => {
         e.stopPropagation();
         
         try {
-            const response = await axios.post(`/logout/${userID}/`, {
+            const response = await axios.post(`/logout/${user.userID}/`, {
                 headers: {
                     'Content-Type': 'application/json'
                 }

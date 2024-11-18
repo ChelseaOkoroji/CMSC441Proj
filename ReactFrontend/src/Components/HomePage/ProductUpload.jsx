@@ -4,6 +4,7 @@ import user_profile from '../Assests/user-profile.png';
 import axios from 'axios';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../../UserContext';
+import { checkForUser } from '../CheckForUser/CheckForUser';
 
 const ProductUpload = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -17,10 +18,11 @@ const ProductUpload = () => {
     const [image, setImage] = useState(null);
     const navigate = useNavigate();
 
-    const userID = user.userID;
+    checkForUser(user)
 
     const handleProductUpload = async (event) => {
         event.preventDefault();
+        const userID = user.userID
     
         const myproduct = {
             name,
@@ -56,7 +58,7 @@ const ProductUpload = () => {
         e.stopPropagation();
         
         try {
-            const response = await axios.post(`/logout/${userID}/`, {
+            const response = await axios.post(`/logout/${user.userID}/`, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
