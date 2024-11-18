@@ -1,6 +1,8 @@
 # pydantic is used to validate the data types for the columns in the tables
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List
+from datetime import datetime
+from pydantic.class_validators import root_validator
 
 # Shared fields of ProductCreate and Product
 class ProductBase(BaseModel):
@@ -37,7 +39,7 @@ class PaginatedProducts(BaseModel):
 
 # Shared fields of FavoriteCreate and Favorite
 class FavoriteBase(BaseModel):
-    userID: str
+    userID: int # Really id (not userID in table)
     productID: int
 
 # Additional fields needed to create favorite
@@ -48,6 +50,31 @@ class FavoriteCreate(FavoriteBase):
 # Returned data will include what is in FavoriteBase
 class Favorite(FavoriteBase):
     favoriteID: int
+
+    class Config:
+        from_attributes = True
+
+class MessageBase(BaseModel):
+    sender_id: int
+    receiver_id: int
+    product_id: int
+    message: str
+    is_read: Optional[bool] = False
+    parent_id: Optional[int] = None
+    convo_id: Optional[int] = None
+
+    class Config:
+        from_attributes = True
+
+class MessageCreate(MessageBase):
+    pass
+
+class Message(MessageBase):
+    id: int
+    sent_at: datetime
+    sender: "User" # Forward reference
+    receiver: "User" # Forward reference
+    product: Product
 
     class Config:
         from_attributes = True
@@ -64,8 +91,11 @@ class UserCreate(UserBase):
 # Data that is returned when user is queried 
 # Returned data will include what is in UserBase
 class User(UserBase):
+    id: int
     products: list[Product] = []
     favorites: list[Favorite] = []
+    sent_messages: list[Message] = []
+    received_messages: list[Message] = []
 
     class Config:
         from_attributes = True
@@ -83,3 +113,6 @@ class ProductSearch(BaseModel):
     max_price: Optional[float] = None
     color: Optional[str] = None
     category: Optional[str] = None
+
+# Resolve forward references
+Message.update_forward_refs()
