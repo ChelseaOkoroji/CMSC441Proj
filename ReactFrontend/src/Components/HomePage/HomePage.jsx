@@ -19,6 +19,8 @@ const HomePage = () => {
     const navigate = useNavigate();
     const { user, setUser } = useUser();
 
+    const userID = user.userID;
+
     useEffect(() => {
         document.body.classList.add('homepage-page');
         return () => {
@@ -56,13 +58,13 @@ const HomePage = () => {
         e.stopPropagation();
         
         try {
-            const response = await axios.post(`/logout/${userID}`, {
+            const response = await axios.post(`/logout/${userID}/`, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             setUser(null);
-            localStorage.removeItem('user');
+            sessionStorage.removeItem('user');
             setIsDropdownOpen(false);
             navigate('/');
         } catch (error) {

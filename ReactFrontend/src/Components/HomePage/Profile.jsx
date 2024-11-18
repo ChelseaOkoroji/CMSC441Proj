@@ -56,24 +56,18 @@ const Profile = () => {
         e.stopPropagation();
         
         try {
-            const response = await fetch('/logout/', {
-                method: 'POST',
-                credentials: 'include',
+            const response = await axios.post(`/logout/${user.userID}/`, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
-
-            if (!response.ok) {
-                throw new Error('Logout failed');
-            }
-
             setUser(null);
-            localStorage.removeItem('user');
+            sessionStorage.removeItem('user');
             setIsDropdownOpen(false);
             navigate('/');
         } catch (error) {
             console.error('Error during logout:', error);
+            alert("Unexpected error during logout");
         }
     };
 
@@ -164,7 +158,13 @@ const Profile = () => {
                                 <Link to="/profile" className="dropdown-item">Profile</Link>
                                 <Link to="/favorites" className="dropdown-item">Favorites</Link>
                                 <Link to="/product-upload" className="dropdown-item">Add Item</Link>
-                                <button onClick={handleLogout} className="dropdown-item">Logout</button>
+                                <button 
+                                    onClick={handleLogout} 
+                                    className="dropdown-item"
+                                    id="logout"
+                                >
+                                    Logout
+                                </button>
                             </div>
                         )}
                     </div>

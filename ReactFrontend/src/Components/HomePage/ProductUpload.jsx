@@ -56,13 +56,13 @@ const ProductUpload = () => {
         e.stopPropagation();
         
         try {
-            const response = await axios.post(`/logout/${userID}`, {
+            const response = await axios.post(`/logout/${userID}/`, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             setUser(null);
-            localStorage.removeItem('user');
+            sessionStorage.removeItem('user');
             setIsDropdownOpen(false);
             navigate('/');
         } catch (error) {
