@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_
 import models, schemas
 import bcrypt
+from datetime import datetime
 
 # CREATE operations
 
@@ -162,3 +163,34 @@ def get_products(db: Session, filters: schemas.ProductSearch):
         query = query.filter(models.Product.color == filters.color)
     # Do the query
     return query.all()
+
+# MESSAGES
+
+# Create a new message
+def create_message(db: Session, message: schemas.MessageCreate):
+    db_message = models.Message(**message.model_dump())
+    db.add(db_message)
+    db.commit()
+    db.refresh(db_message)
+    return db_message
+
+# Get all messages sent by a user (using id, not userID)
+def get_sent_messages(db: Session, user_id: int, skip: int = 0, limit: int = 100):
+    return db.query(models.Message).filter(models.Message.sender_id == user_id).offset(skip).limit(limit).all()
+
+# Get all messages received by a user (using id, not userID)
+def get_received_messages(db: Session, user_id: int, skip: int = 0, limit: int = 100):
+    return db.query(models.Message).filter(models.Message.receiver_id == user_id).offset(skip).limit(limit).all()
+
+# Get a specific message by ID (using id, not userID)
+def get_message_by_id(db: Session, message_id: int):
+    return db.query(models.Message).filter(models.Message.id == message_id).first()
+
+# Update read status
+def mark_read(db: Session, message_id: int):
+    db_message = db.query(models.Message).filter(models.Message.id == message_id).first()
+    if db_message:
+        db_message.is_read = True
+        db.commit()
+        db.refresh(db_message)
+    return db_message
