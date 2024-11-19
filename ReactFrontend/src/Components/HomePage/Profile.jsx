@@ -14,7 +14,7 @@ const Profile = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [userProducts, setUserProducts] = useState([]);
-    const [purchasedItems, setPurchasedItems] = useState([]);
+    const [favorites, setFavorites] = useState([]);
     const [editForm, setEditForm] = useState({
         userID: user?.userID || '',
         email: user?.email || '',
@@ -25,9 +25,9 @@ const Profile = () => {
     checkForUser(user)
 
     useEffect(() => {
-        // Fetch user's products and purchased items
+        // Fetch user's products and favorites
         fetchUserProducts();
-        fetchPurchasedItems();
+        fetchFavorites();
     }, [user]);
 
     const fetchUserProducts = async () => {
@@ -41,16 +41,16 @@ const Profile = () => {
             console.error('Error fetching user products:', error);
         }
     };
-    
-    const fetchPurchasedItems = async () => {
+    // Still working
+    const fetchFavorites = async () => {
         try {
-            const response = await fetch(`http://localhost:8000/purchased-items/${user.userID}`);
-            if (response.ok) {
-                const data = await response.json();
-                setPurchasedItems(data);
+            const response = await axios.get(`/favorites/${user.userID}`);
+            if (response.status === 200) {
+                const data = response.data;
+                setFavorites(data);
             }
         } catch (error) {
-            console.error('Error fetching purchased items:', error);
+            console.error('Error fetching favorites:', error);
         }
     };
 
@@ -236,7 +236,7 @@ const Profile = () => {
 
                 <div className="user-items-section">
                     <div className="items-for-sale">
-                        <h3>Items For Sale</h3>
+                        <h3>My Items For Sale</h3>
                         <div className="products-grid">
                             {userProducts.map(product => (
                                 <div key={product.id} className="product-card">
@@ -248,10 +248,10 @@ const Profile = () => {
                         </div>
                     </div>
 
-                    <div className="purchased-items">
-                        <h3>Purchased Items</h3>
+                    <div className="favorite-items">
+                        <h3>My Favorites</h3>
                         <div className="products-grid">
-                            {purchasedItems.map(item => (
+                            {favorites.map(item => (
                                 <div key={item.id} className="product-card">
                                     <img src={item.image} alt={item.name} />
                                     <h4>{item.name}</h4>
