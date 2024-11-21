@@ -22,7 +22,7 @@ const Profile = () => {
     });
     const [error, setError] = useState('');
 
-    checkForUser(user)
+    checkForUser(user);
 
     useEffect(() => {
         // Fetch user's products and favorites
