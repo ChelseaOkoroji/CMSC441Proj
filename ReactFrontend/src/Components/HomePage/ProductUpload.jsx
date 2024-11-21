@@ -22,7 +22,7 @@ const ProductUpload = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const navigate = useNavigate();
 
-    checkForUser(user)
+    checkForUser(user);
 
     const handleProductUpload = async (event) => {
         event.preventDefault();
