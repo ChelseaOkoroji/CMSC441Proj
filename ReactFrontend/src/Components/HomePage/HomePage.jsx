@@ -79,15 +79,16 @@ const HomePage = () => {
 
     const handleAddToFavorites = async (productID) => {
         try {
-            const response = await axios.post(`/browse/product/${productID}/`, {
+            const userID = user.userID;
+            const response = await axios.post('/create-favorite/', {
                 userID,
                 productID,
             });
             // Optionally update UI state here
             alert("Added to favorites successfully!");
         } catch (error) {
-            console.error("Error uploading product:", error.response?.data || error.message);
-            alert("Failed to upload product. Please try again.");
+            console.error("Error favoriting product:", error.response?.data || error.message);
+            alert("Failed to favorite product. Please try again.");
         }
     };
 
