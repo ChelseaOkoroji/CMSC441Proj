@@ -41,7 +41,7 @@ class Favorite(Base):
 
     favoriteID = Column(Integer, primary_key=True, index=True)
 
-    userID = Column(Integer, ForeignKey('users.id', ondelete='CASCADE', onupdate='CASCADE'))
+    userID = Column(String, ForeignKey('users.userID', ondelete='CASCADE', onupdate='CASCADE'))
     productID = Column(Integer, ForeignKey('products.productID', ondelete='CASCADE', onupdate='CASCADE'))
 
 class PasswordResetToken(Base):
