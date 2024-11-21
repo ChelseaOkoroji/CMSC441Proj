@@ -12,10 +12,10 @@ from datetime import datetime, timedelta
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
-    userID = Column(String, nullable=False, unique=True, index=True)
+    userID = Column(String, primary_key=True, index=True)
     email = Column(String, nullable=False, index=True)
     password_hashed = Column(String, nullable=False)
+    name = Column(String)
 
     products = relationship("Product", cascade='all,delete', backref='seller')
     favorites = relationship("Favorite", cascade='all,delete', backref='favorited_by')
@@ -57,8 +57,8 @@ class Message(Base):
     __tablename__ = "messages"
 
     id = Column(Integer, primary_key=True, index=True)
-    sender_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False, index=True)
-    receiver_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False, index=True)
+    sender_id = Column(Integer, ForeignKey('users.userID', ondelete='CASCADE', onupdate='CASCADE'), nullable=False, index=True)
+    receiver_id = Column(Integer, ForeignKey('users.userID', ondelete='CASCADE', onupdate='CASCADE'), nullable=False, index=True)
     product_id = Column(Integer, ForeignKey('products.productID', ondelete='CASCADE', onupdate='CASCADE'), nullable=False, index=True)
 
     message = Column(Text, nullable=False)

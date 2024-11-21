@@ -93,9 +93,13 @@ async def update_user(db: Session, oldUserID: str, newUserID: str, newEmail: str
     existing_user = get_user_by_id(db, oldUserID)
     # Simply update email
     existing_user.email = newEmail
-    # Updating userID is a little more complicated since it is connected to products
+    # Updating userID is a little more complicated since it is connected to products and favorites
+    # Products
     for product in get_user_products(db, oldUserID):
         product.userID = newUserID
+    # Favorites
+    for favorite in get_user_favorites(db, oldUserID):
+        favorite.userID = newUserID
     existing_user.userID = newUserID
     db.commit()
     db.refresh(existing_user)
@@ -174,15 +178,15 @@ def create_message(db: Session, message: schemas.MessageCreate):
     db.refresh(db_message)
     return db_message
 
-# Get all messages sent by a user (using id, not userID)
-def get_sent_messages(db: Session, user_id: int, skip: int = 0, limit: int = 100):
-    return db.query(models.Message).filter(models.Message.sender_id == user_id).offset(skip).limit(limit).all()
+# Get all messages sent by a user
+def get_sent_messages(db: Session, userID: str, skip: int = 0, limit: int = 100):
+    return db.query(models.Message).filter(models.Message.sender_id == userID).offset(skip).limit(limit).all()
 
-# Get all messages received by a user (using id, not userID)
-def get_received_messages(db: Session, user_id: int, skip: int = 0, limit: int = 100):
-    return db.query(models.Message).filter(models.Message.receiver_id == user_id).offset(skip).limit(limit).all()
+# Get all messages received by a user
+def get_received_messages(db: Session, userID: str, skip: int = 0, limit: int = 100):
+    return db.query(models.Message).filter(models.Message.receiver_id == userID).offset(skip).limit(limit).all()
 
-# Get a specific message by ID (using id, not userID)
+# Get a specific message by message ID
 def get_message_by_id(db: Session, message_id: int):
     return db.query(models.Message).filter(models.Message.id == message_id).first()
 

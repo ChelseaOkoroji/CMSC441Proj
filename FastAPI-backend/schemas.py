@@ -54,8 +54,8 @@ class Favorite(FavoriteBase):
         from_attributes = True
 
 class MessageBase(BaseModel):
-    sender_id: int
-    receiver_id: int
+    sender_id: str
+    receiver_id: str
     product_id: int
     message: str
     is_read: Optional[bool] = False
@@ -69,7 +69,7 @@ class MessageBase(BaseModel):
         product_id = instance.product_id
 
         # Make convo_id
-        instance.convo_id = sender_id + receiver_id + product_id
+        instance.convo_id = sender_id + receiver_id + str(product_id)
         return instance
 
     class Config:
@@ -93,6 +93,14 @@ class Message(MessageBase):
 class UserBase(BaseModel):
     userID: str
     email: EmailStr
+    name: Optional[str] = None
+    
+    @model_validator(mode='after')
+    def set_name(cls, instance):
+        userID = instance.userID
+        # name = userID (default)
+        instance.name = userID
+        return instance
 
 # Additional fields needed to create user
 class UserCreate(UserBase):
@@ -101,7 +109,6 @@ class UserCreate(UserBase):
 # Data that is returned when user is queried 
 # Returned data will include what is in UserBase
 class User(UserBase):
-    id: int
     products: list[Product] = []
     favorites: list[Favorite] = []
 

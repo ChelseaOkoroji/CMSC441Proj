@@ -30,7 +30,7 @@ const MessagesList = ({ onSelectConversation }) => {
         setLoadingSent(true);
         if(user) {
             try {
-                const response = await axios.get(`/sent/${user.id}/`);
+                const response = await axios.get(`/sent/${user.userID}/`);
                 setSentConversations(response.data);
             } catch(error) {
                 console.error('Error getting sent messages', error);
@@ -46,7 +46,7 @@ const MessagesList = ({ onSelectConversation }) => {
         setLoadingReceived(true);
         if(user) {
             try {
-                const response = await axios.get(`/received/${user.id}/`);
+                const response = await axios.get(`/received/${user.userID}/`);
                 setReceivedConversations(response.data);
             } catch(error) {
                 console.error('Error getting received messages', error);
