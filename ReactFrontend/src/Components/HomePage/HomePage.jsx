@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import './HomePage.css';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../../UserContext';
+import empty_img from '../Assests/empty_img.png';
 import user_profile from '../Assests/user-profile.png';
 import axios from 'axios';
+import { FaRegHeart } from "react-icons/fa6";
+import { CiHeart } from "react-icons/ci";
 import { checkForUser } from '../CheckForUser/CheckForUser';
 
 const HomePage = () => {
@@ -129,7 +132,6 @@ const HomePage = () => {
                         {isDropdownOpen && (
                             <div className="dropdown-menu">
                                 <Link to="/profile" className="dropdown-item">Profile</Link>
-                                <Link to="/favorites" className="dropdown-item">Favorites</Link>
                                 <Link to="/product-upload" className="dropdown-item">Add Item</Link>
                                 <button
                                     onClick={handleLogout}
@@ -182,7 +184,11 @@ const HomePage = () => {
                 ) : (
                     filteredProducts.map(product => (
                         <div key={product.productID} className="product-card">
-                            <img src={product.image} alt={product.name} className="product-image" />
+                            <img 
+                                src={product.image ? product.image : empty_img} 
+                                alt={product.name || "Product"} 
+                                className="product-image" 
+                            />
                             <div className="product-info">
                                 <h3>{product.name}</h3>
                                 <p>{product.description}</p>
