@@ -6,6 +6,8 @@ import { useUser } from '../../UserContext';
 import user_profile from '../Assests/user-profile.png';
 import './Profile.css';
 import axios from 'axios';
+import { data } from '@remix-run/router';
+import { checkForUser } from '../CheckForUser/CheckForUser';
 
 const Profile = () => {
     const { user, setUser } = useUser();
@@ -13,7 +15,7 @@ const Profile = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [userProducts, setUserProducts] = useState([]);
-    const [favoritedProducts, setFavoritedProducts] = useState([]);
+    const [purchasedItems, setPurchasedItems] = useState([]);
     const [editForm, setEditForm] = useState({
         userID: user?.userID || '',
         email: user?.email || '',
@@ -21,11 +23,12 @@ const Profile = () => {
     });
     const [error, setError] = useState('');
 
+    checkForUser(user)
+
     useEffect(() => {
-        if (user) {
-            fetchUserProducts();
-            fetchFavoritedProducts(); 
-        }
+        // Fetch user's products and purchased items
+        fetchUserProducts();
+        fetchPurchasedItems();
     }, [user]);
 
     const fetchUserProducts = async () => {
@@ -38,35 +41,36 @@ const Profile = () => {
             console.error('Error fetching user products:', error);
         }
     };
-
-    const fetchFavoritedProducts = async () => {
-        
+    // Still working
+    const fetchFavorites = async () => {
+        try {
+            const response = await axios.get(`/favorites/${user.userID}`);
+            if (response.status === 200) {
+                const data = response.data;
+                setFavorites(data);
+            }
+        } catch (error) {
+            console.error('Error fetching favorites:', error);
+        }
     };
-    
 
     const handleLogout = async (e) => {
         e.preventDefault();
         e.stopPropagation();
 
         try {
-            const response = await fetch('/logout/', {
-                method: 'POST',
-                credentials: 'include',
+            const response = await axios.post(`/logout/${user.userID}/`, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
-
-            if (!response.ok) {
-                throw new Error('Logout failed');
-            }
-
             setUser(null);
-            localStorage.removeItem('user');
+            sessionStorage.removeItem('user');
             setIsDropdownOpen(false);
             navigate('/');
         } catch (error) {
             console.error('Error during logout:', error);
+            alert("Unexpected error during logout");
         }
     };
 
@@ -120,7 +124,7 @@ const Profile = () => {
 
                 if (response.ok) {
                     setUser(null);
-                    localStorage.removeItem('user');
+                    sessionStorage.removeItem('user');
                     navigate('/');
                 }
             } catch (error) {
@@ -143,7 +147,7 @@ const Profile = () => {
                     <span className="welcome-text">WELCOME, {user?.userID}</span>
                     <div className="profile-container" onClick={toggleDropdown}>
                         <img 
-                            src={user.profilePicture || user_profile} 
+                            src={/*user.profilePicture ||*/ user_profile} 
                             alt="Profile" 
                             className='profile_icon'
                         />
@@ -152,7 +156,13 @@ const Profile = () => {
                                 <Link to="/profile" className="dropdown-item">Profile</Link>
                                 <Link to="/favorites" className="dropdown-item">Favorites</Link>
                                 <Link to="/product-upload" className="dropdown-item">Add Item</Link>
-                                <button onClick={handleLogout} className="dropdown-item">Logout</button>
+                                <button 
+                                    onClick={handleLogout} 
+                                    className="dropdown-item"
+                                    id="logout"
+                                >
+                                    Logout
+                                </button>
                             </div>
                         )}
                     </div>
@@ -162,14 +172,14 @@ const Profile = () => {
             <div className="profile-content">
                 <div className="profile-header">
                     <img 
-                        src={user.profilePicture || user_profile} 
+                        src={/*user.profilePicture ||*/ user_profile} 
                         alt="Profile" 
                         className="large-profile-image" 
                     />
                     {!isEditing ? (
                         <div className="profile-info">
-                            <h2>{user.userID}</h2>
-                            <p>{user.email}</p>
+                            <h2>{user?.userID}</h2>
+                            <p>{user?.email}</p>
                             <button onClick={() => setIsEditing(true)} className="edit-button">
                                 Edit Profile
                             </button>
@@ -221,7 +231,7 @@ const Profile = () => {
 
                 <div className="user-items-section">
                     <div className="items-for-sale">
-                        <h3>Items For Sale</h3>
+                        <h3>My Items For Sale</h3>
                         <div className="products-grid">
                             {userProducts.map(product => (
                                 <div key={product.id} className="product-card">
@@ -233,16 +243,14 @@ const Profile = () => {
                         </div>
                     </div>
 
-                    <div className="favorited-products">
-                        <h2>Favorited Products</h2>
-                        {favoritedProducts.length > 0 ? (
-                            favoritedProducts.map((product) => (
-                                <div key={product.productID} className="product-card">
-                                    <img src={product.image} alt={product.name} />
-                                    <h3>{product.name}</h3>
-                                    <p>{product.description}</p>
-                                    <p>Price: ${product.price}</p>
-                                    <p>Category: {product.category}</p>
+                    <div className="purchased-items">
+                        <h3>Purchased Items</h3>
+                        <div className="products-grid">
+                            {purchasedItems.map(item => (
+                                <div key={item.id} className="product-card">
+                                    <img src={item.image} alt={item.name} />
+                                    <h4>{item.name}</h4>
+                                    <p>${item.price}</p>
                                 </div>
                             ))
                         ) : (

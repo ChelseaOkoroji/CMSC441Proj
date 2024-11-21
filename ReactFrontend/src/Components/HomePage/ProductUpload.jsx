@@ -4,6 +4,8 @@ import user_profile from '../Assests/user-profile.png';
 import axios from 'axios';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../../UserContext';
+import { checkForUser } from '../CheckForUser/CheckForUser';
+import Modal from '../Modal/Modal';
 
 const ProductUpload = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -15,12 +17,16 @@ const ProductUpload = () => {
     const [color, setColor] = useState('');
     const [category, setCategory] = useState('');
     const [image, setImage] = useState(null);
+
+    const [modalMessage, setModalMessage] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
     const navigate = useNavigate();
 
-    const userID = user.userID;
+    checkForUser(user)
 
     const handleProductUpload = async (event) => {
         event.preventDefault();
+        const userID = user.userID
     
         const myproduct = {
             name,
@@ -44,7 +50,12 @@ const ProductUpload = () => {
     
         try {
             const response = await axios.post('/create-product/', formData);
-            navigate('/home/home/all');
+            setModalMessage("Product upload successful. Redirecting to login page...");
+            setModalVisible(true);
+            // Redirect after 2 seconds
+            setTimeout(() => {
+                navigate('/home/marketplace'); // Redirect to the home page
+            }, 2000);
         } catch (error) {
             console.error("Error uploading product:", error);
             alert("Failed to upload product. Please try again.");
@@ -56,13 +67,13 @@ const ProductUpload = () => {
         e.stopPropagation();
         
         try {
-            const response = await axios.post(`/logout/${userID}`, {
+            const response = await axios.post(`/logout/${user.userID}/`, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             setUser(null);
-            localStorage.removeItem('user');
+            sessionStorage.removeItem('user');
             setIsDropdownOpen(false);
             navigate('/');
         } catch (error) {
@@ -77,6 +88,10 @@ const ProductUpload = () => {
 
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
+    };
+
+    const handleCloseModal = () => {
+        setModalVisible(false);
     };
 
     return (
@@ -137,6 +152,9 @@ const ProductUpload = () => {
                     <button type="submit">Upload Product</button>
                 </form>
             </div>
+            {modalVisible && (
+                <Modal message={modalMessage} onClose={handleCloseModal} />
+            )}
         </div>
     );
 };

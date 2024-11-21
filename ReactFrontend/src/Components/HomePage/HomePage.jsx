@@ -4,9 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../../UserContext';
 import user_profile from '../Assests/user-profile.png';
 import axios from 'axios';
-import { TiPlus } from "react-icons/ti";
-import { AiOutlineMessage } from "react-icons/ai";
-
+import { checkForUser } from '../CheckForUser/CheckForUser';
 
 const HomePage = () => {
     const [menu, setMenu] = useState("all");
@@ -21,7 +19,6 @@ const HomePage = () => {
     const { category } = useParams();
     const navigate = useNavigate();
     const { user, setUser } = useUser();
-    const userID = user.userID;
 
     useEffect(() => {
         document.body.classList.add('homepage-page');
@@ -60,13 +57,13 @@ const HomePage = () => {
         e.stopPropagation();
         
         try {
-            const response = await axios.post(`/logout/${userID}`, {
+            const response = await axios.post(`/logout/${user.userID}/`, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             setUser(null);
-            localStorage.removeItem('user');
+            sessionStorage.removeItem('user');
             setIsDropdownOpen(false);
             navigate('/');
         } catch (error) {

@@ -144,7 +144,7 @@ async def add_product(
 
 # Add favorite
 # TESTED
-@app.post("/browse/product/{productID}/", status_code=status.HTTP_201_CREATED, response_model=schemas.Favorite)
+@app.post("/create-favorite/", status_code=status.HTTP_201_CREATED, response_model=schemas.Favorite)
 def add_favorite(favorite: schemas.FavoriteCreate, db: Session = Depends(get_db)):
     return operations.create_favorite(db, favorite)
 
@@ -197,6 +197,11 @@ def reset_password(reset: schemas.ResetPassword, db: Session = Depends(get_db)):
 @app.get("/user-products/{userID}/", status_code=status.HTTP_200_OK, response_model=list[schemas.Product])
 async def get_user_products(userID: str, db: Session = Depends(get_db)):
     return operations.get_user_products(db, userID)
+
+# Get user's favorites
+@app.get("/user-favorites/{userID}/", status_code=status.HTTP_200_OK, response_model=list[schemas.Favorite])
+async def get_user_favorites(userID: str, db: Session = Depends(get_db)):
+    return operations.get_user_favorites(db, userID)
 
 # Update user's profile
 @app.put("/update-profile/{userID}/", status_code=status.HTTP_200_OK, response_model=schemas.User)
