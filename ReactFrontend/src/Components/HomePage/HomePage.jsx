@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import './HomePage.css';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../../UserContext';
+import empty_img from '../Assests/empty_img.png';
 import user_profile from '../Assests/user-profile.png';
 import axios from 'axios';
+import { FaRegHeart } from "react-icons/fa6";
+import { CiHeart } from "react-icons/ci";
 import { checkForUser } from '../CheckForUser/CheckForUser';
 
 const HomePage = () => {
@@ -76,15 +79,16 @@ const HomePage = () => {
 
     const handleAddToFavorites = async (productID) => {
         try {
-            const response = await axios.post(`/browse/product/${productID}/`, {
+            const userID = user.userID;
+            const response = await axios.post('/create-favorite/', {
                 userID,
                 productID,
             });
             // Optionally update UI state here
             alert("Added to favorites successfully!");
         } catch (error) {
-            console.error("Error uploading product:", error.response?.data || error.message);
-            alert("Failed to upload product. Please try again.");
+            console.error("Error favoriting product:", error.response?.data || error.message);
+            alert("Failed to favorite product. Please try again.");
         }
     };
 
@@ -131,7 +135,6 @@ const HomePage = () => {
                         {isDropdownOpen && (
                             <div className="dropdown-menu">
                                 <Link to="/profile" className="dropdown-item">Profile</Link>
-                                <Link to="/favorites" className="dropdown-item">Favorites</Link>
                                 <Link to="/product-upload" className="dropdown-item">Add Item</Link>
                                 <Link to="/messages" className="dropdown-item">Messages</Link>
                                 <button
@@ -185,7 +188,11 @@ const HomePage = () => {
                 ) : (
                     filteredProducts.map(product => (
                         <div key={product.productID} className="product-card">
-                            <img src={product.image} alt={product.name} className="product-image" />
+                            <img 
+                                src={product.image ? product.image : empty_img} 
+                                alt={product.name || "Product"} 
+                                className="product-image" 
+                            />
                             <div className="product-info">
                                 <h3>{product.name}</h3>
                                 <p>{product.description}</p>

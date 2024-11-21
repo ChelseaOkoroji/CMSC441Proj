@@ -107,7 +107,6 @@ const ProductUpload = () => {
                         {isDropdownOpen && (
                             <div className="dropdown-menu">
                                 <Link to="/profile" className="dropdown-item">Profile</Link>
-                                <Link to="/favorites" className="dropdown-item">Favorites</Link>
                                 <Link to="/product-upload" className="dropdown-item">Add Item</Link>
                                 <Link to="/messages" className="dropdown-item">Messages</Link>
                                 <button
@@ -134,6 +133,8 @@ const ProductUpload = () => {
                         <option value="" disabled>Select Color</option>
                         <option value="red">Red</option>
                         <option value="blue">Blue</option>
+                        <option value="yellow">Yellow</option>
+                        <option value="orange">Orange</option>
                         <option value="green">Green</option>
                         <option value="gray">Gray</option>
                         <option value="pink">Pink</option>

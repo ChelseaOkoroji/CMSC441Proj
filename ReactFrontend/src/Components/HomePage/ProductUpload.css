@@ -90,116 +90,106 @@
     background-color: #f5f5f5;
 }
 
-/* Adjust content below header */
 .product-upload {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 16px;
-    padding-top: 150px; /* Space for fixed header */
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: #f5f5f5;
-    border-radius: 8px;
+    background-color: white;
+    color: #333;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .product-upload h1 {
-    font-size: 32px;
-    color: #345aa0;
-    margin-bottom: 30px;
+    color: #007bff; /* Blue */
+    font-size: 28px;
     text-align: center;
+    margin-bottom: 20px;
 }
 
 .product-upload form {
-    width: 100%;
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
-.product-upload input,
-.product-upload select,
-.product-upload textarea {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-    transition: border-color 0.3s;
-}
-
-.product-upload input:focus,
-.product-upload select:focus,
-.product-upload textarea:focus {
-    border-color: #345aa0;
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(52, 90, 160, 0.2);
-}
-
-.product-upload input,
-.product-upload select,
-.product-upload button {
-    width: 100%;
-    padding: 15px;
-    background-color: #345aa0;
-    color: rgb(13, 71, 115);
-    border: none;
-    border-radius: 4px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    margin-top: 20px;
-}
-
-.product-upload button:hover {
-    background-color: #2a4780;
-}
-
-/* File input container */
-.file-input-container {
-    border: 2px dashed #ddd;
-    padding: 20px;
-    text-align: center;
-    border-radius: 4px;
-    margin: 10px 0;
-}
-
-.file-input-container:hover {
-    border-color: #345aa0;
-    background-color: rgba(52, 90, 160, 0.05);
-}
-
-/* Background of body */
-body {
-    background-color: #f5f5f5;
-    margin: 0;
+.product-upload input, .product-upload select {
     padding: 10px;
-    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.product-upload input[type="text"], .product-upload input[type="number"] {
+    width: 100%;
+}
+
+.product-upload input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.product-upload select {
+    width: 100%;
+}
+
+.product-upload button {
+    background-color: #007bff; /* Blue */
+    color: white;
+    border: none;
+    padding: 12px;
     font-size: 16px;
     border-radius: 5px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-}
-
-/* Styling for select dropdowns */
-.product-upload select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background-color: #fff;
-}
-
-.product-upload button {
-    background-color: #007bff;
-    color: white;
     cursor: pointer;
-    border: none;
+    transition: background-color 0.3s;
 }
 
 .product-upload button:hover {
+    background-color: #0056b3; /* Darker blue */
+}
+
+.product-upload input[type="file"]:hover, .product-upload input[type="text"]:hover,
+.product-upload input[type="number"]:hover, .product-upload select:hover {
+    border-color: #007bff;
+}
+
+/* Modal Styling */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 300px;
+}
+
+.modal button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.modal button:hover {
     background-color: #0056b3;
 }
