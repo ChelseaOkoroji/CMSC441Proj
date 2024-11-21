@@ -62,6 +62,7 @@ class MessageBase(BaseModel):
     parent_id: Optional[int] = None
     convo_id: Optional[int] = None
 
+    # Needs to be changed
     @model_validator(mode='after')
     def calc_convo_id(cls, instance):
         sender_id = instance.sender_id
