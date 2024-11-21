@@ -92,9 +92,13 @@ async def update_user(db: Session, oldUserID: str, newUserID: str, newEmail: str
     existing_user = get_user_by_id(db, oldUserID)
     # Simply update email
     existing_user.email = newEmail
-    # Updating userID is a little more complicated since it is connected to products
+    # Updating userID is a little more complicated since it is connected to products and favorites
+    # Products
     for product in get_user_products(db, oldUserID):
         product.userID = newUserID
+    # Favorites
+    for favorite in get_user_products(db, oldUserID):
+        favorite.userID = newUserID
     existing_user.userID = newUserID
     db.commit()
     db.refresh(existing_user)
