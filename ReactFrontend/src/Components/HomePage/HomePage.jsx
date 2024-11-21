@@ -23,6 +23,8 @@ const HomePage = () => {
     const navigate = useNavigate();
     const { user, setUser } = useUser();
 
+    checkForUser(user);
+
     useEffect(() => {
         document.body.classList.add('homepage-page');
         return () => {
