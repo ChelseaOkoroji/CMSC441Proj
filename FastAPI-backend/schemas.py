@@ -48,6 +48,7 @@ class FavoriteCreate(FavoriteBase):
 # Returned data will include what is in FavoriteBase
 class Favorite(FavoriteBase):
     favoriteID: int
+    product: Product
 
     class Config:
         from_attributes = True
