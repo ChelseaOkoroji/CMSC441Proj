@@ -1,11 +1,11 @@
-// Profile.jsx
+
+//Profile.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../../UserContext';
 import user_profile from '../Assests/user-profile.png';
 import './Profile.css';
 import axios from 'axios';
-import { data } from '@remix-run/router';
 
 const Profile = () => {
     const { user, setUser } = useUser();
@@ -13,7 +13,7 @@ const Profile = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [userProducts, setUserProducts] = useState([]);
-    const [purchasedItems, setPurchasedItems] = useState([]);
+    const [favoritedProducts, setFavoritedProducts] = useState([]);
     const [editForm, setEditForm] = useState({
         userID: user?.userID || '',
         email: user?.email || '',
@@ -22,39 +22,32 @@ const Profile = () => {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        // Fetch user's products and purchased items
-        fetchUserProducts();
-        fetchPurchasedItems();
+        if (user) {
+            fetchUserProducts();
+            fetchFavoritedProducts(); 
+        }
     }, [user]);
 
     const fetchUserProducts = async () => {
         try {
             const response = await axios.get(`/user-products/${user.userID}/`);
             if (response.status === 200) {
-                const data = response.data;
-                setUserProducts(data);
+                setUserProducts(response.data);
             }
         } catch (error) {
             console.error('Error fetching user products:', error);
         }
     };
-    
-    const fetchPurchasedItems = async () => {
-        try {
-            const response = await fetch(`http://localhost:8000/purchased-items/${user.userID}`);
-            if (response.ok) {
-                const data = await response.json();
-                setPurchasedItems(data);
-            }
-        } catch (error) {
-            console.error('Error fetching purchased items:', error);
-        }
+
+    const fetchFavoritedProducts = async () => {
+        
     };
+    
 
     const handleLogout = async (e) => {
         e.preventDefault();
         e.stopPropagation();
-        
+
         try {
             const response = await fetch('/logout/', {
                 method: 'POST',
@@ -97,16 +90,12 @@ const Profile = () => {
         setError('');
 
         try {
-            
-            // Create FormData for file upload
             const formData = new FormData();
             formData.append('newUserID', editForm.userID);
             formData.append('newEmail', editForm.email);
             if (editForm.profilePicture) {
                 formData.append('profilePicture', editForm.profilePicture);
             }
-            console.log(formData);
-            console.log(user)
 
             const response = await axios.put(`/update-profile/${user.userID}/`, formData);
 
@@ -115,7 +104,6 @@ const Profile = () => {
                 setUser(updatedUser);
                 setIsEditing(false);
             }
-
         } catch (error) {
             console.error('Error updating profile:', error);
             setError('Failed to update profile');
@@ -245,19 +233,23 @@ const Profile = () => {
                         </div>
                     </div>
 
-                    <div className="purchased-items">
-                        <h3>Purchased Items</h3>
-                        <div className="products-grid">
-                            {purchasedItems.map(item => (
-                                <div key={item.id} className="product-card">
-                                    <img src={item.image} alt={item.name} />
-                                    <h4>{item.name}</h4>
-                                    <p>${item.price}</p>
+                    <div className="favorited-products">
+                        <h2>Favorited Products</h2>
+                        {favoritedProducts.length > 0 ? (
+                            favoritedProducts.map((product) => (
+                                <div key={product.productID} className="product-card">
+                                    <img src={product.image} alt={product.name} />
+                                    <h3>{product.name}</h3>
+                                    <p>{product.description}</p>
+                                    <p>Price: ${product.price}</p>
+                                    <p>Category: {product.category}</p>
                                 </div>
-                            ))}
-                        </div>
+                            ))
+                        ) : (
+                            <p>No favorited products yet.</p>
+                        )}
                     </div>
-                </div>
+                                    </div>
 
                 <div className="deactivate">
                     <h3>Deactivate</h3>

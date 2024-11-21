@@ -44,7 +44,7 @@ const ProductUpload = () => {
     
         try {
             const response = await axios.post('/create-product/', formData);
-            navigate('/product-upload-success');
+            navigate('/home/home/all');
         } catch (error) {
             console.error("Error uploading product:", error);
             alert("Failed to upload product. Please try again.");

@@ -4,6 +4,9 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../../UserContext';
 import user_profile from '../Assests/user-profile.png';
 import axios from 'axios';
+import { TiPlus } from "react-icons/ti";
+import { AiOutlineMessage } from "react-icons/ai";
+
 
 const HomePage = () => {
     const [menu, setMenu] = useState("all");
@@ -18,6 +21,7 @@ const HomePage = () => {
     const { category } = useParams();
     const navigate = useNavigate();
     const { user, setUser } = useUser();
+    const userID = user.userID;
 
     useEffect(() => {
         document.body.classList.add('homepage-page');
@@ -68,6 +72,20 @@ const HomePage = () => {
         } catch (error) {
             console.error('Error during logout:', error);
             alert("Unexpected error during logout");
+        }
+    };
+
+    const handleAddToFavorites = async (productID) => {
+        try {
+            const response = await axios.post(`/browse/product/${productID}/`, {
+                userID,
+                productID,
+            });
+            // Optionally update UI state here
+            alert("Added to favorites successfully!");
+        } catch (error) {
+            console.error("Error uploading product:", error.response?.data || error.message);
+            alert("Failed to upload product. Please try again.");
         }
     };
 
@@ -172,6 +190,15 @@ const HomePage = () => {
                                 <h3>{product.name}</h3>
                                 <p>{product.description}</p>
                                 <p>${product.price}</p>
+                                <div className="product-attributes">
+                                <button 
+                                    onClick={() => handleAddToFavorites(product.productID)} 
+                                    className="favorite-button"
+                                >
+                                    Add to favorites
+                                </button>
+                            </div>
+                             
                             </div>
                         </div>
                     ))
