@@ -57,19 +57,19 @@ class Message(Base):
     __tablename__ = "messages"
 
     id = Column(Integer, primary_key=True, index=True)
-    sender_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
-    receiver_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE', onupdate='CASCADE'), index=True)
-    product_id = Column(Integer, ForeignKey('products.productID', ondelete='CASCADE', onupdate='CASCADE'), index=True)
+    sender_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False, index=True)
+    receiver_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False, index=True)
+    product_id = Column(Integer, ForeignKey('products.productID', ondelete='CASCADE', onupdate='CASCADE'), nullable=False, index=True)
 
     message = Column(Text, nullable=False)
     sent_at = Column(DateTime, default=datetime.now())
     is_read = Column(Boolean, default=False)
-    parent_id = Column(Integer, ForeignKey('messages.id', ondelete='SET NULL')) # Won't actually be option to delete
-    convo_id = Column(Integer, index=True)
+    parent_id = Column(Integer, ForeignKey('messages.id', ondelete='SET NULL'), nullable=True) # If this isn't the first message
+    convo_id = Column(Integer, index=True) # Group messages (like messages between same people) 
     
     parent_message = relationship("Message", remote_side=[id]) # Message threading (replies)
-    sender = relationship("User", foreign_keys=[sender_id])
-    receiver = relationship("User", foreign_keys=[receiver_id])
+    #sender = relationship("User", foreign_keys=[sender_id])
+    #receiver = relationship("User", foreign_keys=[receiver_id])
     product = relationship("Product", foreign_keys=[product_id])
 
     def __repr__(self):

@@ -109,6 +109,7 @@ const ProductUpload = () => {
                                 <Link to="/profile" className="dropdown-item">Profile</Link>
                                 <Link to="/favorites" className="dropdown-item">Favorites</Link>
                                 <Link to="/product-upload" className="dropdown-item">Add Item</Link>
+                                <Link to="/messages" className="dropdown-item">Messages</Link>
                                 <button
                                     onClick={handleLogout}
                                     className="dropdown-item"

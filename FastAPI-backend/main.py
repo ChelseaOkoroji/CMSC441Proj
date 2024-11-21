@@ -323,13 +323,13 @@ def create_message(message: schemas.MessageCreate, db: Session = Depends(get_db)
     return db_message
 
 # Get all messages sent by a user
-@app.get("/sent/", response_model=List[schemas.Message])
+@app.get("/sent/{id}/", response_model=List[schemas.Message])
 def get_sent_messages(id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     sent_messages = operations.get_sent_messages(db, id, skip, limit)
     return sent_messages
 
 # Get all messages received by a user
-@app.get("/received/", status_code=status.HTTP_200_OK, response_model=List[schemas.Message])
+@app.get("/received/{id}/", status_code=status.HTTP_200_OK, response_model=List[schemas.Message])
 def get_received_messages(id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     received_messages = operations.get_received_messages(db, id, skip, limit)
     return received_messages

@@ -12,6 +12,7 @@ import ProductsInfo from './Components/Products/ProductsInfo';
 import ProtectedRoute from './ProtectedRoute';
 import Profile from './Components/HomePage/Profile';
 import ProductUpload from './Components/HomePage/ProductUpload';
+import MessagesList from './Components/Messages/MessagesList';
 
 const App = () => {
   return (
@@ -44,6 +45,7 @@ const App = () => {
           </Route>
           <Route path='/profile' element={<Profile />} />
           <Route path='/product-upload' element={<ProductUpload />} />
+          <Route path='/messages' element={<MessagesList />} />
         </Routes>
       </Router>
     </UserProvider>
