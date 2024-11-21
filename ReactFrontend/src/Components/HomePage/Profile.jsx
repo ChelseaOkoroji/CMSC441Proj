@@ -1,101 +1,139 @@
-import './ProductUpload.css';
+//Profile.jsx
 import React, { useState, useEffect } from 'react';
-import user_profile from '../Assests/user-profile.png';
-import axios from 'axios';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../../UserContext';
-import { checkForUser } from '../CheckForUser/CheckForUser';
-import Modal from '../Modal/Modal';
+import user_profile from '../Assests/user-profile.png';
+import './Profile.css';
+import axios from 'axios';
 
-const ProductUpload = () => {
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+const Profile = () => {
     const { user, setUser } = useUser();
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [price, setPrice] = useState('');
-    const [quantity, setQuantity] = useState('');
-    const [color, setColor] = useState('');
-    const [category, setCategory] = useState('');
-    const [image, setImage] = useState(null);
-
-    const [modalMessage, setModalMessage] = useState('');
-    const [modalVisible, setModalVisible] = useState(false);
     const navigate = useNavigate();
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [userProducts, setUserProducts] = useState([]);
+    const [favoritedProducts, setFavoritedProducts] = useState([]);
+    const [editForm, setEditForm] = useState({
+        userID: user?.userID || '',
+        email: user?.email || '',
+        profilePicture: null
+    });
+    const [error, setError] = useState('');
 
-    checkForUser(user);
+    useEffect(() => {
+        if (user) {
+            fetchUserProducts();
+            fetchFavoritedProducts(); 
+        }
+    }, [user]);
 
-    const handleProductUpload = async (event) => {
-        event.preventDefault();
-        const userID = user.userID
-    
-        const myproduct = {
-            name,
-            description,
-            price: parseFloat(price), 
-            quantity: parseInt(quantity),  
-            color,
-            category,
-            image: image ? image.name : '',  
-            userID
-        };
-        const formData = new FormData();
-        formData.append('userID', userID)
-        formData.append('name', name);
-        formData.append('description', description);
-        formData.append('price', price);
-        formData.append('quantity', quantity);
-        formData.append('color', color);
-        formData.append('category', category);
-        formData.append('image', image);
-    
+    const fetchUserProducts = async () => {
         try {
-            const response = await axios.post('/create-product/', formData);
-            setModalMessage("Product upload successful. Redirecting to login page...");
-            setModalVisible(true);
-            // Redirect after 2 seconds
-            setTimeout(() => {
-                navigate('/home/marketplace'); // Redirect to the home page
-            }, 2000);
+            const response = await axios.get(`/user-products/${user.userID}/`);
+            if (response.status === 200) {
+                setUserProducts(response.data);
+            }
         } catch (error) {
-            console.error("Error uploading product:", error);
-            alert("Failed to upload product. Please try again.");
+            console.error('Error fetching user products:', error);
         }
     };
+
+    const fetchFavoritedProducts = async () => {
+        
+    };
+    
 
     const handleLogout = async (e) => {
         e.preventDefault();
         e.stopPropagation();
-        
+
         try {
-            const response = await axios.post(`/logout/${user.userID}/`, {
+            const response = await fetch('/logout/', {
+                method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
+
+            if (!response.ok) {
+                throw new Error('Logout failed');
+            }
+
             setUser(null);
-            sessionStorage.removeItem('user');
+            localStorage.removeItem('user');
             setIsDropdownOpen(false);
             navigate('/');
         } catch (error) {
             console.error('Error during logout:', error);
-            alert("Unexpected error during logout");
         }
     };
 
-    const handleImageChange = (event) => {
-        setImage(event.target.files[0]);
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setEditForm(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleFileChange = (e) => {
+        setEditForm(prev => ({
+            ...prev,
+            profilePicture: e.target.files[0]
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+
+        try {
+            const formData = new FormData();
+            formData.append('newUserID', editForm.userID);
+            formData.append('newEmail', editForm.email);
+            if (editForm.profilePicture) {
+                formData.append('profilePicture', editForm.profilePicture);
+            }
+
+            const response = await axios.put(`/update-profile/${user.userID}/`, formData);
+
+            if (response.status === 200) {
+                const updatedUser = response.data;
+                setUser(updatedUser);
+                setIsEditing(false);
+            }
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            setError('Failed to update profile');
+        }
+    };
+
+    const handleDeleteAccount = async () => {
+        if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+            try {
+                const response = await fetch(`/users/${user.userID}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    setUser(null);
+                    localStorage.removeItem('user');
+                    navigate('/');
+                }
+            } catch (error) {
+                console.error('Error deleting account:', error);
+            }
+        }
     };
 
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
 
-    const handleCloseModal = () => {
-        setModalVisible(false);
-    };
-
     return (
-        <div className='homepage'>
+        <div className='profile-page'>
             <header className='header'>
                 <Link to="/home/home/all" className="header-title">
                     <h1>E-Z COLLEGE</h1>
@@ -103,60 +141,127 @@ const ProductUpload = () => {
                 <div className="header-right">
                     <span className="welcome-text">WELCOME, {user?.userID}</span>
                     <div className="profile-container" onClick={toggleDropdown}>
-                        <img src={user_profile} alt="Profile" className='profile_icon' />
+                        <img 
+                            src={user.profilePicture || user_profile} 
+                            alt="Profile" 
+                            className='profile_icon'
+                        />
                         {isDropdownOpen && (
                             <div className="dropdown-menu">
                                 <Link to="/profile" className="dropdown-item">Profile</Link>
                                 <Link to="/favorites" className="dropdown-item">Favorites</Link>
                                 <Link to="/product-upload" className="dropdown-item">Add Item</Link>
-                                <button
-                                    onClick={handleLogout}
-                                    className="dropdown-item"
-                                    id="logout"
-                                >
-                                    Logout
-                                </button>
+                                <button onClick={handleLogout} className="dropdown-item">Logout</button>
                             </div>
                         )}
                     </div>
                 </div>
             </header>
 
-            <div className='product-upload'>
-                <h1>Upload your Product</h1>
-                <form onSubmit={handleProductUpload}>
-                    <input type="text" placeholder="Product Name" value={name} onChange={(e) => setName(e.target.value)} required/>
-                    <input type="text" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} required/>
-                    <input type="number" placeholder="Price" value={price} onChange={(e) => setPrice(e.target.value)} required/>
-                    <input type="number" placeholder="Quantity" value={quantity} onChange={(e) => setQuantity(e.target.value)} required/>
-                    <select value={color} onChange={(e) => setColor(e.target.value)} >
-                        <option value="" disabled>Select Color</option>
-                        <option value="red">Red</option>
-                        <option value="blue">Blue</option>
-                        <option value="green">Green</option>
-                        <option value="gray">Gray</option>
-                        <option value="pink">Pink</option>
-                        <option value="white">White</option>
-                        <option value="black">Black</option>
-                    </select>
-                    <select value={category} onChange={(e) => setCategory(e.target.value)} required>
-                        <option value="" disabled>Select Category</option>
-                        <option value="book">Books</option>
-                        <option value="merch">Merch</option>
-                        <option value="school-supplies">School Supplies</option>
-                        <option value="technology">Technology</option>
-                        <option value="dorm">Dorm</option>
-                        <option value="health">Health/Fitness</option>
-                    </select>
-                    <input type="file" onChange={handleImageChange} accept="image/*" required/>
-                    <button type="submit">Upload Product</button>
-                </form>
+            <div className="profile-content">
+                <div className="profile-header">
+                    <img 
+                        src={user.profilePicture || user_profile} 
+                        alt="Profile" 
+                        className="large-profile-image" 
+                    />
+                    {!isEditing ? (
+                        <div className="profile-info">
+                            <h2>{user.userID}</h2>
+                            <p>{user.email}</p>
+                            <button onClick={() => setIsEditing(true)} className="edit-button">
+                                Edit Profile
+                            </button>
+                        </div>
+                    ) : (
+                        <form onSubmit={handleSubmit} className="edit-form">
+                            {error && <p className="error-message">{error}</p>}
+                            <div className="form-group">
+                                <label>Username:</label>
+                                <input
+                                    type="text"
+                                    name="userID"
+                                    value={editForm.userID}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Email:</label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={editForm.email}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Profile Picture:</label>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleFileChange}
+                                />
+                            </div>
+                            <div className="form-buttons">
+                                <button type="submit" className="save-button">Save</button>
+                                <button 
+                                    type="button" 
+                                    onClick={() => setIsEditing(false)} 
+                                    className="cancel-button"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    )}
+                </div>
+
+                <div className="user-items-section">
+                    <div className="items-for-sale">
+                        <h3>Items For Sale</h3>
+                        <div className="products-grid">
+                            {userProducts.map(product => (
+                                <div key={product.id} className="product-card">
+                                    <img src={product.image} alt={product.name} />
+                                    <h4>{product.name}</h4>
+                                    <p>${product.price}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="favorited-products">
+                        <h2>Favorited Products</h2>
+                        {favoritedProducts.length > 0 ? (
+                            favoritedProducts.map((product) => (
+                                <div key={product.productID} className="product-card">
+                                    <img src={product.image} alt={product.name} />
+                                    <h3>{product.name}</h3>
+                                    <p>{product.description}</p>
+                                    <p>Price: ${product.price}</p>
+                                    <p>Category: {product.category}</p>
+                                </div>
+                            ))
+                        ) : (
+                            <p>No favorited products yet.</p>
+                        )}
+                    </div>
+                                    </div>
+
+                <div className="deactivate">
+                    <h3>Deactivate</h3>
+                    <button 
+                        onClick={handleDeleteAccount}
+                        className="delete-account-button"
+                    >
+                        Delete Account
+                    </button>
+                </div>
             </div>
-            {modalVisible && (
-                <Modal message={modalMessage} onClose={handleCloseModal} />
-            )}
         </div>
     );
 };
 
-export default ProductUpload;
+export default Profile;
