@@ -33,7 +33,8 @@ class Product(Base):
     category = Column(String) # User will choose from a pre-defined list when they add their product
     image = Column(String, nullable=False)
 
-    userID = Column(Integer, ForeignKey('users.userID', ondelete='CASCADE', onupdate='CASCADE'))
+    userID = Column(String, ForeignKey('users.userID', ondelete='CASCADE', onupdate='CASCADE')) # Seller
+    favorites = relationship("Favorite", cascade='all, delete', backref='product')
 
 # All attributes for favorites functionality
 class Favorite(Base):

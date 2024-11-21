@@ -20,8 +20,6 @@ const HomePage = () => {
     const navigate = useNavigate();
     const { user, setUser } = useUser();
 
-    checkForUser(user);
-
     useEffect(() => {
         document.body.classList.add('homepage-page');
         return () => {
@@ -71,6 +69,20 @@ const HomePage = () => {
         } catch (error) {
             console.error('Error during logout:', error);
             alert("Unexpected error during logout");
+        }
+    };
+
+    const handleAddToFavorites = async (productID) => {
+        try {
+            const response = await axios.post(`/browse/product/${productID}/`, {
+                userID,
+                productID,
+            });
+            // Optionally update UI state here
+            alert("Added to favorites successfully!");
+        } catch (error) {
+            console.error("Error uploading product:", error.response?.data || error.message);
+            alert("Failed to upload product. Please try again.");
         }
     };
 
@@ -176,6 +188,15 @@ const HomePage = () => {
                                 <h3>{product.name}</h3>
                                 <p>{product.description}</p>
                                 <p>${product.price}</p>
+                                <div className="product-attributes">
+                                <button 
+                                    onClick={() => handleAddToFavorites(product.productID)} 
+                                    className="favorite-button"
+                                >
+                                    Add to favorites
+                                </button>
+                            </div>
+                             
                             </div>
                         </div>
                     ))
