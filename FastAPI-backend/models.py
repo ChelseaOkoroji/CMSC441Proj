@@ -15,7 +15,7 @@ class User(Base):
     userID = Column(String, primary_key=True, index=True)
     email = Column(String, nullable=False, index=True)
     password_hashed = Column(String, nullable=False)
-    name = Column(String)
+    #name = Column(String)
 
     products = relationship("Product", cascade='all,delete', backref='seller')
     favorites = relationship("Favorite", cascade='all,delete', backref='favorited_by')
@@ -66,7 +66,7 @@ class Message(Base):
     sent_at = Column(DateTime, default=datetime.now())
     is_read = Column(Boolean, default=False)
     parent_id = Column(Integer, ForeignKey('messages.id', ondelete='SET NULL'), nullable=True) # If this isn't the first message
-    convo_id = Column(Integer, index=True) # Group messages (like messages between same people) 
+    convo_id = Column(String, index=True, nullable=False) # Group messages (like messages between same people) 
     
     parent_message = relationship("Message", remote_side=[id]) # Message threading (replies)
     #sender = relationship("User", foreign_keys=[sender_id])

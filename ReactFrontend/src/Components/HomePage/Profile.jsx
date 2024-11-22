@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../../UserContext';
+import { checkForUser } from '../CheckForUser/CheckForUser';
 import user_profile from '../Assests/user-profile.png';
 import './Profile.css';
 import axios from 'axios';

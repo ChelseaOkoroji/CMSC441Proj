@@ -1,7 +1,8 @@
 # pydantic is used to validate the data types for the columns in the tables
-from pydantic import BaseModel, EmailStr, model_validator
+from pydantic import BaseModel, EmailStr, model_validator, field_validator, Field
 from typing import Optional, List
 from datetime import datetime
+import uuid
 
 # Shared fields of ProductCreate and Product
 class ProductBase(BaseModel):
@@ -61,19 +62,17 @@ class MessageBase(BaseModel):
     message: str
     is_read: Optional[bool] = False
     parent_id: Optional[int] = None
-    convo_id: Optional[int] = None
-
-    # Needs to be changed
-    @model_validator(mode='after')
-    def calc_convo_id(cls, instance):
-        sender_id = instance.sender_id
-        receiver_id = instance.receiver_id
-        product_id = instance.product_id
-
-        # Make convo_id
-        instance.convo_id = sender_id + receiver_id + str(product_id)
-        return instance
-
+    convo_id: Optional[str] = None
+    
+    # If no convo_id is provided, generate one
+    @field_validator('convo_id')
+    @classmethod
+    def generate_convo_id(cls, convoID: Optional[str]) -> str:
+        # Used if no convo_id is provided (i.e. first message)
+        if convoID is None:
+            convoID = str(uuid.uuid4())
+        return convoID
+    
     class Config:
         from_attributes = True
 
