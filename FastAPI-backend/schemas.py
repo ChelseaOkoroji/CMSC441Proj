@@ -94,15 +94,6 @@ class Message(MessageBase):
 class UserBase(BaseModel):
     userID: str
     email: EmailStr
-    name: Optional[str] = None
-    """
-    @model_validator(mode='after')
-    def set_name(cls, instance):
-        userID = instance.userID
-        # name = userID (default)
-        instance.name = userID
-        return instance
-    """
 
 # Additional fields needed to create user
 class UserCreate(UserBase):
