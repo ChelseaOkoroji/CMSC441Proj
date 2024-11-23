@@ -12,8 +12,12 @@ from datetime import datetime
 def create_user(db: Session, user: schemas.UserCreate):
     # Hash password
     hashed_password = bcrypt.hashpw(user.password.encode("utf-8"), bcrypt.gensalt())
+    # Add name (default = userID)
+    name = user.name
+    if(user.name is None):
+        name = user.userID
     # New user
-    new_user = models.User(userID=user.userID, email=user.email, password_hashed=hashed_password.decode("utf-8"))
+    new_user = models.User(userID=user.userID, email=user.email, password_hashed=hashed_password.decode("utf-8"), name=name)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)

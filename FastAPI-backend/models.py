@@ -15,7 +15,7 @@ class User(Base):
     userID = Column(String, primary_key=True, index=True)
     email = Column(String, nullable=False, index=True)
     password_hashed = Column(String, nullable=False)
-    #name = Column(String)
+    name = Column(String, nullable=False)
 
     products = relationship("Product", cascade='all,delete', backref='seller')
     favorites = relationship("Favorite", cascade='all,delete', backref='favorited_by')
