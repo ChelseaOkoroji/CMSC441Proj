@@ -21,7 +21,7 @@ const MessageModal = ({ isOpen, onClose, onSendMessage, userID, sellerID, produc
     return (
         <div className="modal-overlay">
             <div className="modal-content">
-                <h2>Send a Message to Seller {sellerID}</h2>
+                <h2>Send a Message to {sellerID}</h2>
                 <textarea
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
