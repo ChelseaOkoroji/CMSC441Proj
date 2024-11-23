@@ -49,6 +49,12 @@
     background-color: #5e6062;
 }
 
+textarea {
+    box-sizing: border-box;
+    max-width: 100%;
+    border-radius: 2px;
+}
+
 /* Responsive adjustments*/ 
 @media (max-width: 500px) {
     .modal-content {
