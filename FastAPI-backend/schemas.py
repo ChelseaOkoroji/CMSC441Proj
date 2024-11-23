@@ -62,7 +62,7 @@ class MessageBase(BaseModel):
     message: str
     is_read: Optional[bool] = False
     parent_id: Optional[int] = None
-    convo_id: Optional[str] = None
+    convo_id: Optional[str] = str(uuid.uuid4())
     
     # If no convo_id is provided, generate one
     @field_validator('convo_id')
@@ -95,13 +95,14 @@ class UserBase(BaseModel):
     userID: str
     email: EmailStr
     name: Optional[str] = None
-    
+    """
     @model_validator(mode='after')
     def set_name(cls, instance):
         userID = instance.userID
         # name = userID (default)
         instance.name = userID
         return instance
+    """
 
 # Additional fields needed to create user
 class UserCreate(UserBase):

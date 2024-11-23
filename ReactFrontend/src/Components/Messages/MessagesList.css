@@ -138,4 +138,8 @@
 #logout:hover {
     background-color: #f5f5f5;
 }
+
+.empty {
+    text-align: center;
+}
   

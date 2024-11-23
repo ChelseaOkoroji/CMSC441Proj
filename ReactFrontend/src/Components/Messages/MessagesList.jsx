@@ -128,7 +128,7 @@ const MessagesList = ({ onSelectConversation }) => {
                                     </li>
                                 ))
                             ) : (
-                                <p>No sent messages yet.</p>
+                                <p className='empty'>No sent messages yet.</p>
                             )}
                         </ul>
                     )}
@@ -150,7 +150,7 @@ const MessagesList = ({ onSelectConversation }) => {
                                     </li>
                                 ))
                             ) : (
-                                <p>No received messages yet.</p>
+                                <p className='empty'>No received messages yet.</p>
                             )}
                         </ul>
                     )}
