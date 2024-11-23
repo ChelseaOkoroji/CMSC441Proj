@@ -127,7 +127,7 @@ const MessagesList = ({ onSelectConversation }) => {
                                         <div className="convo-item">
                                             <strong>{convo.product.name}</strong>
                                             <p>To: {convo.receiver_id}</p>
-                                            <p>{convo.message}</p>
+                                            <p>{convo.message.length > 15 ? `${convo.message.slice(0, 15)}...` : convo.message}</p>
                                         </div>
                                     </li>
                                 ))
@@ -150,7 +150,7 @@ const MessagesList = ({ onSelectConversation }) => {
                                         <div className="convo-item">
                                             <strong>{convo.product.name}</strong>
                                             <p>From: {convo.sender_id}</p>
-                                            <p>{convo.message}</p>
+                                            <p>{convo.message.length > 15 ? `${convo.message.slice(0, 15)}...` : convo.message}</p>
                                         </div>
                                     </li>
                                 ))

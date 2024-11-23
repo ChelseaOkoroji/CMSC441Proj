@@ -142,4 +142,8 @@
 .empty {
     text-align: center;
 }
+
+.convo-item p {
+    font-size: 13px;
+}
   
