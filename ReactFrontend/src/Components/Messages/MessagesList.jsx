@@ -122,6 +122,7 @@ const MessagesList = ({ onSelectConversation }) => {
                                     <li key={convo.convo_id} onClick={() => onSelectConversation(convo.convo_id)}>
                                         <div className="convo-item">
                                             <strong>{convo.product.name}</strong>
+                                            <p>To: {convo.receiver_id}</p>
                                             <p>{convo.message}</p>
                                         </div>
                                     </li>
@@ -144,6 +145,7 @@ const MessagesList = ({ onSelectConversation }) => {
                                     <li key={convo.convo_id} onClick={() => onSelectConversation(convo.convo_id)}>
                                         <div className="convo-item">
                                             <strong>{convo.product.name}</strong>
+                                            <p>From: {convo.sender_id}</p>
                                             <p>{convo.message}</p>
                                         </div>
                                     </li>
