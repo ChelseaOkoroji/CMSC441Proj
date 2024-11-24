@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session, aliased
-from sqlalchemy import and_, func
+from sqlalchemy import and_, func, update
 import models, schemas
 import bcrypt
 from datetime import datetime
@@ -240,10 +240,17 @@ def get_message_by_id(db: Session, message_id: int):
     return db.query(models.Message).filter(models.Message.id == message_id).first()
 
 # Update read status
-def mark_read(db: Session, message_id: int):
-    db_message = db.query(models.Message).filter(models.Message.id == message_id).first()
-    if db_message:
+def mark_read(db: Session, convo_id: int):
+    # Update all messages with given convo_id
+    """
+    db_messages = db.query(models.Message).filter(models.Message.convo_id == convo_id).all()
+    for db_message in db_messages:
         db_message.is_read = True
-        db.commit()
-        db.refresh(db_message)
-    return db_message
+    """
+    db.query(models.Message).filter(models.Message.convo_id == convo_id).update(
+        {models.Message.is_read: True}, synchronize_session=False
+    )
+    db.commit()
+    # Need the messages for the frontend display
+    updated_messages = db.query(models.Message).filter(models.Message.convo_id == convo_id).all()
+    return updated_messages

@@ -21,8 +21,8 @@ const Conversation = () => {
     const getConversation = async() => {
         setLoading(true);
         try {
-            //const response = await axios.
-            //setConversation(response.data);
+            const response = await axios.put(`/read/${convo_id}/`);
+            setConversation(response.data);
         } catch(error) {
             alert("Error fetching conversation.");
         } finally {
@@ -45,7 +45,7 @@ const Conversation = () => {
                             >
                                 <p className="convo-text">{convo.message}</p>
                                 <span className="convo-info">
-                                    {convo.sent_at} - {message.sender_id}
+                                    {convo.sent_at} - {convo.sender_id}
                                 </span>
                             </div>
                         ))
