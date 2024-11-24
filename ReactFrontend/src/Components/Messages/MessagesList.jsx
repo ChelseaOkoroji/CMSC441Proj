@@ -151,6 +151,9 @@ const MessagesList = ({ onSelectConversation }) => {
                                             <strong>{convo.product.name}</strong>
                                             <p>From: {convo.sender_id}</p>
                                             <p>{convo.message.length > 15 ? `${convo.message.slice(0, 15)}...` : convo.message}</p>
+                                            {!convo.is_read && (
+                                                <span className='unread'></span>
+                                            )}
                                         </div>
                                     </li>
                                 ))

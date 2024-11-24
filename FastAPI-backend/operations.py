@@ -1,5 +1,5 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import and_
+from sqlalchemy.orm import Session, aliased
+from sqlalchemy import and_, func
 import models, schemas
 import bcrypt
 from datetime import datetime
@@ -187,11 +187,53 @@ def create_message(db: Session, message: schemas.MessageCreate):
 
 # Get all messages sent by a user
 def get_sent_messages(db: Session, userID: str, skip: int = 0, limit: int = 100):
-    return db.query(models.Message).filter(models.Message.sender_id == userID).offset(skip).limit(limit).all()
+    # Alias for Message table 
+    message_alias = aliased(models.Message)
+    # Subquery to get the most recent message's timestamp per convo_id
+    subquery = db.query(
+        func.max(models.Message.sent_at).label('max_timestamp'),
+        models.Message.convo_id
+    ).filter(
+        models.Message.sender_id == userID
+    ).group_by(
+        models.Message.convo_id
+    ).subquery()
+    # Main query to get most recent message per convo_id
+    query = db.query(models.Message).join(
+        subquery,
+        models.Message.convo_id == subquery.c.convo_id
+    ).filter(
+        models.Message.sent_at == subquery.c.max_timestamp
+    ).filter(
+        models.Message.sender_id == userID  
+    )
+    query = query.offset(skip).limit(limit)
+    return query.all()
 
 # Get all messages received by a user
 def get_received_messages(db: Session, userID: str, skip: int = 0, limit: int = 100):
-    return db.query(models.Message).filter(models.Message.receiver_id == userID).offset(skip).limit(limit).all()
+    # Alias for Message table 
+    message_alias = aliased(models.Message)
+    # Subquery to get the most recent message's timestamp per convo_id
+    subquery = db.query(
+        func.max(models.Message.sent_at).label('max_timestamp'),
+        models.Message.convo_id
+    ).filter(
+        models.Message.receiver_id == userID
+    ).group_by(
+        models.Message.convo_id
+    ).subquery()
+    # Main query to get most recent message per convo_id
+    query = db.query(models.Message).join(
+        subquery,
+        models.Message.convo_id == subquery.c.convo_id
+    ).filter(
+        models.Message.sent_at == subquery.c.max_timestamp
+    ).filter(
+        models.Message.receiver_id == userID  
+    )
+    query = query.offset(skip).limit(limit)
+    return query.all()
 
 # Get a specific message by message ID
 def get_message_by_id(db: Session, message_id: int):

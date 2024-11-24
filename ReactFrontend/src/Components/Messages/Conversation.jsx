@@ -14,16 +14,48 @@ const Conversation = () => {
     const [loading, setLoading] = useState(null);
 
     useEffect(() => {
+        // Get the entire conversation
+        getConversation();
+    }, [convo_id]);
+
+    const getConversation = async() => {
         setLoading(true);
         try {
-
+            //const response = await axios.
+            //setConversation(response.data);
         } catch(error) {
-
+            alert("Error fetching conversation.");
         } finally {
             setLoading(false);
         }
-    }, [convo_id]);
+    };
 
+    return (
+        <div className="container">
+            <h1>Conversation</h1>
+            {loading ? (
+                <p>Loading conversation...</p>
+            ) : (
+                <div className="convo">
+                    {conversation.length > 0 ? (
+                        conversation.map((convo) => (
+                            <div 
+                                key={convo.message_id}
+                                className={`message ${convo.sender_id === convo.receiver_id ? 'sent' : 'received'}`}
+                            >
+                                <p className="convo-text">{convo.message}</p>
+                                <span className="convo-info">
+                                    {convo.sent_at} - {message.sender_id}
+                                </span>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No messages in this conversation.</p>
+                    )}
+                </div>
+            )}
+        </div>
+    );
 };
 
 export default Conversation;
