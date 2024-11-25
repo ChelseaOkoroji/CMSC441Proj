@@ -1,4 +1,3 @@
-// Profile.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../../UserContext';
@@ -26,7 +25,7 @@ const Profile = () => {
     useEffect(() => {
         if (user) {
             fetchUserProducts();
-            fetchFavoritedProducts(); 
+            fetchFavoritedProducts();
         }
     }, [user]);
 
@@ -42,10 +41,36 @@ const Profile = () => {
         }
     };
 
-    const fetchFavoritedProducts = async () => {
-        
-    };
+    const removeProduct = async (productID) => {
+        if (!window.confirm("Are you sure you want to remove this product?")) {
+            return;
+        }
     
+        try {
+            const response = await axios.delete(`/users/${user.userID}/products/${productID}/`);
+            if (response.status === 200) {
+                setUserProducts((prevProducts) =>
+                    prevProducts.filter((product) => product.productID !== productID)
+                );
+                console.log('Product removed successfully');
+            } else {
+                console.error('Failed to remove product');
+            }
+        } catch (error) {
+            console.error('Error removing product:', error);
+        }
+    };
+
+    const fetchFavoritedProducts = async () => {
+        try {
+            const response = await axios.get(`/user-favorites/${user.userID}/`);
+            if (response.status === 200) {
+                setFavoritedProducts(response.data);
+            }
+        } catch (error) {
+            console.error('Error fetching favorited products:', error);
+        }
+    };
 
     const handleLogout = async (e) => {
         e.preventDefault();
@@ -232,22 +257,27 @@ const Profile = () => {
                                 <div key={product.id} className="product-card">
                                     <img src={product.image} alt={product.name} />
                                     <h4>{product.name}</h4>
-                                    <p>${product.price}</p>
+                                    <p>Price: ${product.price}</p>
+                                    <button 
+                                        onClick={() => removeProduct(product.id)} 
+                                        className="remove-product-button"
+                                    >
+                                        Remove
+                                    </button>
                                 </div>
                             ))}
                         </div>
                     </div>
 
                     <div className="favorited-products">
-                        <h2>Favorited Products</h2>
+                        <h3>Favorited Products</h3>
                         {favoritedProducts.length > 0 ? (
                             favoritedProducts.map((product) => (
                                 <div key={product.productID} className="product-card">
-                                    <img src={product.image} alt={product.name} />
-                                    <h3>{product.name}</h3>
-                                    <p>{product.description}</p>
-                                    <p>Price: ${product.price}</p>
-                                    <p>Category: {product.category}</p>
+                                    <img src={product.product.image} alt={product.product.name} />
+                                    <h4>{product.product.name}</h4>
+                                    <p>Price: ${product.product.price}</p>
+                                    <button>Remove Favorited Item</button>
                                 </div>
                             ))
                         ) : (
