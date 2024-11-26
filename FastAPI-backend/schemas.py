@@ -39,7 +39,7 @@ class PaginatedProducts(BaseModel):
 
 # Shared fields of FavoriteCreate and Favorite
 class FavoriteBase(BaseModel):
-    userID: int # Really id (not userID in table)
+    userID: str 
     productID: int
 
 # Additional fields needed to create favorite
@@ -65,6 +65,7 @@ class MessageBase(BaseModel):
     convo_id: Optional[str] = str(uuid.uuid4())
     
     # If no convo_id is provided, generate one
+    # Not used anymore
     @field_validator('convo_id')
     @classmethod
     def generate_convo_id(cls, convoID: Optional[str]) -> str:
