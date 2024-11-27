@@ -334,10 +334,10 @@ def get_received_messages(userID: str, skip: int = 0, limit: int = 100, db: Sess
     received_messages = operations.get_received_messages(db, userID, skip, limit)
     return received_messages
 
-# Mark a message as read
-@app.put("/read/{convo_id}/", status_code=status.HTTP_200_OK, response_model=List[schemas.Message])
-def mark_message_as_read(convo_id: str, db: Session = Depends(get_db)):
-    db_messages = operations.mark_read(db, convo_id)
+# Mark a message as read and get entire convo
+@app.put("/read/{convo_id}/{mark_read}/", status_code=status.HTTP_200_OK, response_model=List[schemas.Message])
+def mark_message_as_read(convo_id: str, mark_read: bool, db: Session = Depends(get_db)):
+    db_messages = operations.mark_read(db, convo_id, mark_read)
     if not db_messages:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Conversation not found")
     return db_messages

@@ -77,8 +77,10 @@ const MessagesList = ({ onSelectConversation }) => {
         }
     };
 
-    const selectConversation = (convo_id) => {
-        navigate(`/messages/${convo_id}`);
+    const selectConversation = (convo_id, mark_read) => {
+        navigate(`/messages/${convo_id}`, {
+            state: { mark_read }
+        });
     };
 
     const toggleDropdown = () => {
@@ -123,7 +125,7 @@ const MessagesList = ({ onSelectConversation }) => {
                         <ul>
                             {sentConversations.length > 0 ? (
                                 sentConversations.map((convo) => (
-                                    <li key={convo.convo_id} onClick={() => selectConversation(convo.convo_id)}>
+                                    <li key={convo.convo_id} onClick={() => selectConversation(convo.convo_id, false)}>
                                         <div className="convo-item">
                                             <strong>{convo.product.name}</strong>
                                             <p>To: {convo.receiver_id}</p>
@@ -146,7 +148,7 @@ const MessagesList = ({ onSelectConversation }) => {
                         <ul>
                             {receivedConversations.length > 0 ? (
                                 receivedConversations.map((convo) => (
-                                    <li key={convo.convo_id} onClick={() => selectConversation(convo.convo_id)}>
+                                    <li key={convo.convo_id} onClick={() => selectConversation(convo.convo_id, true)}>
                                         <div className="convo-item">
                                             <strong>{convo.product.name}</strong>
                                             <p>From: {convo.sender_id}</p>

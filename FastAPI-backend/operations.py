@@ -206,7 +206,7 @@ def get_sent_messages(db: Session, userID: str, skip: int = 0, limit: int = 100)
         models.Message.sent_at == subquery.c.max_timestamp
     ).filter(
         models.Message.sender_id == userID  
-    )
+    ).order_by(models.Message.sent_at.desc())
     query = query.offset(skip).limit(limit)
     return query.all()
 
@@ -231,7 +231,7 @@ def get_received_messages(db: Session, userID: str, skip: int = 0, limit: int = 
         models.Message.sent_at == subquery.c.max_timestamp
     ).filter(
         models.Message.receiver_id == userID  
-    )
+    ).order_by(models.Message.sent_at.desc())
     query = query.offset(skip).limit(limit)
     return query.all()
 
@@ -239,17 +239,20 @@ def get_received_messages(db: Session, userID: str, skip: int = 0, limit: int = 
 def get_message_by_id(db: Session, message_id: int):
     return db.query(models.Message).filter(models.Message.id == message_id).first()
 
-# Update read status
-def mark_read(db: Session, convo_id: int):
+# Update read status and return messages with convo_id (used in conversations)
+# Only mark read if mark_read = True
+def mark_read(db: Session, convo_id: int, mark_read: bool = False):
     # Update all messages with given convo_id
     """
     db_messages = db.query(models.Message).filter(models.Message.convo_id == convo_id).all()
     for db_message in db_messages:
         db_message.is_read = True
     """
-    db.query(models.Message).filter(models.Message.convo_id == convo_id).update(
-        {models.Message.is_read: True}, synchronize_session=False
-    )
+    # mark_read determines whether to mark the conversation as read
+    if(mark_read):
+        db.query(models.Message).filter(models.Message.convo_id == convo_id).update(
+            {models.Message.is_read: mark_read}, synchronize_session=False
+        )
     db.commit()
     # Need the messages for the frontend display
     updated_messages = db.query(models.Message).filter(models.Message.convo_id == convo_id).all()

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useUser } from '../../UserContext';
 import { checkForUser } from '../CheckForUser/CheckForUser';
 import { format } from 'date-fns';
@@ -10,6 +10,8 @@ import axios from "axios";
 const Conversation = () => {
     // convo_id is in the URL
     const { convo_id } = useParams();
+    // is_read
+    const { state } = useLocation();
     // There can be multiple messages in one conversation (i.e. one convo_id)
     const [conversation, setConversation] = useState([]);
     const [loading, setLoading] = useState(null);
@@ -20,18 +22,21 @@ const Conversation = () => {
     // Needed for sending new message in text chain
     const [productID, setProductID] = useState(null); 
     const [receiverID, setReceiverID] = useState(null);
+    const [markRead, setMarkRead] = useState(false);
+
+    const mark_read = state?.mark_read || false;
 
     checkForUser(user);
 
     useEffect(() => {
         // Get the entire conversation
-        getConversation();
+        getConversation(mark_read);
     }, [convo_id]);
 
-    const getConversation = async() => {
+    const getConversation = async(mark_read_new) => {
         setLoading(true);
         try {
-            const response = await axios.put(`/read/${convo_id}/`);
+            const response = await axios.put(`/read/${convo_id}/${mark_read_new}`);
             const convoData = response.data;
             setConversation(convoData);
             // Store receiverID and productID
@@ -61,11 +66,11 @@ const Conversation = () => {
                 message: reply,
                 convo_id: convo_id
             };
-            console.log(message);
             const response = await axios.post("/send-message/", message);
             setReply('');
             // Updates to include the message just sent
-            getConversation();
+            setMarkRead(false);
+            getConversation(markRead);
         } catch(error) {
             alert("Error sending message. Please try again");
         }
