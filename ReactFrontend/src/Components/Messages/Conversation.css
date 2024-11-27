@@ -95,3 +95,29 @@
 #send-reply:active {
     background-color: #0a3b74;
 }
+
+.back-to-messages {
+    position: fixed;
+    bottom: 20px;  
+    left: 20px;   
+    z-index: 1000;
+}
+
+.back-to-messages button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.back-to-messages button:hover {
+    background-color: #0056b3;
+}
+
+.back-to-messages button:active {
+    background-color: #0a3b74;
+}

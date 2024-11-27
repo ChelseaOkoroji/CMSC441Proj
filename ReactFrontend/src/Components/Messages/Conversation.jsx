@@ -116,6 +116,9 @@ const Conversation = () => {
                     <button id="send-reply" onClick={handleSendReply}>Send Message</button>
                 </div>
             </div>
+            <div className="back-to-messages">
+                <button onClick={backToMessages}>Back to Messages</button>
+            </div>
         </div>
     );
 };
