@@ -8,6 +8,8 @@ import axios from 'axios';
 import { FaRegHeart } from "react-icons/fa6";
 import { CiHeart } from "react-icons/ci";
 import { checkForUser } from '../CheckForUser/CheckForUser';
+import MessageModal from '../MessageModal/MessageModal';
+import Modal from '../Modal/Modal';
 
 const HomePage = () => {
     const [menu, setMenu] = useState("all");
@@ -19,6 +21,17 @@ const HomePage = () => {
     const [products, setProducts] = useState([]);
     const itemsPerPage = 25;
 
+    // This is the modal for error/success messages
+    const [modalMessage, setModalMessage] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
+
+    // This is the modal for sending a message
+    const [messageModalVisible, setMessageModalVisible] = useState(false);
+    // Setting sellerID is necessary for the Modal
+    const [seller, setSeller] = useState(null);
+    // Setting productID is necessary for the Modal
+    const [product, setProduct] = useState(null);
+    // For display, navigation, and current user
     const { category } = useParams();
     const navigate = useNavigate();
     const { user, setUser } = useUser();
@@ -92,8 +105,46 @@ const HomePage = () => {
         }
     };
 
+    // Called from html
+    const sendMessage = async (userID, sellerID, productID, message) => {
+        try {
+            const myMessage = {
+                sender_id: userID,
+                receiver_id: sellerID,
+                product_id: productID,
+                message: message
+            };
+            console.log(myMessage);
+            const response = axios.post('/send-message/', myMessage);
+            setModalMessage("Message sent!");
+            setModalVisible(true);
+
+        } catch(error) {
+            console.error("Message sending error", error);
+            setModalMessage("Failed to send message. Please try again.");
+            setModalVisible(true);
+        }
+    };
+
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
+    };
+
+    // Open modal for sending a message
+    const handleOpenMessageModal = (sellerID, productID) => {
+        setSeller(sellerID);
+        setProduct(productID);
+        setMessageModalVisible(true);
+    };
+
+    // Close modal for sending a message
+    const handleCloseMessageModal = () => {
+        setMessageModalVisible(false);
+    };
+
+    // Close modal for success/error messages
+    const handleCloseModal = () => {
+        setModalVisible(false);
     };
 
     const filteredProducts = products.filter(product => {
@@ -136,6 +187,7 @@ const HomePage = () => {
                             <div className="dropdown-menu">
                                 <Link to="/profile" className="dropdown-item">Profile</Link>
                                 <Link to="/product-upload" className="dropdown-item">Add Item</Link>
+                                <Link to="/messages" className="dropdown-item">Messages</Link>
                                 <button
                                     onClick={handleLogout}
                                     className="dropdown-item"
@@ -195,13 +247,19 @@ const HomePage = () => {
                             <div className="product-info">
                                 <h3>{product.name}</h3>
                                 <p>{product.description}</p>
-                                <p>${product.price}</p>
+                                <p>${product.price.toFixed(2)}</p>
                                 <div className="product-attributes">
                                 <button 
                                     onClick={() => handleAddToFavorites(product.productID)} 
                                     className="favorite-button"
                                 >
                                     Add to favorites
+                                </button>
+                                <button
+                                    onClick={() => handleOpenMessageModal(product.userID, product.productID)}
+                                    className="message-button"
+                                >
+                                    Message seller
                                 </button>
                             </div>
                              
@@ -221,6 +279,17 @@ const HomePage = () => {
                     <button onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
                 )}
             </div>
+            <MessageModal
+                isOpen={messageModalVisible}
+                onClose={handleCloseMessageModal} 
+                onSendMessage={sendMessage}
+                userID={user.userID}
+                sellerID={seller}
+                productID={product}
+            />
+            {modalVisible && (
+                <Modal message={modalMessage} onClose={handleCloseModal} />
+            )}
         </div>
     );
 };

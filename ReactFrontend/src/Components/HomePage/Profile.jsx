@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../../UserContext';
+import { checkForUser } from '../CheckForUser/CheckForUser';
 import user_profile from '../Assests/user-profile.png';
 import './Profile.css';
 import axios from 'axios';
@@ -19,6 +20,8 @@ const Profile = () => {
     });
     const [error, setError] = useState('');
 
+    checkForUser(user);
+
     useEffect(() => {
         if (user) {
             fetchUserProducts();
@@ -30,7 +33,8 @@ const Profile = () => {
         try {
             const response = await axios.get(`/user-products/${user.userID}/`);
             if (response.status === 200) {
-                setUserProducts(response.data);
+                const data = response.data;
+                setUserProducts(data);
             }
         } catch (error) {
             console.error('Error fetching user products:', error);
@@ -43,7 +47,7 @@ const Profile = () => {
         }
     
         try {
-            const response = await axios.delete(`/users/${user.userID}/products/${productID}/`);
+            const response = await axios.delete(`/${user.userID}/products/${productID}/`);
             if (response.status === 200) {
                 setUserProducts((prevProducts) =>
                     prevProducts.filter((product) => product.productID !== productID)
@@ -73,24 +77,18 @@ const Profile = () => {
         e.stopPropagation();
 
         try {
-            const response = await fetch('/logout/', {
-                method: 'POST',
-                credentials: 'include',
+            const response = await axios.post(`/logout/${user.userID}/`, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
-
-            if (!response.ok) {
-                throw new Error('Logout failed');
-            }
-
             setUser(null);
-            localStorage.removeItem('user');
+            sessionStorage.removeItem('user');
             setIsDropdownOpen(false);
             navigate('/');
         } catch (error) {
             console.error('Error during logout:', error);
+            alert("Unexpected error during logout");
         }
     };
 
@@ -114,6 +112,8 @@ const Profile = () => {
         setError('');
 
         try {
+            
+            // Create FormData for file upload
             const formData = new FormData();
             formData.append('newUserID', editForm.userID);
             formData.append('newEmail', editForm.email);
@@ -144,7 +144,7 @@ const Profile = () => {
 
                 if (response.ok) {
                     setUser(null);
-                    localStorage.removeItem('user');
+                    sessionStorage.removeItem('user');
                     navigate('/');
                 }
             } catch (error) {
@@ -174,9 +174,15 @@ const Profile = () => {
                         {isDropdownOpen && (
                             <div className="dropdown-menu">
                                 <Link to="/profile" className="dropdown-item">Profile</Link>
-                                <Link to="/favorites" className="dropdown-item">Favorites</Link>
                                 <Link to="/product-upload" className="dropdown-item">Add Item</Link>
-                                <button onClick={handleLogout} className="dropdown-item">Logout</button>
+                                <Link to="/messages" className="dropdown-item">Messages</Link>
+                                <button 
+                                    onClick={handleLogout} 
+                                    className="dropdown-item"
+                                    id="logout"
+                                >
+                                    Logout
+                                </button>
                             </div>
                         )}
                     </div>
@@ -186,14 +192,14 @@ const Profile = () => {
             <div className="profile-content">
                 <div className="profile-header">
                     <img 
-                        src={user.profilePicture || user_profile} 
+                        src={/*user.profilePicture ||*/ user_profile} 
                         alt="Profile" 
                         className="large-profile-image" 
                     />
                     {!isEditing ? (
                         <div className="profile-info">
-                            <h2>{user.userID}</h2>
-                            <p>{user.email}</p>
+                            <h2>{user?.userID}</h2>
+                            <p>{user?.email}</p>
                             <button onClick={() => setIsEditing(true)} className="edit-button">
                                 Edit Profile
                             </button>
@@ -248,12 +254,12 @@ const Profile = () => {
                         <h3>Items For Sale</h3>
                         <div className="products-grid">
                             {userProducts.map(product => (
-                                <div key={product.id} className="product-card">
+                                <div key={product.productID} className="product-card">
                                     <img src={product.image} alt={product.name} />
                                     <h4>{product.name}</h4>
-                                    <p>Price: ${product.price}</p>
+                                    <p>Price: ${product.price.toFixed(2)}</p>
                                     <button 
-                                        onClick={() => removeProduct(product.id)} 
+                                        onClick={() => removeProduct(product.productID)} 
                                         className="remove-product-button"
                                     >
                                         Remove
@@ -270,7 +276,7 @@ const Profile = () => {
                                 <div key={product.productID} className="product-card">
                                     <img src={product.product.image} alt={product.product.name} />
                                     <h4>{product.product.name}</h4>
-                                    <p>Price: ${product.product.price}</p>
+                                    <p>Price: ${product.product.price.toFixed(2)}</p>
                                     <button>Remove Favorited Item</button>
                                 </div>
                             ))

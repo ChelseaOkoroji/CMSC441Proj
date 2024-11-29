@@ -1,7 +1,8 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import and_
+from sqlalchemy.orm import Session, aliased
+from sqlalchemy import and_, func, update
 import models, schemas
 import bcrypt
+from datetime import datetime
 
 # CREATE operations
 
@@ -92,13 +93,20 @@ async def update_user(db: Session, oldUserID: str, newUserID: str, newEmail: str
     existing_user = get_user_by_id(db, oldUserID)
     # Simply update email
     existing_user.email = newEmail
-    # Updating userID is a little more complicated since it is connected to products and favorites
+    # Updating userID is a little more complicated since it is connected to products, favorites, and messages
     # Products
     for product in get_user_products(db, oldUserID):
         product.userID = newUserID
     # Favorites
-    for favorite in get_user_products(db, oldUserID):
+    for favorite in get_user_favorites(db, oldUserID):
         favorite.userID = newUserID
+    # First do sent messages 
+    for sent_message in db.query(models.Message).filter(models.Message.sender_id == oldUserID).all():
+        sent_message.sender_id = newUserID
+    # Then do received messages
+    for received_message in db.query(models.Message).filter(models.Message.receiver_id == oldUserID).all():
+        received_message.receiver_id = newUserID
+    # Now update userID
     existing_user.userID = newUserID
     db.commit()
     db.refresh(existing_user)
@@ -120,6 +128,9 @@ def delete_user(db: Session, userID: str):
 # Delete product
 def delete_product(db: Session, productID: str):
     db.delete(get_product(db, productID))
+    # Must delete all messages related to said productID
+    for message in db.query(models.Message).filter(models.Message.product_id == productID).all():
+        db.delete(message)
     db.commit()
 
 # **** Favorite-related functions ****
@@ -166,3 +177,86 @@ def get_products(db: Session, filters: schemas.ProductSearch):
         query = query.filter(models.Product.color == filters.color)
     # Do the query
     return query.all()
+
+# MESSAGES
+
+# Create a new message
+def create_message(db: Session, message: schemas.MessageCreate):
+    db_message = models.Message(**message.model_dump())
+    db.add(db_message)
+    db.commit()
+    db.refresh(db_message)
+    return db_message
+
+# Get all messages sent by a user
+def get_sent_messages(db: Session, userID: str, skip: int = 0, limit: int = 100):
+    # Alias for Message table 
+    message_alias = aliased(models.Message)
+    # Subquery to get the most recent message's timestamp per convo_id
+    subquery = db.query(
+        func.max(models.Message.sent_at).label('max_timestamp'),
+        models.Message.convo_id
+    ).filter(
+        models.Message.sender_id == userID
+    ).group_by(
+        models.Message.convo_id
+    ).subquery()
+    # Main query to get most recent message per convo_id
+    query = db.query(models.Message).join(
+        subquery,
+        models.Message.convo_id == subquery.c.convo_id
+    ).filter(
+        models.Message.sent_at == subquery.c.max_timestamp
+    ).filter(
+        models.Message.sender_id == userID  
+    ).order_by(models.Message.sent_at.desc())
+    query = query.offset(skip).limit(limit)
+    return query.all()
+
+# Get all messages received by a user
+def get_received_messages(db: Session, userID: str, skip: int = 0, limit: int = 100):
+    # Alias for Message table 
+    message_alias = aliased(models.Message)
+    # Subquery to get the most recent message's timestamp per convo_id
+    subquery = db.query(
+        func.max(models.Message.sent_at).label('max_timestamp'),
+        models.Message.convo_id
+    ).filter(
+        models.Message.receiver_id == userID
+    ).group_by(
+        models.Message.convo_id
+    ).subquery()
+    # Main query to get most recent message per convo_id
+    query = db.query(models.Message).join(
+        subquery,
+        models.Message.convo_id == subquery.c.convo_id
+    ).filter(
+        models.Message.sent_at == subquery.c.max_timestamp
+    ).filter(
+        models.Message.receiver_id == userID  
+    ).order_by(models.Message.sent_at.desc())
+    query = query.offset(skip).limit(limit)
+    return query.all()
+
+# Get a specific message by message ID
+def get_message_by_id(db: Session, message_id: int):
+    return db.query(models.Message).filter(models.Message.id == message_id).first()
+
+# Update read status and return messages with convo_id (used in conversations)
+# Only mark read if mark_read = True
+def mark_read(db: Session, convo_id: int, mark_read: bool = False):
+    # Update all messages with given convo_id
+    """
+    db_messages = db.query(models.Message).filter(models.Message.convo_id == convo_id).all()
+    for db_message in db_messages:
+        db_message.is_read = True
+    """
+    # mark_read determines whether to mark the conversation as read
+    if(mark_read):
+        db.query(models.Message).filter(models.Message.convo_id == convo_id).update(
+            {models.Message.is_read: mark_read}, synchronize_session=False
+        )
+    db.commit()
+    # Need the messages for the frontend display
+    updated_messages = db.query(models.Message).filter(models.Message.convo_id == convo_id).all()
+    return updated_messages

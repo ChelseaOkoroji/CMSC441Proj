@@ -236,7 +236,7 @@ def user_login(user_to_check: schemas.UserLogin, db: Session = Depends(get_db)):
 
 # Get products based on filterable arguments (name, price, category, color)
 # TESTED
-@app.get("/products/", response_model=schemas.PaginatedProducts)
+@app.get("/products/", status_code=status.HTTP_200_OK, response_model=schemas.PaginatedProducts)
 async def get_products_paginated(
     page: int = Query(1, ge=1, description="Page number"),
     limit: int = Query(25, ge=1, le=100, description="Items per page"),
@@ -279,7 +279,7 @@ async def get_products_paginated(
 
 # Delete specific product
 # TESTED
-@app.delete("/users/{userID}/products/{productID}/", status_code=status.HTTP_200_OK)
+@app.delete("/{userID}/products/{productID}/", status_code=status.HTTP_200_OK)
 def delete_product(userID: str, productID: int, db: Session = Depends(get_db)):
     products = operations.get_user_products(db, userID)
     for product in products:
@@ -296,7 +296,7 @@ def delete_user(userID: str, db: Session = Depends(get_db)):
 # just added a success message since the frontend will simply be deleting
 # the session storage and redirecting the user to the home page
 @app.post("/logout/{userID}/", status_code=status.HTTP_200_OK)
-async def logout(userID: str):
+async def logout(userID: str, db: Session = Depends(get_db)):
     #Endpoint to handle user logout
     """
     try:
@@ -312,3 +312,32 @@ async def logout(userID: str):
         raise HTTPException(status_code=500, detail=str(e))
     """
     return {"message": "success"}
+
+# MESSAGES
+
+# Create a new message
+@app.post("/send-message/", status_code=status.HTTP_200_OK, response_model=schemas.Message)
+def create_message(message: schemas.MessageCreate, db: Session = Depends(get_db)):
+    # Create the message
+    db_message = operations.create_message(db, message)
+    return db_message
+
+# Get all messages sent by a user
+@app.get("/sent/{userID}/", response_model=List[schemas.Message])
+def get_sent_messages(userID: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    sent_messages = operations.get_sent_messages(db, userID, skip, limit)
+    return sent_messages
+
+# Get all messages received by a user
+@app.get("/received/{userID}/", status_code=status.HTTP_200_OK, response_model=List[schemas.Message])
+def get_received_messages(userID: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    received_messages = operations.get_received_messages(db, userID, skip, limit)
+    return received_messages
+
+# Mark a message as read and get entire convo
+@app.put("/read/{convo_id}/{mark_read}/", status_code=status.HTTP_200_OK, response_model=List[schemas.Message])
+def mark_message_as_read(convo_id: str, mark_read: bool, db: Session = Depends(get_db)):
+    db_messages = operations.mark_read(db, convo_id, mark_read)
+    if not db_messages:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Conversation not found")
+    return db_messages

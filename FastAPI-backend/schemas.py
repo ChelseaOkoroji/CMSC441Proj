@@ -1,6 +1,8 @@
 # pydantic is used to validate the data types for the columns in the tables
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, model_validator, field_validator, Field
 from typing import Optional, List
+from datetime import datetime
+import uuid
 
 # Shared fields of ProductCreate and Product
 class ProductBase(BaseModel):
@@ -37,7 +39,7 @@ class PaginatedProducts(BaseModel):
 
 # Shared fields of FavoriteCreate and Favorite
 class FavoriteBase(BaseModel):
-    userID: str
+    userID: str 
     productID: int
 
 # Additional fields needed to create favorite
@@ -48,6 +50,32 @@ class FavoriteCreate(FavoriteBase):
 # Returned data will include what is in FavoriteBase
 class Favorite(FavoriteBase):
     favoriteID: int
+    product: Product
+
+    class Config:
+        from_attributes = True
+
+class MessageBase(BaseModel):
+    sender_id: str
+    receiver_id: str
+    product_id: int
+    message: str
+    is_read: Optional[bool] = False
+    parent_id: Optional[int] = None
+    convo_id: Optional[str] = str(uuid.uuid4())
+    
+    class Config:
+        from_attributes = True
+
+class MessageCreate(MessageBase):
+    pass
+
+class Message(MessageBase):
+    id: int
+    sent_at: datetime
+    #sender: "User" # Forward reference
+    #receiver: "User" # Forward reference
+    parent_message: Optional["Message"] = None
     product: Product
 
     class Config:
@@ -84,3 +112,6 @@ class ProductSearch(BaseModel):
     max_price: Optional[float] = None
     color: Optional[str] = None
     category: Optional[str] = None
+
+# Resolve forward references
+Message.update_forward_refs()

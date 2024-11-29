@@ -12,6 +12,8 @@ import ProductsInfo from './Components/Products/ProductsInfo';
 import ProtectedRoute from './ProtectedRoute';
 import Profile from './Components/HomePage/Profile';
 import ProductUpload from './Components/HomePage/ProductUpload';
+import MessagesList from './Components/Messages/MessagesList';
+import Conversation from './Components/Messages/Conversation';
 
 const App = () => {
   return (
@@ -44,6 +46,8 @@ const App = () => {
           </Route>
           <Route path='/profile' element={<Profile />} />
           <Route path='/product-upload' element={<ProductUpload />} />
+          <Route path='/messages' element={<MessagesList />} />
+          <Route path='/messages/:convo_id' element={<Conversation />} />
         </Routes>
       </Router>
     </UserProvider>
