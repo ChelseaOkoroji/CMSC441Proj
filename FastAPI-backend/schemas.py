@@ -64,16 +64,6 @@ class MessageBase(BaseModel):
     parent_id: Optional[int] = None
     convo_id: Optional[str] = str(uuid.uuid4())
     
-    # If no convo_id is provided, generate one
-    # Not used anymore
-    @field_validator('convo_id')
-    @classmethod
-    def generate_convo_id(cls, convoID: Optional[str]) -> str:
-        # Used if no convo_id is provided (i.e. first message)
-        if convoID is None:
-            convoID = str(uuid.uuid4())
-        return convoID
-    
     class Config:
         from_attributes = True
 

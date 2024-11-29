@@ -128,6 +128,9 @@ def delete_user(db: Session, userID: str):
 # Delete product
 def delete_product(db: Session, productID: str):
     db.delete(get_product(db, productID))
+    # Must delete all messages related to said productID
+    for message in db.query(models.Message).filter(models.Message.product_id == productID).all():
+        db.delete(message)
     db.commit()
 
 # **** Favorite-related functions ****

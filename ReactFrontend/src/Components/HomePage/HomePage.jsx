@@ -114,6 +114,7 @@ const HomePage = () => {
                 product_id: productID,
                 message: message
             };
+            console.log(myMessage);
             const response = axios.post('/send-message/', myMessage);
             setModalMessage("Message sent!");
             setModalVisible(true);

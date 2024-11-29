@@ -47,7 +47,7 @@ const Profile = () => {
         }
     
         try {
-            const response = await axios.delete(`/users/${user.userID}/products/${productID}/`);
+            const response = await axios.delete(`/${user.userID}/products/${productID}/`);
             if (response.status === 200) {
                 setUserProducts((prevProducts) =>
                     prevProducts.filter((product) => product.productID !== productID)
@@ -254,12 +254,12 @@ const Profile = () => {
                         <h3>Items For Sale</h3>
                         <div className="products-grid">
                             {userProducts.map(product => (
-                                <div key={product.id} className="product-card">
+                                <div key={product.productID} className="product-card">
                                     <img src={product.image} alt={product.name} />
                                     <h4>{product.name}</h4>
                                     <p>Price: ${product.price.toFixed(2)}</p>
                                     <button 
-                                        onClick={() => removeProduct(product.id)} 
+                                        onClick={() => removeProduct(product.productID)} 
                                         className="remove-product-button"
                                     >
                                         Remove

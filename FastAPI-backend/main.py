@@ -279,7 +279,7 @@ async def get_products_paginated(
 
 # Delete specific product
 # TESTED
-@app.delete("/products/{productID}/", status_code=status.HTTP_200_OK)
+@app.delete("/{userID}/products/{productID}/", status_code=status.HTTP_200_OK)
 def delete_product(userID: str, productID: int, db: Session = Depends(get_db)):
     products = operations.get_user_products(db, userID)
     for product in products:
