@@ -246,7 +246,7 @@ const HomePage = () => {
                             <div className="product-info">
                                 <h3>{product.name}</h3>
                                 <p>{product.description}</p>
-                                <p>${product.price}</p>
+                                <p>${product.price.toFixed(2)}</p>
                                 <div className="product-attributes">
                                 <button 
                                     onClick={() => handleAddToFavorites(product.productID)} 

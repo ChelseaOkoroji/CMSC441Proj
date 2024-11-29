@@ -257,7 +257,7 @@ const Profile = () => {
                                 <div key={product.id} className="product-card">
                                     <img src={product.image} alt={product.name} />
                                     <h4>{product.name}</h4>
-                                    <p>Price: ${product.price}</p>
+                                    <p>Price: ${product.price.toFixed(2)}</p>
                                     <button 
                                         onClick={() => removeProduct(product.id)} 
                                         className="remove-product-button"
@@ -276,7 +276,7 @@ const Profile = () => {
                                 <div key={product.productID} className="product-card">
                                     <img src={product.product.image} alt={product.product.name} />
                                     <h4>{product.product.name}</h4>
-                                    <p>Price: ${product.product.price}</p>
+                                    <p>Price: ${product.product.price.toFixed(2)}</p>
                                     <button>Remove Favorited Item</button>
                                 </div>
                             ))
