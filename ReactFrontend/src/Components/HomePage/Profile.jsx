@@ -251,18 +251,19 @@ const Profile = () => {
 
                 <div className="user-items-section">
                     <div className="items-for-sale">
-                        <h3>Items For Sale</h3>
+                        <h3 id='sale'>Items For Sale</h3>
                         <div className="products-grid">
                             {userProducts.map(product => (
                                 <div key={product.productID} className="product-card">
                                     <img src={product.image} alt={product.name} />
                                     <h4>{product.name}</h4>
+                                    <p>{product.description}</p>
                                     <p>Price: ${product.price.toFixed(2)}</p>
                                     <button 
                                         onClick={() => removeProduct(product.productID)} 
                                         className="remove-product-button"
                                     >
-                                        Remove
+                                        Remove Product
                                     </button>
                                 </div>
                             ))}
@@ -270,19 +271,22 @@ const Profile = () => {
                     </div>
 
                     <div className="favorited-products">
-                        <h3>Favorited Products</h3>
-                        {favoritedProducts.length > 0 ? (
-                            favoritedProducts.map((product) => (
-                                <div key={product.productID} className="product-card">
-                                    <img src={product.product.image} alt={product.product.name} />
-                                    <h4>{product.product.name}</h4>
-                                    <p>Price: ${product.product.price.toFixed(2)}</p>
-                                    <button>Remove Favorited Item</button>
-                                </div>
-                            ))
-                        ) : (
-                            <p>No favorited products yet.</p>
-                        )}
+                        <h3 id='favorite'>Favorited Products</h3>
+                        <div className='favs'>
+                            {favoritedProducts.length > 0 ? (
+                                favoritedProducts.map((product) => (
+                                    <div key={product.productID} className="product-card">
+                                        <img src={product.product.image} alt={product.product.name} />
+                                        <h4>{product.product.name}</h4>
+                                        <p>{product.product.description}</p>
+                                        <p>Price: ${product.product.price.toFixed(2)}</p>
+                                        <button>Remove Favorite</button>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No favorited products yet.</p>
+                            )}
+                        </div>
                     </div>
                 </div>
 
