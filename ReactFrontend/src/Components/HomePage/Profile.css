@@ -121,6 +121,11 @@
     overflow-y: auto;
 }
 
+.favs {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
 .product-card {
     margin-top: 10px;
     padding: 10px;
