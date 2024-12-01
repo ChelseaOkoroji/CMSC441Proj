@@ -61,6 +61,26 @@ const Profile = () => {
         }
     };
 
+    const removeFavorite = async (productID) => {
+        if (!window.confirm("Are you sure you want to remove this favorite?")) {
+            return;
+        }
+    
+        try {
+            const response = await axios.delete(`/delete-favorite/${user.userID}/${productID}/`);
+            if (response.status === 200) {
+                setFavoritedProducts((prevFavorites) =>
+                    prevFavorites.filter((product) => product.productID !== productID)
+                );
+                console.log('Favorite removed successfully');
+            } else {
+                console.error('Failed to remove favorite');
+            }
+        } catch (error) {
+            console.error('Error removing favorite:', error);
+        }
+    };
+
     const fetchFavoritedProducts = async () => {
         try {
             const response = await axios.get(`/user-favorites/${user.userID}/`);
@@ -280,7 +300,10 @@ const Profile = () => {
                                         <h4>{product.product.name}</h4>
                                         <p>{product.product.description}</p>
                                         <p>Price: ${product.product.price.toFixed(2)}</p>
-                                        <button>Remove Favorite</button>
+                                        <button
+                                            onClick={() => removeFavorite(product.productID)}
+                                            className="remove-favorite-button"
+                                        >Remove Favorite</button>
                                     </div>
                                 ))
                             ) : (

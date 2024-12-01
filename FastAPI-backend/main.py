@@ -286,6 +286,12 @@ def delete_product(userID: str, productID: int, db: Session = Depends(get_db)):
         if product.productID == productID:
             operations.delete_product(db, productID)
 
+# Delete specifc favorite
+# TESTED
+@app.delete("/delete-favorite/{userID}/{productID}/", status_code=status.HTTP_200_OK)
+def delete_favorite(userID: str, productID: int, db: Session = Depends(get_db)):
+    operations.delete_favorite(db, userID, productID)
+
 # Delete user (which will also delete any products they were selling)
 # TESTED
 @app.delete("/users/{userID}/", status_code=status.HTTP_200_OK)

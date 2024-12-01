@@ -138,8 +138,13 @@ def delete_product(db: Session, productID: str):
 # Add favorite
 
 # Delete favorite
-def delete_favorite(db: Session, favoriteID: str):
-    db.delete(get_favorite(db, favoriteID))
+def delete_favorite(db: Session, userID: str, productID: int):
+    favorites = db.query(models.Favorite).filter(
+        models.Favorite.userID == userID,
+        models.Favorite.productID == productID
+    ).all()
+    for favorite in favorites:
+        db.delete(favorite)
     db.commit()
 
 # HELPER FUNCTIONS (TOKEN)
