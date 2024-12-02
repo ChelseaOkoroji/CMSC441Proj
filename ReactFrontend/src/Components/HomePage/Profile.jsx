@@ -273,7 +273,8 @@ const Profile = () => {
                     <div className="items-for-sale">
                         <h3 id='sale'>Items For Sale</h3>
                         <div className="products-grid">
-                            {userProducts.map(product => (
+                            {userProducts.length > 0 ? (
+                                userProducts.map((product) => (
                                 <div key={product.productID} className="product-card">
                                     <img src={product.image} alt={product.name} />
                                     <h4>{product.name}</h4>
@@ -286,7 +287,10 @@ const Profile = () => {
                                         Remove Product
                                     </button>
                                 </div>
-                            ))}
+                                ))
+                            ) : (
+                                <p>No items listed.</p>
+                            )}
                         </div>
                     </div>
 
