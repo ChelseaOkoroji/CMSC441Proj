@@ -245,8 +245,8 @@ const HomePage = () => {
                                 className="product-image" 
                             />
                             <div className="product-info">
-                                <h3>{product.name}</h3>
-                                <p>{product.description}</p>
+                                <h3 className="product-name">{product.name}</h3>
+                                <p className="product-description">{product.description}</p>
                                 <p>${product.price.toFixed(2)}</p>
                                 <div className="product-attributes">
                                 <button 
