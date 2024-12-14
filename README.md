@@ -1,5 +1,5 @@
 # E-Z College
-CMSC 447 Semester Project
+CMSC 447 Semester Project\ 
 Contributors: John Akinmolayan, Chelsea Okoroji, Trevor Stepp, and William Whatley
 # Description
 E-Z College is an e-commerce website for past and present college students. Many past college students have supplies from college they no longer need or use, 
