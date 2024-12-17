@@ -4,10 +4,6 @@ import models, schemas
 import bcrypt
 from datetime import datetime
 
-# CREATE operations
-
-# **** User-related functions ****
-
 # Create new user
 def create_user(db: Session, user: schemas.UserCreate):
     # Hash password
@@ -19,8 +15,6 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.refresh(new_user)
     return new_user
 
-# **** Product-related functions ****
-
 # Create new product
 def create_product(db: Session, product: schemas.ProductCreate):
     new_product = models.Product(**product.model_dump())
@@ -29,8 +23,6 @@ def create_product(db: Session, product: schemas.ProductCreate):
     db.refresh(new_product)
     return new_product
 
-# **** Favorite-related functions ****
-
 # Create new favorite
 def create_favorite(db: Session, favorite: schemas.FavoriteCreate):
     new_favorite = models.Favorite(**favorite.dict())
@@ -38,10 +30,6 @@ def create_favorite(db: Session, favorite: schemas.FavoriteCreate):
     db.commit()
     db.refresh(new_favorite)
     return new_favorite
-
-# READ operations
-
-# **** User-related functions ****
 
 # Checks if given userID exists
 def get_user_by_id(db: Session, userID: str):
@@ -75,8 +63,6 @@ def get_user_products(db: Session, userID: str):
     user = get_user_by_id(db, userID)
     return user.products
 
-# **** Favorite-related functions ****
-
 # Get specific favorite
 def get_favorite(db: Session, favoriteID: int):
     return db.query(models.Favorite).filter(models.Favorite.favoriteID == favoriteID)
@@ -85,8 +71,6 @@ def get_favorite(db: Session, favoriteID: int):
 def get_user_favorites(db: Session, userID: str):
     user = get_user_by_id(db, userID)
     return user.favorites
-
-# UPDATE operations
 
 # Update user (only possible for userID, email, and (maybe) profile image)
 async def update_user(db: Session, oldUserID: str, newUserID: str, newEmail: str):
@@ -112,18 +96,10 @@ async def update_user(db: Session, oldUserID: str, newUserID: str, newEmail: str
     db.refresh(existing_user)
     return existing_user
 
-#def update_price(db: Session, productID: int):
-
-# DELETE operations
-
-# **** User-related functions ****
-
 # Delete user
 def delete_user(db: Session, userID: str):
     db.delete(get_user_by_id(db, userID))
     db.commit()
-
-# **** Product-related functions ****
 
 # Delete product
 def delete_product(db: Session, productID: str):
@@ -132,10 +108,6 @@ def delete_product(db: Session, productID: str):
     for message in db.query(models.Message).filter(models.Message.product_id == productID).all():
         db.delete(message)
     db.commit()
-
-# **** Favorite-related functions ****
-
-# Add favorite
 
 # Delete favorite
 def delete_favorite(db: Session, userID: str, productID: int):
