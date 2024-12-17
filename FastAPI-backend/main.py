@@ -50,7 +50,6 @@ app.add_middleware(
 )   
 
 # Create a dependency
-
 def get_db():
     db = SessionLocal()
     try:
@@ -59,11 +58,10 @@ def get_db():
         db.close()
 
 # Create database tables
-# Note: normally you'd want to use migrations
+# Note: normally may want to use migrations
 models.Base.metadata.create_all(bind=engine)
 
-
-#image helpper functions
+# Image helper function
 async def upload_image_to_cloudinary(image: UploadFile) -> str:
     """Uploads an image to Cloudinary asynchronously and returns the URL."""
     try:
@@ -75,7 +73,9 @@ async def upload_image_to_cloudinary(image: UploadFile) -> str:
         print(f"Error uploading to Cloudinary: {e}")
         return None	
 
+# *****************
 # FastAPI functions
+# *****************
 
 # Used when input data does not match pydantic model
 @app.exception_handler(RequestValidationError)
@@ -88,7 +88,6 @@ def validation_exception_handler(request: Request, exc: RequestValidationError):
 # ****CREATE****
 
 # Add user
-# TESTED
 @app.post("/register/", status_code=status.HTTP_201_CREATED, response_model=schemas.User)
 def add_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     # Check if email is already in system
@@ -102,7 +101,6 @@ def add_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return operations.create_user(db, user)
 
 # Add product
-# TESTED
 @app.post("/create-product/", status_code=status.HTTP_201_CREATED, response_model=schemas.Product)
 async def add_product(
     userID: str = Form(...), 
@@ -143,15 +141,11 @@ async def add_product(
 
 
 # Add favorite
-# TESTED
 @app.post("/create-favorite/", status_code=status.HTTP_201_CREATED, response_model=schemas.Favorite)
 def add_favorite(favorite: schemas.FavoriteCreate, db: Session = Depends(get_db)):
     return operations.create_favorite(db, favorite)
 
-# ****READ****
-
 # Used if user forgot their password (sends email)
-# TESTED
 @app.post("/forget-password/{email}/", status_code=status.HTTP_200_OK)
 def send_email(email: str, db: Session = Depends(get_db)):
     user = operations.get_user_by_email(db, email)
@@ -167,7 +161,6 @@ def send_email(email: str, db: Session = Depends(get_db)):
     return operations.create_password_reset_token(db, user.email, token)
 
 # Reset password functionality (used after user clicks link in email)
-# TESTED
 @app.post("/reset-password/", status_code=status.HTTP_200_OK)
 def reset_password(reset: schemas.ResetPassword, db: Session = Depends(get_db)):
     try:
@@ -193,7 +186,6 @@ def reset_password(reset: schemas.ResetPassword, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired token. Please enter new password reset request.")
 
 # Get user's products they have listed
-# TESTED
 @app.get("/user-products/{userID}/", status_code=status.HTTP_200_OK, response_model=list[schemas.Product])
 async def get_user_products(userID: str, db: Session = Depends(get_db)):
     return operations.get_user_products(db, userID)
@@ -226,16 +218,15 @@ async def update_profile(
     return await operations.update_user(db, oldUserID=userID, newUserID=newUserID, newEmail=newEmail)
 
 # Login function
-# TESTED
 @app.post("/login/", status_code=status.HTTP_200_OK, response_model=schemas.User)
 def user_login(user_to_check: schemas.UserLogin, db: Session = Depends(get_db)):
     user = operations.get_user_by_id(db, user_to_check.userID)
+    # If username or password is incorrect, raise an exception
     if not user or not operations.check_password(db, user_to_check.password, user):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid username or password")
     return user
 
 # Get products based on filterable arguments (name, price, category, color)
-# TESTED
 @app.get("/products/", status_code=status.HTTP_200_OK, response_model=schemas.PaginatedProducts)
 async def get_products_paginated(
     page: int = Query(1, ge=1, description="Page number"),
@@ -273,12 +264,7 @@ async def get_products_paginated(
         "pages": total_pages
     }
 
-# ****UPDATE****
-
-# ****DELETE****
-
 # Delete specific product
-# TESTED
 @app.delete("/{userID}/products/{productID}/", status_code=status.HTTP_200_OK)
 def delete_product(userID: str, productID: int, db: Session = Depends(get_db)):
     products = operations.get_user_products(db, userID)
@@ -287,13 +273,11 @@ def delete_product(userID: str, productID: int, db: Session = Depends(get_db)):
             operations.delete_product(db, productID)
 
 # Delete specifc favorite
-# TESTED
 @app.delete("/delete-favorite/{userID}/{productID}/", status_code=status.HTTP_200_OK)
 def delete_favorite(userID: str, productID: int, db: Session = Depends(get_db)):
     operations.delete_favorite(db, userID, productID)
 
 # Delete user (which will also delete any products they were selling)
-# TESTED
 @app.delete("/users/{userID}/", status_code=status.HTTP_200_OK)
 def delete_user(userID: str, db: Session = Depends(get_db)):
     operations.delete_user(db, userID)

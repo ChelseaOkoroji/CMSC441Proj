@@ -44,6 +44,7 @@ class Favorite(Base):
     userID = Column(String, ForeignKey('users.userID', ondelete='CASCADE', onupdate='CASCADE'))
     productID = Column(Integer, ForeignKey('products.productID', ondelete='CASCADE', onupdate='CASCADE'))
 
+# Table used for password reset tokens (token is embedded in the link the user receives in email)
 class PasswordResetToken(Base):
     __tablename__ = "password_reset_tokens"
     

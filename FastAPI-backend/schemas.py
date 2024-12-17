@@ -1,4 +1,6 @@
-# pydantic is used to validate the data types for the columns in the tables
+# pydantic is used to validate the data types coming in to the FastAPI functions
+# pydantic schemas are also used to return data in a formatted way 
+# For example, class User(UserBase is used to send information to the frontend
 from pydantic import BaseModel, EmailStr, model_validator, field_validator, Field
 from typing import Optional, List
 from datetime import datetime
@@ -99,6 +101,9 @@ class User(UserBase):
     class Config:
         from_attributes = True
 
+# Used for logging in
+# Frontend sends data to the backend function, which uses this schema
+# to validate that the data matches the below types
 class UserLogin(BaseModel):
     userID: str
     password: str

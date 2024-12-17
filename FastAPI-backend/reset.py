@@ -1,3 +1,4 @@
+# This file is used for email sending using SendGrid
 import os
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
